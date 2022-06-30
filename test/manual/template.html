@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MJS Toolbar manual testing</title>
+  <script>
+    let experiments;
+    document.addEventListener("DOMContentLoaded", function () {
+      experiments = new mjsdiagram.Experiments();
+
+      experiments.setup();
+    });    
+  </script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      background-color: blue;
+      font-size: 40px;
+      font-family: 'Times New Roman', Times, serif;
+    }
+  </style>
+</head>
+<body>
+    <div style="width: 70%; min-width: 400px; height: 400px; background-color: antiquewhite; margin: 10px auto; display: flex; flex-direction: column;">
+      <div style="height: 80px; background-color: aquamarine; margin: 3px; padding: 4px;">
+        <mjstb-diagram-editor id="tbPanel"></mjstb-diagram-editor>
+      </div>
+    </div>
+</body>
+</html>

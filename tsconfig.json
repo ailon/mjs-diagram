@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["es2015", "dom"],
+    "target": "es6",
+    "forceConsistentCasingInFileNames": true
+  },
+  "exclude": ["node_modules"]
+}
