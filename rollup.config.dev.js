@@ -30,7 +30,7 @@ export default {
         },
       ],
     }),
-    dev({ dirs: ['build-dev'], port: 8089 }),
+    dev({ dirs: ['build-dev'], port: 8090 }),
     livereload('build-dev'),
   ],
 };
