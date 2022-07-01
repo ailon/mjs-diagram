@@ -3,7 +3,9 @@
     "strict": true,
     "lib": ["es2015", "dom"],
     "target": "es6",
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "preserveSymlinks": true,
+    "moduleResolution": "node"
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
 }

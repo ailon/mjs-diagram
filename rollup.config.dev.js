@@ -5,17 +5,23 @@ import livereload from 'rollup-plugin-livereload';
 // import del from 'rollup-plugin-delete';
 import copy from 'rollup-plugin-copy';
 import svgo from 'rollup-plugin-svgo';
+import resolve from 'rollup-plugin-node-resolve';
 
 export default {
+  preserveSymlinks: false,
   input: ['test/manual/index.ts'],
   output: {
     dir: 'build-dev',
     format: 'umd',
     sourcemap: true,
     name: 'mjsdiagram',
+    // globals: {
+    //   'mjs-toolbar': 'mjstoolbar'
+    // }
   },
   plugins: [
     //del({ targets: 'build-dev/*' }),
+    resolve(),
     typescript(),
     svgo(),
     htmlTemplate({
