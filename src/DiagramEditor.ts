@@ -1,10 +1,16 @@
 import { Button, Panel, Toolbar, ToolbarBlock } from 'mjs-toolbar';
+import { SvgHelper } from './SvgHelper';
 
 export class DiagramEditor extends HTMLElement {
   private _container?: HTMLDivElement;
   private _toolbarContainer?: HTMLDivElement;
   private _contentContainer?: HTMLDivElement;
   private _toolboxContainer?: HTMLDivElement;
+
+  private _mainCanvas?: SVGSVGElement;
+  private _groupLayer?: SVGGElement;
+  private _connectorLayer?: SVGGElement;
+  private _objectLayer?: SVGGElement;
 
   constructor() {
     super();
@@ -84,9 +90,38 @@ export class DiagramEditor extends HTMLElement {
     this._toolbarContainer?.appendChild(panel);
   }
 
+  private addMainCanvas() {
+    const w = this._contentContainer?.clientWidth || 0;
+    const h = this._contentContainer?.clientHeight || 0;
+
+    this._mainCanvas = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'svg'
+    );
+    this._mainCanvas.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    this._mainCanvas.setAttribute('width', w.toString());
+    this._mainCanvas.setAttribute('height', h.toString());
+    this._mainCanvas.setAttribute(
+      'viewBox',
+      '0 0 ' + w.toString() + ' ' + h.toString()
+    );
+    this._mainCanvas.style.pointerEvents = 'auto';
+
+    this._groupLayer = SvgHelper.createGroup();
+    this._connectorLayer = SvgHelper.createGroup();
+    this._objectLayer = SvgHelper.createGroup();
+
+    this._mainCanvas.appendChild(this._groupLayer);
+    this._mainCanvas.appendChild(this._connectorLayer);
+    this._mainCanvas.appendChild(this._objectLayer);
+
+    this._contentContainer?.appendChild(this._mainCanvas);
+  }
+
   private connectedCallback() {
     this.createLayout();
     this.addToolbar();
+    this.addMainCanvas();
     // this.attachEvents();
   }
 
