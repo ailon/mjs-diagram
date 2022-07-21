@@ -16,19 +16,14 @@ export class StencilBase {
     return this._container;
   }
 
-  protected _overlayContainer: HTMLDivElement;
-  public get overlayContainer(): HTMLDivElement {
-    return this._overlayContainer;
-  }
-
   public notes?: string;
 
   public onStencilCreated?: (stencil: StencilBase) => void;
 
-  protected left = 0;
-  protected top = 0;
-  protected width = 0;
-  protected height = 0;
+  public left = 0;
+  public top = 0;
+  public width = 0;
+  public height = 0;
 
   protected defaultSize: IPoint = {x: 50, y: 20};  
 
@@ -68,9 +63,8 @@ export class StencilBase {
     ]
   )
 
-  constructor(container: SVGGElement, overlayContainer: HTMLDivElement) {
+  constructor(container: SVGGElement) {
     this._container = container;
-    this._overlayContainer = overlayContainer;
 
     this.setStrokeColor = this.setStrokeColor.bind(this);
     this.setFillColor = this.setFillColor.bind(this);
