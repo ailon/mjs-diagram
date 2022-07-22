@@ -1,4 +1,7 @@
 import { Button, Panel, Toolbar, ToolbarBlock } from 'mjs-toolbar';
+import { IPoint } from './IPoint';
+import { StencilBase } from './StencilBase';
+import { StencilBaseEditor } from './StencilBaseEditor';
 import { SvgHelper } from './SvgHelper';
 
 export class DiagramEditor extends HTMLElement {
@@ -12,11 +15,50 @@ export class DiagramEditor extends HTMLElement {
   private _connectorLayer?: SVGGElement;
   private _objectLayer?: SVGGElement;
 
+  private _currentStencilEditor?: StencilBaseEditor;
+
+  public zoomSteps = [1, 1.5, 2, 4];
+  private _zoomLevel = 1;
+  public get zoomLevel(): number {
+    return this._zoomLevel;
+  }
+  public set zoomLevel(value: number) {
+    this._zoomLevel = value;
+    // @todo
+    // if (this.editorCanvas && this.contentDiv) {
+    //   this.editorCanvas.style.transform = `scale(${this._zoomLevel})`;
+    //   this.contentDiv.scrollTo({
+    //     left:
+    //       (this.editorCanvas.clientWidth * this._zoomLevel -
+    //         this.contentDiv.clientWidth) /
+    //       2,
+    //     top:
+    //       (this.editorCanvas.clientHeight * this._zoomLevel -
+    //         this.contentDiv.clientHeight) /
+    //       2,
+    //   });
+    // }
+  }
+
   constructor() {
     super();
 
-    this.attachShadow({ mode: 'open' });
+    this.stencilCreated = this.stencilCreated.bind(this);
+    this.setCurrentStencil = this.setCurrentStencil.bind(this);
+    this.onPointerDown = this.onPointerDown.bind(this);
+    //this.onDblClick = this.onDblClick.bind(this);
+    this.onPointerMove = this.onPointerMove.bind(this);
+    this.onPointerUp = this.onPointerUp.bind(this);
+    this.onPointerOut = this.onPointerOut.bind(this);
+    //this.onKeyUp = this.onKeyUp.bind(this);
+    //this.overrideOverflow = this.overrideOverflow.bind(this);
+    //this.restoreOverflow = this.restoreOverflow.bind(this);
+    //this.close = this.close.bind(this);
+    //this.closeUI = this.closeUI.bind(this);
+    this.clientToLocalCoordinates = this.clientToLocalCoordinates.bind(this);
+    // this.onWindowResize = this.onWindowResize.bind(this);
 
+    this.attachShadow({ mode: 'open' });
   }
 
   private createLayout() {
@@ -28,7 +70,7 @@ export class DiagramEditor extends HTMLElement {
     this._container.style.display = 'flex';
     this._container.style.flexDirection = 'column';
     this._container.style.width = '100%';
-    this._container.style.height = '100%'; 
+    this._container.style.height = '100%';
     this._container.style.backgroundColor = 'green';
 
     this._toolbarContainer = document.createElement('div');
@@ -48,18 +90,19 @@ export class DiagramEditor extends HTMLElement {
     this._toolboxContainer.style.backgroundColor = 'cyan';
     this._container.appendChild(this._toolboxContainer);
 
-    this._container.setAttribute('part','container');
+    this._container.setAttribute('part', 'container');
 
-    this.shadowRoot?.appendChild(this._container);  
+    this.shadowRoot?.appendChild(this._container);
   }
 
   private addToolbar() {
     const panel = <Panel>document.createElement('mjstb-panel');
 
     const toolbar = new Toolbar();
-    toolbar.addEventListener('buttonclick', (ev) =>
+    toolbar.addEventListener('buttonclick', (ev) => {
+      this.createNewStencil(typeof StencilBase);
       console.log(`'${ev.detail.button.command}' button clicked.`)
-    );
+    });
 
     const block1 = new ToolbarBlock();
     const block2 = new ToolbarBlock();
@@ -122,10 +165,236 @@ export class DiagramEditor extends HTMLElement {
     this.createLayout();
     this.addToolbar();
     this.addMainCanvas();
-    // this.attachEvents();
+    this.attachEvents();
   }
 
   private disconnectedCallback() {
-    // this.detachEvents();
-  }  
+    this.detachEvents();
+  }
+
+  private attachEvents() {
+    this._mainCanvas?.addEventListener('pointerdown', this.onPointerDown);
+    // @todo
+    // this._mainCanvas?.addEventListener('dblclick', this.onDblClick);
+    this.attachWindowEvents();
+  }
+
+  private attachWindowEvents() {
+    window.addEventListener('pointermove', this.onPointerMove);
+    window.addEventListener('pointerup', this.onPointerUp);
+    window.addEventListener('pointercancel', this.onPointerOut);
+    window.addEventListener('pointerout', this.onPointerOut);
+    window.addEventListener('pointerleave', this.onPointerUp);
+    // @todo
+    // window.addEventListener('resize', this.onWindowResize);
+    // window.addEventListener('keyup', this.onKeyUp);
+  }
+
+  private detachEvents() {
+    this._mainCanvas?.removeEventListener('pointerdown', this.onPointerDown);
+    // @todo
+    // this._mainCanvas?.removeEventListener('dblclick', this.onDblClick);
+    this.detachWindowEvents();
+  }
+
+  private detachWindowEvents() {
+    window.removeEventListener('pointermove', this.onPointerMove);
+    window.removeEventListener('pointerup', this.onPointerUp);
+    window.removeEventListener('pointercancel', this.onPointerOut);
+    window.removeEventListener('pointerout', this.onPointerOut);
+    window.removeEventListener('pointerleave', this.onPointerUp);
+    // @todo
+    // window.removeEventListener('resize', this.onWindowResize);
+    // window.removeEventListener('keyup', this.onKeyUp);
+  }
+
+  private clientToLocalCoordinates(x: number, y: number): IPoint {
+    if (this._mainCanvas) {
+      const clientRect = this._mainCanvas.getBoundingClientRect();
+      return {
+        x: (x - clientRect.left) / this.zoomLevel,
+        y: (y - clientRect.top) / this.zoomLevel,
+      };
+    } else {
+      return { x: x, y: y };
+    }
+  }
+
+  private touchPoints = 0;
+  private isDragging = false;
+
+  private onPointerDown(ev: PointerEvent) {
+    // @todo
+    // if (!this._isFocused) {
+    //   this.focus();
+    // }
+
+    this.touchPoints++;
+    if (this.touchPoints === 1 || ev.pointerType !== 'touch') {
+      if (
+        this._currentStencilEditor !== undefined &&
+        (this._currentStencilEditor.state === 'new' ||
+          this._currentStencilEditor.state === 'creating')
+      ) {
+        this.isDragging = true;
+        this._currentStencilEditor.pointerDown(
+          this.clientToLocalCoordinates(ev.clientX, ev.clientY)
+        );
+      }
+      // @todo
+      // else if (this.mode === 'select') {
+      //   const hitMarker = this.markers.find((m) => m.ownsTarget(ev.target));
+      //   if (hitMarker !== undefined) {
+      //     this.setCurrentMarker(hitMarker);
+      //     this.isDragging = true;
+      //     this.currentMarker.pointerDown(
+      //       this.clientToLocalCoordinates(ev.clientX, ev.clientY),
+      //       ev.target
+      //     );
+      //   } else {
+      //     this.setCurrentMarker();
+      //     this.isDragging = true;
+      //     this.prevPanPoint = { x: ev.clientX, y: ev.clientY };
+      //   }
+      // }
+    }
+  }
+
+  private onPointerMove(ev: PointerEvent) {
+    if (this.touchPoints === 1 || ev.pointerType !== 'touch') {
+      if (this._currentStencilEditor !== undefined || this.isDragging) {
+        // don't swallow the event when editing text
+        if (
+          this._currentStencilEditor === undefined ||
+          this._currentStencilEditor.state !== 'edit'
+        ) {
+          ev.preventDefault();
+        }
+
+        if (this._currentStencilEditor !== undefined) {
+          this._currentStencilEditor.manipulate(
+            this.clientToLocalCoordinates(ev.clientX, ev.clientY)
+          );
+        }
+        // @todo - handle zoomed state
+        // else if (this.zoomLevel > 1) {
+        //   this.panTo({ x: ev.clientX, y: ev.clientY });
+        // }
+      }
+    }
+  }
+  private onPointerUp(ev: PointerEvent) {
+    if (this.touchPoints > 0) {
+      this.touchPoints--;
+    }
+    if (this.touchPoints === 0) {
+      if (this.isDragging && this._currentStencilEditor !== undefined) {
+        this._currentStencilEditor.pointerUp(
+          this.clientToLocalCoordinates(ev.clientX, ev.clientY)
+        );
+      }
+    }
+    this.isDragging = false;
+    // @todo
+    // this.addUndoStep();
+  }
+
+  private onPointerOut(/*ev: PointerEvent*/) {
+    if (this.touchPoints > 0) {
+      this.touchPoints--;
+    }
+  }
+
+  public createNewStencil(steniclType: typeof StencilBase | string): void {
+    let sType: typeof StencilBase;
+
+    if (typeof steniclType === 'string') {
+      sType = StencilBase; // @todo remove hardcoded
+      // @todo implement search
+      // mType = this._availableMarkerTypes.find(
+      //   (mt) => mt.typeName === markerType
+      // );
+    } else {
+      sType = steniclType;
+    }
+
+    if (sType) {
+      this.setCurrentStencil();
+      // @todo
+      // this.addUndoStep();
+      this._currentStencilEditor = this.addNewStencil(sType);
+      this._currentStencilEditor.onStencilCreated = this.stencilCreated;
+      if (this._mainCanvas) {
+        this._mainCanvas.style.cursor = 'crosshair';
+      }
+      // @todo
+      // this.toolbar.setActiveMarkerButton(mType.typeName);
+      // this.toolbox.setPanelButtons(this.currentMarker.toolboxPanels);
+      // this.eventListeners['markercreating'].forEach((listener) =>
+      //   listener(new MarkerEvent(this, this.currentMarker))
+      // );
+    }
+  }
+
+  private stencilCreated(stencilEditor: StencilBaseEditor) {
+    // @todo
+    // this.mode = 'select';
+    if (this._mainCanvas) {
+      this._mainCanvas.style.cursor = 'default';
+    }
+    // @todo
+    // this.markers.push(marker);
+    this.setCurrentStencil(stencilEditor);
+
+    // @todo
+    // this.toolbar.setSelectMode();
+    // this.addUndoStep();
+    // this.eventListeners['markercreate'].forEach((listener) =>
+    //   listener(new MarkerEvent(this, this.currentMarker))
+    // );
+  }
+
+  public setCurrentStencil(stencilEditor?: StencilBaseEditor): void {
+    if (this._currentStencilEditor !== stencilEditor) {
+      // no need to deselect if not changed
+      if (this._currentStencilEditor !== undefined) {
+        // @todo
+        // this._currentStencilEditor.deselect();
+        // this.toolbar.setCurrentMarker();
+        // this.toolbox.setPanelButtons([]);
+        // @todo
+        // if (!this._isResizing) {
+        //   this.eventListeners['markerdeselect'].forEach((listener) =>
+        //     listener(new MarkerEvent(this, this.currentMarker))
+        //   );
+        // }
+      }
+    }
+    this._currentStencilEditor = stencilEditor;
+    // @todo
+    // if (this.currentMarker !== undefined && !this.currentMarker.isSelected) {
+    //   if (this.currentMarker.state !== 'new') {
+    //   this.currentMarker.select();
+    //   }
+    //   this.toolbar.setCurrentMarker(this.currentMarker);
+    //   this.toolbox.setPanelButtons(this.currentMarker.toolboxPanels);
+
+    //   if (!this._isResizing) {
+    //     this.eventListeners['markerselect'].forEach((listener) =>
+    //       listener(new MarkerEvent(this, this.currentMarker))
+    //     );
+    //   }
+    // }
+  }
+
+  private addNewStencil(stencilType: typeof StencilBase): StencilBaseEditor {
+    const g = SvgHelper.createGroup();
+    this._mainCanvas?.appendChild(g);
+
+    return new StencilBaseEditor(
+      g,
+      document.createElement('div') /* @todo this.overlayContainer */,
+      stencilType,
+    );
+  }
 }

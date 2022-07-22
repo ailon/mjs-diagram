@@ -1,11 +1,14 @@
+import { IPoint } from './IPoint';
 import { GripLocation, ResizeGrip } from './ResizeGrip';
 import { StencilBase } from './StencilBase';
 import { SvgHelper } from './SvgHelper';
 
-export class StencilBaseEditor<T extends StencilBase> {
+export type StencilEditorState = 'new' | 'creating' | 'select' | 'move' | 'resize' | 'edit';
+
+export class StencilBaseEditor {
   // @todo switch type to use the generic
   protected _stencilType: typeof StencilBase;
-  protected _stencil?: T;
+  protected _stencil: StencilBase;
 
   protected _container: SVGGElement;
   public get container(): SVGGElement {
@@ -15,6 +18,11 @@ export class StencilBaseEditor<T extends StencilBase> {
   protected _overlayContainer: HTMLDivElement;
   public get overlayContainer(): HTMLDivElement {
     return this._overlayContainer;
+  }
+
+  protected _state: StencilEditorState = 'new';
+  public get state(): StencilEditorState {
+    return this._state;
   }
 
   protected resizeGrips = new Map<GripLocation, ResizeGrip>([
@@ -37,12 +45,14 @@ export class StencilBaseEditor<T extends StencilBase> {
     container: SVGGElement,
     overlayContainer: HTMLDivElement,
     stencilType: typeof StencilBase,
-    stencil?: T
+    stencil?: StencilBase
   ) {
     this._container = container;
     this._overlayContainer = overlayContainer;
     this._stencilType = stencilType;
-    this._stencil = stencil;
+    this._stencil = stencil ?? new stencilType(container);
+
+    this.setupControlBox();
   }
 
   public ownsTarget(el: EventTarget): boolean {
@@ -58,6 +68,8 @@ export class StencilBaseEditor<T extends StencilBase> {
       return found;
     }
   }
+
+  public onStencilCreated?: (stencilEditor: StencilBaseEditor) => void;
 
   private setupControlBox() {
     if (this._stencil !== undefined) {
@@ -178,4 +190,201 @@ export class StencilBaseEditor<T extends StencilBase> {
 
     this.adjustControlBox();
   }
+
+  /**
+   * x coordinate of the top-left corner at the start of manipulation.
+   */
+   protected manipulationStartLeft = 0;
+   /**
+    * y coordinate of the top-left corner at the start of manipulation.
+    */
+   protected manipulationStartTop = 0;
+   /**
+    * Width at the start of manipulation.
+    */
+   protected manipulationStartWidth = 0;
+   /**
+    * Height at the start of manipulation.
+    */
+   protected manipulationStartHeight = 0;
+ 
+   /**
+    * x coordinate of the pointer at the start of manipulation.
+    */
+   protected manipulationStartX = 0;
+   /**
+    * y coordinate of the pointer at the start of manipulation.
+    */
+   protected manipulationStartY = 0;
+ 
+   /**
+    * Pointer's horizontal distance from the top left corner.
+    */
+   protected offsetX = 0;
+   /**
+    * Pointer's vertical distance from the top left corner.
+    */
+   protected offsetY = 0;
+ 
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public pointerDown(point: IPoint, target?: EventTarget): void {
+    if (this._stencil !== undefined) {
+      if (this.state === 'new') {
+        this._stencil.left = point.x;
+        this._stencil.top = point.y;
+      }
+
+      this.manipulationStartLeft = this._stencil.left;
+      this.manipulationStartTop = this._stencil.top;
+      this.manipulationStartWidth = this._stencil.width;
+      this.manipulationStartHeight = this._stencil.height;
+
+      this.manipulationStartX = point.x;
+      this.manipulationStartY = point.y;
+
+      this.offsetX = point.x - this._stencil.left;
+      this.offsetY = point.y - this._stencil.top;
+
+      if (this.state === 'new') {
+        this._stencil.createVisual();
+  
+        this._stencil.moveVisual(point);
+  
+        this._state = 'creating';
+      }      
+
+      // @todo - when not new
+      // if (this.state !== 'new') {
+      //   this.select();
+      //   this.activeGrip = this.controlGrips.findGripByVisual(target as SVGGraphicsElement);
+      //   if (this.activeGrip !== undefined) {
+      //     this._state = 'resize';
+      //   } else if (this.rotatorGrip.ownsTarget(target)) {
+      //     this.activeGrip = this.rotatorGrip;
+
+      //     const rotatedCenter = this.rotatePoint({x: this.centerX, y: this.centerY});
+      //     this.left = rotatedCenter.x - this.width / 2;
+      //     this.top = rotatedCenter.y - this.height / 2;
+      //     this.moveVisual({ x: this.left, y: this.top });
+
+      //     const rotate = this.container.transform.baseVal.getItem(0);
+      //     rotate.setRotate(this.rotationAngle, this.centerX, this.centerY);
+      //     this.container.transform.baseVal.replaceItem(rotate, 0);
+
+      //     this.adjustControlBox();
+
+      //     this._state = 'rotate';
+      //   } else {
+      //     this._state = 'move';
+      //   }
+      // }
+    }
+  }
+
+  public manipulate(point: IPoint): void {
+    if (this._stencil) {
+      //console.log(this._stencil);
+      if (this.state === 'creating') {
+        this.resize(point);
+      } else if (this.state === 'move') {
+        this._stencil.left =
+          this.manipulationStartLeft +
+          (point.x - this.manipulationStartLeft) -
+          this.offsetX;
+        this._stencil.top =
+          this.manipulationStartTop +
+          (point.y - this.manipulationStartTop) -
+          this.offsetY;
+        this._stencil.moveVisual({x: this._stencil.left, y: this._stencil.top});
+        this.adjustControlBox();
+      } else if (this.state === 'resize') {
+        this.resize(point);
+      }
+    }
+  }
+
+  protected resize(point: IPoint): void {
+    if (this._stencil) {
+      let newX = this.manipulationStartLeft;
+      let newWidth = this.manipulationStartWidth;
+      let newY = this.manipulationStartTop;
+      let newHeight = this.manipulationStartHeight;
+
+      switch(this.activeGrip) {
+        case this.resizeGrips.get('bottomleft'):
+        case this.resizeGrips.get('leftcenter'):
+        case this.resizeGrips.get('topleft'):
+          newX = this.manipulationStartLeft + point.x - this.manipulationStartX;
+          newWidth = this.manipulationStartWidth + this.manipulationStartLeft - newX;
+          break; 
+        case this.resizeGrips.get('bottomright'):
+        case this.resizeGrips.get('rightcenter'):
+        case this.resizeGrips.get('topright'):
+        case undefined:
+          newWidth = this.manipulationStartWidth + point.x - this.manipulationStartX;
+          break; 
+      }
+
+      switch(this.activeGrip) {
+        case this.resizeGrips.get('topcenter'):
+        case this.resizeGrips.get('topleft'):
+        case this.resizeGrips.get('topright'):
+          newY = this.manipulationStartTop + point.y - this.manipulationStartY;
+          newHeight = this.manipulationStartHeight + this.manipulationStartTop - newY;
+          break; 
+        case this.resizeGrips.get('bottomcenter'):
+        case this.resizeGrips.get('bottomleft'):
+        case this.resizeGrips.get('bottomright'):
+        case undefined:
+          newHeight = this.manipulationStartHeight + point.y - this.manipulationStartY;
+          break; 
+      }
+
+      if (newWidth >= 0) {
+        this._stencil.left = newX;
+        this._stencil.width = newWidth;
+      } else {
+        this._stencil.left = newX + newWidth;
+        this._stencil.width = -newWidth;
+      }
+      if (newHeight >= 0) {
+        this._stencil.top = newY;
+        this._stencil.height = newHeight;
+      } else {
+        this._stencil.top = newY + newHeight;
+        this._stencil.height = -newHeight;
+      }
+
+      this.setSize();
+    }
+  }  
+
+  protected setSize(): void {
+    if (this._stencil) {
+      this._stencil.setSize();
+    }
+    this.adjustControlBox();
+  }
+
+  protected _suppressStencilCreateEvent = false;
+  public pointerUp(point: IPoint): void {
+    if (this._stencil) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const inState = this.state;
+      if (this.state === 'creating' && this._stencil.width < 10 && this._stencil.height < 10) {
+        this._stencil.width = this._stencil.defaultSize.x;
+        this._stencil.height = this._stencil.defaultSize.y;
+      } else {
+        this.manipulate(point);
+      }
+      this._state = 'select';
+
+      if (inState === 'creating' && this.onStencilCreated && this._suppressStencilCreateEvent === false) {
+        this.onStencilCreated(this);
+      }
+    }
+  }
+
+
 }

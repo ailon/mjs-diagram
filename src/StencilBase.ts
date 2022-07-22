@@ -25,7 +25,7 @@ export class StencilBase {
   public width = 0;
   public height = 0;
 
-  protected defaultSize: IPoint = {x: 50, y: 20};  
+  public defaultSize: IPoint = {x: 50, y: 20};  
 
   protected get centerX(): number {
     return this.left + this.width / 2;
@@ -46,8 +46,8 @@ export class StencilBase {
   }
 
   protected fillColor = 'transparent';
-  protected strokeColor = 'transparent';
-  protected strokeWidth = 0;
+  protected strokeColor = 'black';
+  protected strokeWidth = 1;
   protected strokeDasharray = '';
 
   protected ports = new Map<PortLocation, Port>(
@@ -106,7 +106,7 @@ export class StencilBase {
     }
   }
 
-  protected createVisual(): void {
+  public createVisual(): void {
     this.visual = SvgHelper.createRect(1, 1, [
       ['fill', this.fillColor],
       ['stroke', this.strokeColor],
@@ -124,11 +124,11 @@ export class StencilBase {
     }
   }
 
-  protected moveVisual(point: IPoint): void {
+  public moveVisual(point: IPoint): void {
     this.visual.style.transform = `translate(${point.x}px, ${point.y}px)`;
   }
 
-  protected setSize(): void {
+  public setSize(): void {
     this.moveVisual({x: this.left, y: this.top});
     SvgHelper.setAttributes(this.visual, [
       ['width', this.width.toString()],
