@@ -53,6 +53,9 @@ export class StencilBaseEditor {
     this._stencil = stencil ?? new stencilType(container);
 
     this.setupControlBox();
+
+    this.findGripByVisual = this.findGripByVisual.bind(this);
+    this.ownsTarget = this.ownsTarget.bind(this);
   }
 
   public ownsTarget(el: EventTarget | null): boolean {
@@ -248,7 +251,15 @@ export class StencilBaseEditor {
       this.offsetX = point.x - this._stencil.left;
       this.offsetY = point.y - this._stencil.top;
 
-      if (this.state === 'new') {
+      if (this.state !== 'new') {
+        this.select();
+        this.activeGrip = this.findGripByVisual(target as SVGGraphicsElement);
+        if (this.activeGrip !== undefined) {
+          this._state = 'resize';
+        } else {
+          this._state = 'move';
+        }
+      } else {
         this._stencil.createVisual();
   
         this._stencil.moveVisual(point);
@@ -256,32 +267,20 @@ export class StencilBaseEditor {
         this._state = 'creating';
       }      
 
-      // @todo - when not new
-      // if (this.state !== 'new') {
-      //   this.select();
-      //   this.activeGrip = this.controlGrips.findGripByVisual(target as SVGGraphicsElement);
-      //   if (this.activeGrip !== undefined) {
-      //     this._state = 'resize';
-      //   } else if (this.rotatorGrip.ownsTarget(target)) {
-      //     this.activeGrip = this.rotatorGrip;
 
-      //     const rotatedCenter = this.rotatePoint({x: this.centerX, y: this.centerY});
-      //     this.left = rotatedCenter.x - this.width / 2;
-      //     this.top = rotatedCenter.y - this.height / 2;
-      //     this.moveVisual({ x: this.left, y: this.top });
-
-      //     const rotate = this.container.transform.baseVal.getItem(0);
-      //     rotate.setRotate(this.rotationAngle, this.centerX, this.centerY);
-      //     this.container.transform.baseVal.replaceItem(rotate, 0);
-
-      //     this.adjustControlBox();
-
-      //     this._state = 'rotate';
-      //   } else {
-      //     this._state = 'move';
-      //   }
-      // }
     }
+  }
+
+  protected findGripByVisual(target: SVGGraphicsElement): ResizeGrip | undefined {
+    let result: ResizeGrip | undefined;
+
+    this.resizeGrips.forEach(grip => {
+      if (grip.ownsTarget(target)) {
+        result = grip;
+      }
+    });
+
+    return result;
   }
 
   public manipulate(point: IPoint): void {
