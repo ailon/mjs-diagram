@@ -392,7 +392,7 @@ export class DiagramEditor extends HTMLElement {
 
   private addNewStencil(stencilType: typeof StencilBase): StencilBaseEditor {
     const g = SvgHelper.createGroup();
-    this._mainCanvas?.appendChild(g);
+    this._objectLayer?.appendChild(g);
 
     return new StencilBaseEditor(
       g,
