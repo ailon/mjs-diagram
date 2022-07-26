@@ -55,18 +55,20 @@ export class StencilBaseEditor {
     this.setupControlBox();
   }
 
-  public ownsTarget(el: EventTarget): boolean {
-    if (this._stencil?.ownsTarget(el)) {
-      return true;
-    } else {
-      let found = false;
-      this.resizeGrips.forEach((grip) => {
-        if (grip.ownsTarget(el)) {
-          found = true;
-        }
-      });
-      return found;
+  public ownsTarget(el: EventTarget | null): boolean {
+    let found = false;
+    if (el !== null) {
+      if (this._stencil?.ownsTarget(el)) {
+        return true;
+      } else {
+        this.resizeGrips.forEach((grip) => {
+          if (grip.ownsTarget(el)) {
+            found = true;
+          }
+        });
+      }
     }
+    return found;
   }
 
   public onStencilCreated?: (stencilEditor: StencilBaseEditor) => void;
@@ -386,5 +388,23 @@ export class StencilBaseEditor {
     }
   }
 
+  protected _isSelected = false;
+  public get isSelected(): boolean {
+    return this._isSelected;
+  }
+
+  public select(): void {
+    this.container.style.cursor = 'move';
+    this._isSelected = true;
+
+    this.adjustControlBox();
+    this._controlBox.style.display = '';
+  }
+
+  public deselect(): void {
+    this.container.style.cursor = 'default';
+    this._isSelected = false;
+    this._controlBox.style.display = 'none';    
+  }
 
 }

@@ -4,11 +4,15 @@ import { StencilBase } from './StencilBase';
 import { StencilBaseEditor } from './StencilBaseEditor';
 import { SvgHelper } from './SvgHelper';
 
+export type DiagramEditorMode = 'select' | 'connect';
+
 export class DiagramEditor extends HTMLElement {
   private _container?: HTMLDivElement;
   private _toolbarContainer?: HTMLDivElement;
   private _contentContainer?: HTMLDivElement;
   private _toolboxContainer?: HTMLDivElement;
+
+  private mode: DiagramEditorMode = 'select';
 
   private _mainCanvas?: SVGSVGElement;
   private _groupLayer?: SVGGElement;
@@ -16,6 +20,7 @@ export class DiagramEditor extends HTMLElement {
   private _objectLayer?: SVGGElement;
 
   private _currentStencilEditor?: StencilBaseEditor;
+  private _stencilEditors: StencilBaseEditor[] = [];
 
   public zoomSteps = [1, 1.5, 2, 4];
   private _zoomLevel = 1;
@@ -241,22 +246,22 @@ export class DiagramEditor extends HTMLElement {
           this.clientToLocalCoordinates(ev.clientX, ev.clientY)
         );
       }
-      // @todo
-      // else if (this.mode === 'select') {
-      //   const hitMarker = this.markers.find((m) => m.ownsTarget(ev.target));
-      //   if (hitMarker !== undefined) {
-      //     this.setCurrentMarker(hitMarker);
-      //     this.isDragging = true;
-      //     this.currentMarker.pointerDown(
-      //       this.clientToLocalCoordinates(ev.clientX, ev.clientY),
-      //       ev.target
-      //     );
-      //   } else {
-      //     this.setCurrentMarker();
-      //     this.isDragging = true;
-      //     this.prevPanPoint = { x: ev.clientX, y: ev.clientY };
-      //   }
-      // }
+      else if (this.mode === 'select' && ev.target) {
+        const hitEditor = this._stencilEditors.find((m) => m.ownsTarget(ev.target));
+        if (hitEditor !== undefined) {
+          this.setCurrentStencil(hitEditor);
+          this.isDragging = true;
+          this._currentStencilEditor?.pointerDown(
+            this.clientToLocalCoordinates(ev.clientX, ev.clientY),
+            ev.target
+          );
+        } else {
+          this.setCurrentStencil();
+          this.isDragging = true;
+          // @todo
+          // this.prevPanPoint = { x: ev.clientX, y: ev.clientY };
+        }
+      }
     }
   }
 
@@ -337,13 +342,11 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private stencilCreated(stencilEditor: StencilBaseEditor) {
-    // @todo
-    // this.mode = 'select';
+    this.mode = 'select';
     if (this._mainCanvas) {
       this._mainCanvas.style.cursor = 'default';
     }
-    // @todo
-    // this.markers.push(marker);
+    this._stencilEditors.push(stencilEditor);
     this.setCurrentStencil(stencilEditor);
 
     // @todo
@@ -358,8 +361,8 @@ export class DiagramEditor extends HTMLElement {
     if (this._currentStencilEditor !== stencilEditor) {
       // no need to deselect if not changed
       if (this._currentStencilEditor !== undefined) {
+        this._currentStencilEditor.deselect();
         // @todo
-        // this._currentStencilEditor.deselect();
         // this.toolbar.setCurrentMarker();
         // this.toolbox.setPanelButtons([]);
         // @todo
@@ -371,20 +374,20 @@ export class DiagramEditor extends HTMLElement {
       }
     }
     this._currentStencilEditor = stencilEditor;
-    // @todo
-    // if (this.currentMarker !== undefined && !this.currentMarker.isSelected) {
-    //   if (this.currentMarker.state !== 'new') {
-    //   this.currentMarker.select();
-    //   }
-    //   this.toolbar.setCurrentMarker(this.currentMarker);
-    //   this.toolbox.setPanelButtons(this.currentMarker.toolboxPanels);
+    if (this._currentStencilEditor !== undefined && !this._currentStencilEditor.isSelected) {
+      if (this._currentStencilEditor.state !== 'new') {
+      this._currentStencilEditor.select();
+      }
+      // @todo
+      // this.toolbar.setCurrentMarker(this.currentMarker);
+      // this.toolbox.setPanelButtons(this.currentMarker.toolboxPanels);
 
-    //   if (!this._isResizing) {
-    //     this.eventListeners['markerselect'].forEach((listener) =>
-    //       listener(new MarkerEvent(this, this.currentMarker))
-    //     );
-    //   }
-    // }
+      // if (!this._isResizing) {
+      //   this.eventListeners['markerselect'].forEach((listener) =>
+      //     listener(new MarkerEvent(this, this.currentMarker))
+      //   );
+      // }
+    }
   }
 
   private addNewStencil(stencilType: typeof StencilBase): StencilBaseEditor {
