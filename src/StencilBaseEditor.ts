@@ -1,9 +1,11 @@
 import { IPoint } from './IPoint';
+import { PortLocation } from './Port';
+import { PortConnector } from "./PortConnector";
 import { GripLocation, ResizeGrip } from './ResizeGrip';
 import { StencilBase } from './StencilBase';
 import { SvgHelper } from './SvgHelper';
 
-export type StencilEditorState = 'new' | 'creating' | 'select' | 'move' | 'resize' | 'edit';
+export type StencilEditorState = 'new' | 'creating' | 'select' | 'move' | 'resize' | 'edit' | 'connect';
 
 export class StencilBaseEditor {
   // @todo switch type to use the generic
@@ -37,9 +39,13 @@ export class StencilBaseEditor {
   ]);
   protected activeGrip?: ResizeGrip;
 
+  protected portConnectors = new Map<PortLocation, PortConnector>();
+
   protected _controlBox = SvgHelper.createGroup();
   private readonly CB_DISTANCE: number = 10;
   private _controlRect?: SVGRectElement;
+
+  protected _portBox = SvgHelper.createGroup();
 
   constructor(
     container: SVGGElement,
@@ -52,10 +58,29 @@ export class StencilBaseEditor {
     this._stencilType = stencilType;
     this._stencil = stencil ?? new stencilType(container);
 
+    this.setupPortBox();
     this.setupControlBox();
 
     this.findGripByVisual = this.findGripByVisual.bind(this);
     this.ownsTarget = this.ownsTarget.bind(this);
+    
+    this.switchToConnectMode = this.switchToConnectMode.bind(this);
+    this.switchConnectModeOff = this.switchConnectModeOff.bind(this);
+
+    this.setupControlBox = this.setupControlBox.bind(this);
+    this.setupPortBox = this.setupPortBox.bind(this);
+    this.addResizeGrips = this.addResizeGrips.bind(this);
+    this.addPorts = this.addPorts.bind(this);
+    this.positionGrips = this.positionGrips.bind(this);
+    this.positionPorts = this.positionPorts.bind(this);
+    this.positionGrip = this.positionGrip.bind(this);
+    this.positionPort = this.positionPort.bind(this);
+    this.hideControlBox = this.hideControlBox.bind(this);
+    this.showControlBox = this.showControlBox.bind(this);
+    this.hidePortBox = this.hidePortBox.bind(this);
+    this.showPortBox = this.showPortBox.bind(this);
+    this.adjustControlBox = this.adjustControlBox.bind(this);
+    this.adjustPortBox = this.adjustPortBox.bind(this);
   }
 
   public ownsTarget(el: EventTarget | null): boolean {
@@ -106,6 +131,24 @@ export class StencilBaseEditor {
     }
   }
 
+  private setupPortBox() {
+    if (this._stencil !== undefined) {
+      this._stencil.ports.forEach((port, location) => {
+        this.portConnectors.set(location, new PortConnector(port));
+      });
+
+      const translate = SvgHelper.createTransform();
+      translate.setTranslate(0, 0);
+      this._portBox.transform.baseVal.appendItem(translate);
+
+      this.container.appendChild(this._portBox);
+
+      this.addPorts();
+
+      this._portBox.style.display = 'none';
+    }
+  }
+
   private addResizeGrips() {
     this.resizeGrips.forEach((grip) => {
       if (grip.enabled) {
@@ -115,6 +158,17 @@ export class StencilBaseEditor {
     });
 
     this.positionGrips();
+  }
+
+  private addPorts() {
+    this.portConnectors.forEach((pc) => {
+      if (pc.port.enabled) {
+        pc.visual.transform.baseVal.appendItem(SvgHelper.createTransform());
+        this._portBox.appendChild(pc.visual);
+      }
+    });
+
+    this.positionPorts();
   }
 
   private positionGrips() {
@@ -151,6 +205,40 @@ export class StencilBaseEditor {
     }
   }
 
+  private positionPorts() {
+    if (this._stencil) {
+      const portSize = this.portConnectors.get('topleft')?.PORT_SIZE || 5;
+
+      const left = -portSize / 2;
+      const top = left;
+      const cx = this._stencil.width / 2 - portSize / 2;
+      const cy = this._stencil.height / 2 - portSize / 2;
+      const bottom = this._stencil.height - portSize / 2;
+      const right = this._stencil.width - portSize / 2;
+
+      this.positionPort(this.portConnectors.get('topleft')?.visual, left, top);
+      this.positionPort(this.portConnectors.get('topcenter')?.visual, cx, top);
+      this.positionPort(this.portConnectors.get('topright')?.visual, right, top);
+      this.positionPort(this.portConnectors.get('leftcenter')?.visual, left, cy);
+      this.positionPort(this.portConnectors.get('rightcenter')?.visual, right, cy);
+      this.positionPort(
+        this.portConnectors.get('bottomleft')?.visual,
+        left,
+        bottom
+      );
+      this.positionPort(
+        this.portConnectors.get('bottomcenter')?.visual,
+        cx,
+        bottom
+      );
+      this.positionPort(
+        this.portConnectors.get('bottomright')?.visual,
+        right,
+        bottom
+      );
+    }
+  }
+
   private positionGrip(
     grip: SVGGraphicsElement | undefined,
     x: number,
@@ -163,11 +251,30 @@ export class StencilBaseEditor {
     }
   }
 
+  private positionPort(
+    port: SVGGraphicsElement | undefined,
+    x: number,
+    y: number
+  ) {
+    if (port !== undefined) {
+      const translate = port.transform.baseVal.getItem(0);
+      translate.setTranslate(x, y);
+      port.transform.baseVal.replaceItem(translate, 0);
+    }
+  }
+
   protected hideControlBox(): void {
     this._controlBox.style.display = 'none';
   }
   protected showControlBox(): void {
     this._controlBox.style.display = '';
+  }
+
+  protected hidePortBox(): void {
+    this._portBox.style.display = 'none';
+  }
+  protected showPortBox(): void {
+    this._portBox.style.display = '';
   }
 
   private adjustControlBox() {
@@ -190,10 +297,34 @@ export class StencilBaseEditor {
     }
   }
 
+  private adjustPortBox() {
+    if (this._stencil !== undefined) {
+      const translate = this._portBox.transform.baseVal.getItem(0);
+      translate.setTranslate(
+        this._stencil.left,
+        this._stencil.top
+      );
+      this._portBox.transform.baseVal.replaceItem(translate, 0);
+      this.positionPorts();
+    }
+  }
+
+  public switchToConnectMode(): void {
+    this._state = 'connect';
+    this.showPortBox();
+    console.log('connect');
+  }
+
+  public switchConnectModeOff(): void {
+    this._state = 'select';
+    this.hidePortBox();
+  }
+
   public scale(scaleX: number, scaleY: number): void {
     this._stencil?.scale(scaleX, scaleY);
 
     this.adjustControlBox();
+    this.adjustPortBox();
   }
 
   /**
@@ -299,6 +430,7 @@ export class StencilBaseEditor {
           this.offsetY;
         this._stencil.moveVisual({x: this._stencil.left, y: this._stencil.top});
         this.adjustControlBox();
+        this.adjustPortBox();
       } else if (this.state === 'resize') {
         this.resize(point);
       }
@@ -366,6 +498,7 @@ export class StencilBaseEditor {
       this._stencil.setSize();
     }
     this.adjustControlBox();
+    this.adjustPortBox();
   }
 
   protected _suppressStencilCreateEvent = false;

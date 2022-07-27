@@ -1,10 +1,5 @@
 import { ConnectorBase } from './ConnectorBase';
 
-export class Port {
-  public enabled = true;
-  public connectors: ConnectorBase[] = [];
-}
-
 export type PortLocation =
   | 'topleft'
   | 'topcenter'
@@ -14,3 +9,9 @@ export type PortLocation =
   | 'bottomleft'
   | 'bottomcenter'
   | 'bottomright';
+
+export class Port {
+  public enabled = true;
+  public connectors: ConnectorBase[] = [];
+}
+

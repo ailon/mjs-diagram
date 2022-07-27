@@ -50,7 +50,7 @@ export class StencilBase {
   protected strokeWidth = 1;
   protected strokeDasharray = '';
 
-  protected ports = new Map<PortLocation, Port>(
+  public ports = new Map<PortLocation, Port>(
     [
       ['topleft', new Port()],
       ['topcenter', new Port()],

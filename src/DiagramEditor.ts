@@ -1,4 +1,4 @@
-import { Button, Panel, Toolbar, ToolbarBlock } from 'mjs-toolbar';
+import { Button, Panel, Toolbar, ToolbarBlock, ButtonEventData } from 'mjs-toolbar';
 import { IPoint } from './IPoint';
 import { StencilBase } from './StencilBase';
 import { StencilBaseEditor } from './StencilBaseEditor';
@@ -62,6 +62,10 @@ export class DiagramEditor extends HTMLElement {
     //this.closeUI = this.closeUI.bind(this);
     this.clientToLocalCoordinates = this.clientToLocalCoordinates.bind(this);
     // this.onWindowResize = this.onWindowResize.bind(this);
+    this.toolbarButtonClicked = this.toolbarButtonClicked.bind(this);
+
+    this.switchToConnectMode = this.switchToConnectMode.bind(this);
+    this.switchConnectModeOff = this.switchConnectModeOff.bind(this);
 
     this.attachShadow({ mode: 'open' });
   }
@@ -104,10 +108,7 @@ export class DiagramEditor extends HTMLElement {
     const panel = <Panel>document.createElement('mjstb-panel');
 
     const toolbar = new Toolbar();
-    toolbar.addEventListener('buttonclick', (ev) => {
-      this.createNewStencil(typeof StencilBase);
-      console.log(`'${ev.detail.button.command}' button clicked.`)
-    });
+    toolbar.addEventListener('buttonclick', this.toolbarButtonClicked);
 
     const block1 = new ToolbarBlock();
     const block2 = new ToolbarBlock();
@@ -119,9 +120,9 @@ export class DiagramEditor extends HTMLElement {
 
     const button11 = new Button({ icon: checkSVG, command: 'run' });
     block1.appendButton(button11);
-    const button12 = new Button({ icon: checkSVG, command: 'for' });
+    const button12 = new Button({ text: 'Add', command: 'add' });
     block1.appendButton(button12);
-    const button13 = new Button({ icon: checkSVG, command: 'cover' });
+    const button13 = new Button({ text: "Connect", command: 'connect' });
     block1.appendButton(button13);
 
     const button21 = new Button({ text: 'click me', command: 'text' });
@@ -136,6 +137,35 @@ export class DiagramEditor extends HTMLElement {
     panel.appendToolbar(toolbar);
 
     this._toolbarContainer?.appendChild(panel);
+  }
+
+  private toolbarButtonClicked(ev: CustomEvent<ButtonEventData>) {
+    if (this.mode === 'connect' && ev.detail.button.command !== 'connect') {
+      this.switchConnectModeOff();
+    }
+    
+    switch (ev.detail.button.command) {
+      case 'add': {
+        this.createNewStencil(typeof StencilBase);
+        break;
+      }
+      case 'connect': {
+        this.switchToConnectMode();
+        break;
+      }
+    }
+    console.log(`'${ev.detail.button.command}' button clicked.`);
+  }
+
+  private switchToConnectMode() {
+    this.setCurrentStencil();
+    this.mode = 'connect';
+    this._stencilEditors.forEach(se => se.switchToConnectMode());
+  }
+
+  private switchConnectModeOff() {
+    this.mode = 'select';
+    this._stencilEditors.forEach(se => se.switchConnectModeOff());
   }
 
   private addMainCanvas() {
