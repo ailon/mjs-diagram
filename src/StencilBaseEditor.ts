@@ -94,9 +94,28 @@ export class StencilBaseEditor {
             found = true;
           }
         });
+        if (!found) {
+          this.portConnectors.forEach((port) => {
+            if (port.ownsTarget(el)) {
+              found = true;
+            }
+          });
+        }
       }
     }
     return found;
+  }
+
+  public getTargetPort(el: EventTarget | null): PortConnector | undefined {
+    let result: PortConnector | undefined;
+    if (el !== null) {
+      this.portConnectors.forEach((port) => {
+        if (port.ownsTarget(el)) {
+          result = port;
+        }
+      });
+    }
+    return result;
   }
 
   public onStencilCreated?: (stencilEditor: StencilBaseEditor) => void;

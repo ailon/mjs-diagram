@@ -1,5 +1,7 @@
 import { Button, Panel, Toolbar, ToolbarBlock, ButtonEventData } from 'mjs-toolbar';
+import { ConnectorBaseEditor } from './ConnectorBaseEditor';
 import { IPoint } from './IPoint';
+import { PortConnector } from './PortConnector';
 import { StencilBase } from './StencilBase';
 import { StencilBaseEditor } from './StencilBaseEditor';
 import { SvgHelper } from './SvgHelper';
@@ -21,6 +23,9 @@ export class DiagramEditor extends HTMLElement {
 
   private _currentStencilEditor?: StencilBaseEditor;
   private _stencilEditors: StencilBaseEditor[] = [];
+
+  private _currentConnectorEditor?: ConnectorBaseEditor;
+  private _connectorEditors: ConnectorBaseEditor[] = [];
 
   public zoomSteps = [1, 1.5, 2, 4];
   private _zoomLevel = 1;
@@ -53,6 +58,7 @@ export class DiagramEditor extends HTMLElement {
     this.onPointerDown = this.onPointerDown.bind(this);
     //this.onDblClick = this.onDblClick.bind(this);
     this.onPointerMove = this.onPointerMove.bind(this);
+    this.onStencilPointerUp = this.onStencilPointerUp.bind(this);
     this.onPointerUp = this.onPointerUp.bind(this);
     this.onPointerOut = this.onPointerOut.bind(this);
     //this.onKeyUp = this.onKeyUp.bind(this);
@@ -143,7 +149,7 @@ export class DiagramEditor extends HTMLElement {
     if (this.mode === 'connect' && ev.detail.button.command !== 'connect') {
       this.switchConnectModeOff();
     }
-    
+
     switch (ev.detail.button.command) {
       case 'add': {
         this.createNewStencil(typeof StencilBase);
@@ -209,6 +215,7 @@ export class DiagramEditor extends HTMLElement {
 
   private attachEvents() {
     this._mainCanvas?.addEventListener('pointerdown', this.onPointerDown);
+    this._mainCanvas?.addEventListener('pointerup', this.onStencilPointerUp);
     // @todo
     // this._mainCanvas?.addEventListener('dblclick', this.onDblClick);
     this.attachWindowEvents();
@@ -227,6 +234,7 @@ export class DiagramEditor extends HTMLElement {
 
   private detachEvents() {
     this._mainCanvas?.removeEventListener('pointerdown', this.onPointerDown);
+    this._mainCanvas?.removeEventListener('pointerdown', this.onStencilPointerUp);
     // @todo
     // this._mainCanvas?.removeEventListener('dblclick', this.onDblClick);
     this.detachWindowEvents();
@@ -257,6 +265,9 @@ export class DiagramEditor extends HTMLElement {
 
   private touchPoints = 0;
   private isDragging = false;
+
+  private connectionStartPort?: PortConnector;
+  private connectionEndPort?: PortConnector;
 
   private onPointerDown(ev: PointerEvent) {
     // @todo
@@ -291,6 +302,21 @@ export class DiagramEditor extends HTMLElement {
           // @todo
           // this.prevPanPoint = { x: ev.clientX, y: ev.clientY };
         }
+      } else if (this.mode === 'connect' && ev.target) {
+        const hitEditor = this._stencilEditors.find((m) => m.ownsTarget(ev.target));
+        if (hitEditor !== undefined) {
+          this.connectionStartPort = hitEditor.getTargetPort(ev.target);
+          this._currentConnectorEditor = this.addNewConnector();
+          this._currentConnectorEditor.pointerDown(
+            this.clientToLocalCoordinates(ev.clientX, ev.clientY),
+            ev.target
+          );
+          console.log(this.connectionStartPort);
+        } else {
+          this.isDragging = true;
+          // @todo
+          // this.prevPanPoint = { x: ev.clientX, y: ev.clientY };
+        }
       }
     }
   }
@@ -316,8 +342,28 @@ export class DiagramEditor extends HTMLElement {
         //   this.panTo({ x: ev.clientX, y: ev.clientY });
         // }
       }
+      if (this._currentConnectorEditor !== undefined) {
+        this._currentConnectorEditor.manipulate(
+          this.clientToLocalCoordinates(ev.clientX, ev.clientY)
+        )
+      }
     }
   }
+  private onStencilPointerUp(ev: PointerEvent) {
+    if (this.mode === 'connect' && ev.target) {
+      const hitEditor = this._stencilEditors.find((m) => m.ownsTarget(ev.target));
+      if (hitEditor !== undefined) {
+        this.connectionEndPort = hitEditor.getTargetPort(ev.target);
+        if (this._currentConnectorEditor !== undefined) {
+          this._currentConnectorEditor.pointerUp(
+            this.clientToLocalCoordinates(ev.clientX, ev.clientY)
+          );
+        }
+        console.log(this.connectionEndPort);
+      }
+    }
+  }
+
   private onPointerUp(ev: PointerEvent) {
     if (this.touchPoints > 0) {
       this.touchPoints--;
@@ -428,6 +474,15 @@ export class DiagramEditor extends HTMLElement {
       g,
       document.createElement('div') /* @todo this.overlayContainer */,
       stencilType,
+    );
+  }
+
+  private addNewConnector(/* @todo connectorType: typeof ConnectorBase */): ConnectorBaseEditor {
+    const g = SvgHelper.createGroup();
+    this._objectLayer?.appendChild(g);
+
+    return new ConnectorBaseEditor(
+      g
     );
   }
 }
