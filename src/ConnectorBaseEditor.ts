@@ -1,4 +1,5 @@
 import { IPoint } from './IPoint';
+import { Port } from './Port';
 import { ResizeGrip } from './ResizeGrip';
 import { SvgHelper } from './SvgHelper';
 
@@ -20,6 +21,9 @@ export class ConnectorBaseEditor {
   public get state(): ConnectorState {
     return this._state;
   }
+
+  public startPort?: Port;
+  public endPort?: Port;
 
   public onConnectorCreated?: (connector: ConnectorBaseEditor) => void;
 
@@ -281,6 +285,18 @@ export class ConnectorBaseEditor {
       SvgHelper.setAttributes(this.visibleLine, [['stroke-width', this.strokeWidth.toString()]]);
       SvgHelper.setAttributes(this.visibleLine, [['stroke-dasharray', this.strokeDasharray.toString()]]);
     }
+  }
+
+  public setStartPosition(point: IPoint) {
+    this.x1 = point.x;
+    this.y1 = point.y;
+    this.adjustVisual();
+  }
+
+  public setEndPosition(point: IPoint) {
+    this.x2 = point.x;
+    this.y2 = point.y;
+    this.adjustVisual();
   }
   
   // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars

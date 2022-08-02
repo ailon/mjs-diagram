@@ -13,5 +13,7 @@ export type PortLocation =
 export class Port {
   public enabled = true;
   public connectors: ConnectorBaseEditor[] = [];
+  public x = 0;
+  public y = 0;
 }
 

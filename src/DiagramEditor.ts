@@ -54,6 +54,7 @@ export class DiagramEditor extends HTMLElement {
     super();
 
     this.stencilCreated = this.stencilCreated.bind(this);
+    this.connectorCreated = this.connectorCreated.bind(this);
     this.setCurrentStencil = this.setCurrentStencil.bind(this);
     this.onPointerDown = this.onPointerDown.bind(this);
     //this.onDblClick = this.onDblClick.bind(this);
@@ -306,12 +307,19 @@ export class DiagramEditor extends HTMLElement {
         const hitEditor = this._stencilEditors.find((m) => m.ownsTarget(ev.target));
         if (hitEditor !== undefined) {
           this.connectionStartPort = hitEditor.getTargetPort(ev.target);
-          this._currentConnectorEditor = this.addNewConnector();
-          this._currentConnectorEditor.pointerDown(
-            this.clientToLocalCoordinates(ev.clientX, ev.clientY),
-            ev.target
-          );
-          console.log(this.connectionStartPort);
+          if (this.connectionStartPort !== undefined) {
+            this._currentConnectorEditor = this.addNewConnector();
+            this._currentConnectorEditor.onConnectorCreated = this.connectorCreated;
+            this._currentConnectorEditor.startPort = this.connectionStartPort.port;
+            this._currentConnectorEditor.pointerDown(
+              { 
+                x: hitEditor.stencil.left + this.connectionStartPort.port.x, 
+                y: hitEditor.stencil.top + this.connectionStartPort.port.y
+              },
+              ev.target
+            );
+            console.log(this.connectionStartPort);
+          }
         } else {
           this.isDragging = true;
           // @todo
@@ -354,9 +362,13 @@ export class DiagramEditor extends HTMLElement {
       const hitEditor = this._stencilEditors.find((m) => m.ownsTarget(ev.target));
       if (hitEditor !== undefined) {
         this.connectionEndPort = hitEditor.getTargetPort(ev.target);
-        if (this._currentConnectorEditor !== undefined) {
+        if (this._currentConnectorEditor !== undefined && this.connectionEndPort !== undefined) {
+          this._currentConnectorEditor.endPort = this.connectionEndPort.port;
           this._currentConnectorEditor.pointerUp(
-            this.clientToLocalCoordinates(ev.clientX, ev.clientY)
+            { 
+              x: hitEditor.stencil.left + this.connectionEndPort.port.x, 
+              y: hitEditor.stencil.top + this.connectionEndPort.port.y
+            },
           );
         }
         console.log(this.connectionEndPort);
@@ -422,6 +434,7 @@ export class DiagramEditor extends HTMLElement {
     if (this._mainCanvas) {
       this._mainCanvas.style.cursor = 'default';
     }
+    stencilEditor.onStencilChanged = this.stencilChanged;
     this._stencilEditors.push(stencilEditor);
     this.setCurrentStencil(stencilEditor);
 
@@ -431,6 +444,33 @@ export class DiagramEditor extends HTMLElement {
     // this.eventListeners['markercreate'].forEach((listener) =>
     //   listener(new MarkerEvent(this, this.currentMarker))
     // );
+  }
+
+  private stencilChanged(stencilEditor: StencilBaseEditor) {
+    stencilEditor.stencil.ports.forEach(port => {
+      if (port.enabled) {
+        port.connectors.forEach(c => {
+          if (c.startPort === port) {
+            c.setStartPosition({
+              x: stencilEditor.stencil.left + port.x,
+              y: stencilEditor.stencil.top + port.y
+            });
+          } else {
+            c.setEndPosition({
+              x: stencilEditor.stencil.left + port.x,
+              y: stencilEditor.stencil.top + port.y
+            });
+          }
+        })
+      }
+    })
+  }
+
+  private connectorCreated(connectorEditor: ConnectorBaseEditor) {
+    connectorEditor.startPort?.connectors.push(connectorEditor);
+    connectorEditor.endPort?.connectors.push(connectorEditor);
+    this._objectLayer?.removeChild(connectorEditor.container);
+    this._connectorLayer?.appendChild(connectorEditor.container);
   }
 
   public setCurrentStencil(stencilEditor?: StencilBaseEditor): void {

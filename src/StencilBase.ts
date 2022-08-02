@@ -45,7 +45,7 @@ export class StencilBase {
     this._visual.transform.baseVal.appendItem(translate);
   }
 
-  protected fillColor = 'transparent';
+  protected fillColor = '#eeeeee';
   protected strokeColor = 'black';
   protected strokeWidth = 1;
   protected strokeDasharray = '';

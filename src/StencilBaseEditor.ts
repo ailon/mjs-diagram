@@ -11,6 +11,9 @@ export class StencilBaseEditor {
   // @todo switch type to use the generic
   protected _stencilType: typeof StencilBase;
   protected _stencil: StencilBase;
+  public get stencil(): StencilBase {
+    return this._stencil;
+  }
 
   protected _container: SVGGElement;
   public get container(): SVGGElement {
@@ -119,6 +122,7 @@ export class StencilBaseEditor {
   }
 
   public onStencilCreated?: (stencilEditor: StencilBaseEditor) => void;
+  public onStencilChanged?: (stencilEditor: StencilBaseEditor) => void;
 
   private setupControlBox() {
     if (this._stencil !== undefined) {
@@ -226,32 +230,30 @@ export class StencilBaseEditor {
 
   private positionPorts() {
     if (this._stencil) {
-      const portSize = this.portConnectors.get('topleft')?.PORT_SIZE || 5;
-
-      const left = -portSize / 2;
+      const left = 0;
       const top = left;
-      const cx = this._stencil.width / 2 - portSize / 2;
-      const cy = this._stencil.height / 2 - portSize / 2;
-      const bottom = this._stencil.height - portSize / 2;
-      const right = this._stencil.width - portSize / 2;
+      const cx = this._stencil.width / 2;
+      const cy = this._stencil.height / 2;
+      const bottom = this._stencil.height;
+      const right = this._stencil.width;
 
-      this.positionPort(this.portConnectors.get('topleft')?.visual, left, top);
-      this.positionPort(this.portConnectors.get('topcenter')?.visual, cx, top);
-      this.positionPort(this.portConnectors.get('topright')?.visual, right, top);
-      this.positionPort(this.portConnectors.get('leftcenter')?.visual, left, cy);
-      this.positionPort(this.portConnectors.get('rightcenter')?.visual, right, cy);
+      this.positionPort(this.portConnectors.get('topleft'), left, top);
+      this.positionPort(this.portConnectors.get('topcenter'), cx, top);
+      this.positionPort(this.portConnectors.get('topright'), right, top);
+      this.positionPort(this.portConnectors.get('leftcenter'), left, cy);
+      this.positionPort(this.portConnectors.get('rightcenter'), right, cy);
       this.positionPort(
-        this.portConnectors.get('bottomleft')?.visual,
+        this.portConnectors.get('bottomleft'),
         left,
         bottom
       );
       this.positionPort(
-        this.portConnectors.get('bottomcenter')?.visual,
+        this.portConnectors.get('bottomcenter'),
         cx,
         bottom
       );
       this.positionPort(
-        this.portConnectors.get('bottomright')?.visual,
+        this.portConnectors.get('bottomright'),
         right,
         bottom
       );
@@ -271,14 +273,16 @@ export class StencilBaseEditor {
   }
 
   private positionPort(
-    port: SVGGraphicsElement | undefined,
+    portConnector: PortConnector | undefined,
     x: number,
     y: number
   ) {
-    if (port !== undefined) {
-      const translate = port.transform.baseVal.getItem(0);
-      translate.setTranslate(x, y);
-      port.transform.baseVal.replaceItem(translate, 0);
+    if (portConnector !== undefined) {
+      portConnector.port.x = x;
+      portConnector.port.y = y;
+      const translate = portConnector.visual.transform.baseVal.getItem(0);
+      translate.setTranslate(x - portConnector.PORT_SIZE / 2, y - portConnector.PORT_SIZE / 2);
+      portConnector.visual.transform.baseVal.replaceItem(translate, 0);
     }
   }
 
@@ -344,6 +348,9 @@ export class StencilBaseEditor {
 
     this.adjustControlBox();
     this.adjustPortBox();
+    if (this.onStencilChanged) {
+      this.onStencilChanged(this);
+    }
   }
 
   /**
@@ -450,8 +457,14 @@ export class StencilBaseEditor {
         this._stencil.moveVisual({x: this._stencil.left, y: this._stencil.top});
         this.adjustControlBox();
         this.adjustPortBox();
+        if (this.onStencilChanged) {
+          this.onStencilChanged(this);
+        }
       } else if (this.state === 'resize') {
         this.resize(point);
+        if (this.onStencilChanged) {
+          this.onStencilChanged(this);
+        }
       }
     }
   }
