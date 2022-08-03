@@ -1,36 +1,17 @@
+import { ConnectorBase } from './ConnectorBase';
 import { IPoint } from './IPoint';
-import { Port } from './Port';
 import { ResizeGrip } from './ResizeGrip';
 import { SvgHelper } from './SvgHelper';
 
 export type ConnectorState = 'new' | 'creating' | 'select' | 'move';
 
 export class ConnectorBaseEditor {
-
-  public static typeName = 'ConnectorBase';
-
-  public get typeName(): string {
-    return Object.getPrototypeOf(this).constructor.typeName;
-  }
-
-  protected _container: SVGGElement;
-  public get container(): SVGGElement {
-    return this._container;
-  }
   protected _state: ConnectorState = 'new';
   public get state(): ConnectorState {
     return this._state;
   }
 
-  public startPort?: Port;
-  public endPort?: Port;
-
   public onConnectorCreated?: (connector: ConnectorBaseEditor) => void;
-
-  protected x1 = 0;
-  protected y1 = 0;
-  protected x2 = 0;
-  protected y2 = 0;
 
   protected manipulationStartX = 0;
   protected manipulationStartY = 0;
@@ -39,15 +20,6 @@ export class ConnectorBaseEditor {
   private manipulationStartY1 = 0;
   private manipulationStartX2 = 0;
   private manipulationStartY2 = 0;
-
-  protected visual: SVGGraphicsElement = SvgHelper.createGroup();
-
-  protected selectorLine!: SVGLineElement;
-  protected visibleLine!: SVGLineElement;
-  protected strokeColor = '#3333ff';
-  protected strokeWidth = 1;
-  protected strokeDasharray = '';
-
 
   /**
    * Container for control elements.
@@ -67,11 +39,20 @@ export class ConnectorBaseEditor {
    */
   protected activeGrip?: ResizeGrip;
 
+  public connector: ConnectorBase
 
-  constructor(container: SVGGElement) {
-    this._container = container;
+  protected overlayContainer: HTMLDivElement;
 
-    this.createVisual();
+  constructor(
+    container: SVGGElement, 
+    overlayContainer: HTMLDivElement, 
+    connectorType: typeof ConnectorBase, 
+    connector?: ConnectorBase
+  ) {
+    this.connector = connector ?? new connectorType(container);
+    this.connector.container = container;
+    this.overlayContainer = overlayContainer;
+
     this.setupControlBox();    
   }
 
@@ -79,9 +60,7 @@ export class ConnectorBaseEditor {
   public ownsTarget(el: EventTarget): boolean {
     if (
       this.grip1.ownsTarget(el) || this.grip2.ownsTarget(el) ||
-      el === this.visual ||
-      el === this.selectorLine ||
-      el === this.visibleLine
+      this.connector.ownsTarget(el)
     ) {
       return true;
     } else {
@@ -89,48 +68,20 @@ export class ConnectorBaseEditor {
     }
   }
 
-  private createVisual() {
-    this.selectorLine = SvgHelper.createLine(
-      this.x1,
-      this.y1,
-      this.x2,
-      this.y2,
-      [
-        ['stroke', 'transparent'],
-        ['stroke-width', (this.strokeWidth + 10).toString()],
-      ]
-    );
-    this.visibleLine = SvgHelper.createLine(
-      this.x1,
-      this.y1,
-      this.x2,
-      this.y2,
-      [
-        ['stroke', this.strokeColor],
-        ['stroke-width', this.strokeWidth.toString()],
-      ]
-    );
-    this.visual.appendChild(this.selectorLine);
-    this.visual.appendChild(this.visibleLine);
-
-    this.addMarkerVisualToContainer(this.visual);
-  }
-
-
   protected _isSelected = false;
   public get isSelected(): boolean {
     return this._isSelected;
   }
 
   public select(): void {
-    this.container.style.cursor = 'move';
+    this.connector.container.style.cursor = 'move';
     this._isSelected = true;
     this.adjustControlBox();
     this.controlBox.style.display = '';
   }
 
   public deselect(): void {
-    this.container.style.cursor = 'default';
+    this.connector.container.style.cursor = 'default';
     this._isSelected = false;
     this.controlBox.style.display = 'none';
   }
@@ -141,16 +92,16 @@ export class ConnectorBaseEditor {
     this.manipulationStartY = point.y;
 
     if (this.state === 'new') {
-      this.x1 = point.x;
-      this.y1 = point.y;
-      this.x2 = point.x;
-      this.y2 = point.y;
+      this.connector.x1 = point.x;
+      this.connector.y1 = point.y;
+      this.connector.x2 = point.x;
+      this.connector.y2 = point.y;
     }
 
-    this.manipulationStartX1 = this.x1;
-    this.manipulationStartY1 = this.y1;
-    this.manipulationStartX2 = this.x2;
-    this.manipulationStartY2 = this.y2;
+    this.manipulationStartX1 = this.connector.x1;
+    this.manipulationStartY1 = this.connector.y1;
+    this.manipulationStartX2 = this.connector.x2;
+    this.manipulationStartY2 = this.connector.y2;
 
     if (this.state !== 'new') {
       this.select();
@@ -168,10 +119,10 @@ export class ConnectorBaseEditor {
         this._state = 'select';
       }
     } else {
-      this.adjustVisual();
+      this.connector.adjustVisual();
 
       this._state = 'creating';
-      SvgHelper.setAttributes(this._container, [['pointer-events', 'none']]);
+      SvgHelper.setAttributes(this.connector.container, [['pointer-events', 'none']]);
     }
   }
 
@@ -183,11 +134,14 @@ export class ConnectorBaseEditor {
     if (this.state === 'creating') {
       this.resize(point);
     } else if (this.state === 'move') {
-      this.x1 = this.manipulationStartX1 + point.x - this.manipulationStartX;
-      this.y1 = this.manipulationStartY1 + point.y - this.manipulationStartY;
-      this.x2 = this.manipulationStartX2 + point.x - this.manipulationStartX;
-      this.y2 = this.manipulationStartY2 + point.y - this.manipulationStartY;
-      this.adjustVisual();
+      this.connector.setStartPosition({ 
+          x: this.manipulationStartX1 + point.x - this.manipulationStartX,
+          y: this.manipulationStartY1 + point.y - this.manipulationStartY
+      });
+      this.connector.setEndPosition({ 
+        x: this.manipulationStartX2 + point.x - this.manipulationStartX,
+        y: this.manipulationStartY2 + point.y - this.manipulationStartY
+      });
       this.adjustControlBox();
     }
   }
@@ -195,22 +149,19 @@ export class ConnectorBaseEditor {
   protected resize(point: IPoint): void {
     switch(this.activeGrip) {
       case this.grip1:
-        this.x1 = point.x;
-        this.y1 = point.y;
+        this.connector.setStartPosition({ x: point.x, y: point.y});
         break; 
       case this.grip2:
       case undefined:
-        this.x2 = point.x;
-        this.y2 = point.y;
+        this.connector.setEndPosition({ x: point.x, y: point.y});
         break; 
     }
-    this.adjustVisual();
     this.adjustControlBox();
   }
 
   protected setupControlBox(): void {
     this.controlBox = SvgHelper.createGroup();
-    this.container.appendChild(this.controlBox);
+    this.connector.container.appendChild(this.controlBox);
 
     this.addControlGrips();
 
@@ -239,8 +190,8 @@ export class ConnectorBaseEditor {
   protected positionGrips(): void {
     const gripSize = this.grip1.GRIP_SIZE;
 
-    this.positionGrip(this.grip1.visual, this.x1 - gripSize / 2, this.y1 - gripSize / 2);
-    this.positionGrip(this.grip2.visual, this.x2 - gripSize / 2, this.y2 - gripSize / 2);
+    this.positionGrip(this.grip1.visual, this.connector.x1 - gripSize / 2, this.connector.y1 - gripSize / 2);
+    this.positionGrip(this.grip2.visual, this.connector.x2 - gripSize / 2, this.connector.y2 - gripSize / 2);
   }
 
   protected positionGrip(grip: SVGGraphicsElement, x: number, y: number): void {
@@ -261,52 +212,10 @@ export class ConnectorBaseEditor {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public dispose(): void {}
 
-  protected addMarkerVisualToContainer(element: SVGElement): void {
-    if (this.container.childNodes.length > 0) {
-      this.container.insertBefore(element, this.container.childNodes[0]);
-    } else {
-      this.container.appendChild(element);
-    }
-  }
 
-  protected adjustVisual(): void {
-    if (this.selectorLine && this.visibleLine) {
-      this.selectorLine.setAttribute('x1', this.x1.toString());
-      this.selectorLine.setAttribute('y1', this.y1.toString());
-      this.selectorLine.setAttribute('x2', this.x2.toString());
-      this.selectorLine.setAttribute('y2', this.y2.toString());
-
-      this.visibleLine.setAttribute('x1', this.x1.toString());
-      this.visibleLine.setAttribute('y1', this.y1.toString());
-      this.visibleLine.setAttribute('x2', this.x2.toString());
-      this.visibleLine.setAttribute('y2', this.y2.toString());
-
-      SvgHelper.setAttributes(this.visibleLine, [['stroke', this.strokeColor]]);
-      SvgHelper.setAttributes(this.visibleLine, [['stroke-width', this.strokeWidth.toString()]]);
-      SvgHelper.setAttributes(this.visibleLine, [['stroke-dasharray', this.strokeDasharray.toString()]]);
-    }
-  }
-
-  public setStartPosition(point: IPoint) {
-    this.x1 = point.x;
-    this.y1 = point.y;
-    this.adjustVisual();
-  }
-
-  public setEndPosition(point: IPoint) {
-    this.x2 = point.x;
-    this.y2 = point.y;
-    this.adjustVisual();
-  }
-  
   // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
   public scale(scaleX: number, scaleY: number): void {
-    this.x1 = this.x1 * scaleX;
-    this.y1 = this.y1 * scaleY;
-    this.x2 = this.x2 * scaleX;
-    this.y2 = this.y2 * scaleY;
-
-    this.adjustVisual();
+    this.connector.scale(scaleX, scaleY);
     this.adjustControlBox();
   }
 }

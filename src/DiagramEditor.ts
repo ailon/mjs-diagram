@@ -1,4 +1,5 @@
 import { Button, Panel, Toolbar, ToolbarBlock, ButtonEventData } from 'mjs-toolbar';
+import { ConnectorBase } from './ConnectorBase';
 import { ConnectorBaseEditor } from './ConnectorBaseEditor';
 import { IPoint } from './IPoint';
 import { PortConnector } from './PortConnector';
@@ -308,9 +309,9 @@ export class DiagramEditor extends HTMLElement {
         if (hitEditor !== undefined) {
           this.connectionStartPort = hitEditor.getTargetPort(ev.target);
           if (this.connectionStartPort !== undefined) {
-            this._currentConnectorEditor = this.addNewConnector();
+            this._currentConnectorEditor = this.addNewConnector(ConnectorBase);
             this._currentConnectorEditor.onConnectorCreated = this.connectorCreated;
-            this._currentConnectorEditor.startPort = this.connectionStartPort.port;
+            this._currentConnectorEditor.connector.startPort = this.connectionStartPort.port;
             this._currentConnectorEditor.pointerDown(
               { 
                 x: hitEditor.stencil.left + this.connectionStartPort.port.x, 
@@ -363,7 +364,7 @@ export class DiagramEditor extends HTMLElement {
       if (hitEditor !== undefined) {
         this.connectionEndPort = hitEditor.getTargetPort(ev.target);
         if (this._currentConnectorEditor !== undefined && this.connectionEndPort !== undefined) {
-          this._currentConnectorEditor.endPort = this.connectionEndPort.port;
+          this._currentConnectorEditor.connector.endPort = this.connectionEndPort.port;
           this._currentConnectorEditor.pointerUp(
             { 
               x: hitEditor.stencil.left + this.connectionEndPort.port.x, 
@@ -450,13 +451,13 @@ export class DiagramEditor extends HTMLElement {
     stencilEditor.stencil.ports.forEach(port => {
       if (port.enabled) {
         port.connectors.forEach(c => {
-          if (c.startPort === port) {
-            c.setStartPosition({
+          if (c.connector.startPort === port) {
+            c.connector.setStartPosition({
               x: stencilEditor.stencil.left + port.x,
               y: stencilEditor.stencil.top + port.y
             });
           } else {
-            c.setEndPosition({
+            c.connector.setEndPosition({
               x: stencilEditor.stencil.left + port.x,
               y: stencilEditor.stencil.top + port.y
             });
@@ -467,10 +468,10 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private connectorCreated(connectorEditor: ConnectorBaseEditor) {
-    connectorEditor.startPort?.connectors.push(connectorEditor);
-    connectorEditor.endPort?.connectors.push(connectorEditor);
-    this._objectLayer?.removeChild(connectorEditor.container);
-    this._connectorLayer?.appendChild(connectorEditor.container);
+    connectorEditor.connector.startPort?.connectors.push(connectorEditor);
+    connectorEditor.connector.endPort?.connectors.push(connectorEditor);
+    this._objectLayer?.removeChild(connectorEditor.connector.container);
+    this._connectorLayer?.appendChild(connectorEditor.connector.container);
   }
 
   public setCurrentStencil(stencilEditor?: StencilBaseEditor): void {
@@ -517,12 +518,14 @@ export class DiagramEditor extends HTMLElement {
     );
   }
 
-  private addNewConnector(/* @todo connectorType: typeof ConnectorBase */): ConnectorBaseEditor {
+  private addNewConnector(connectorType: typeof ConnectorBase): ConnectorBaseEditor {
     const g = SvgHelper.createGroup();
     this._objectLayer?.appendChild(g);
 
     return new ConnectorBaseEditor(
-      g
+      g, 
+      document.createElement('div') /* @todo this.overlayContainer */,
+      connectorType
     );
   }
 }
