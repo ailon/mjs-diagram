@@ -168,6 +168,16 @@ export class StencilBase {
     }
   }
 
+  public getPortPosition(location: PortLocation): IPoint {
+    const port = this.ports.get(location);
+    const result: IPoint = {
+      x: this.left + (port?.x || 0),
+      y: this.top + (port?.y || 0)
+    };
+
+    return result;
+  }
+
   public getState(): StencilBaseState {
     return {
       typeName: this.typeName,
@@ -184,5 +194,23 @@ export class StencilBase {
       strokeWidth: this.strokeWidth,
       strokeDasharray: this.strokeDasharray
     };
+  }
+
+  public restoreState(state: StencilBaseState): void {
+    this._iid = state.iid;
+    this.notes = state.notes;
+
+    this.left = state.left;
+    this.top = state.top;
+    this.width = state.width;
+    this.height = state.height;
+
+    this.fillColor = state.fillColor;
+    this.strokeColor = state.strokeColor;
+    this.strokeWidth = state.strokeWidth;
+    this.strokeDasharray = state.strokeDasharray;
+
+    this.createVisual();
+    this.setSize();
   }
 }

@@ -1,4 +1,5 @@
-import { PortLocation } from './Port';
+import { Port, PortLocation } from './Port';
+import { StencilBase } from './StencilBase';
 
 export interface ConnectorBaseState {
   typeName: string;
@@ -13,4 +14,11 @@ export interface ConnectorBaseState {
   strokeColor: string;
   strokeWidth: number;
   strokeDasharray: string;
+}
+
+export interface ConnectorEndPoints {
+  startStencil: StencilBase;
+  startPort: Port;
+  endStencil: StencilBase;
+  endPort: Port;
 }

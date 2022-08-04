@@ -10,6 +10,14 @@ import { SvgHelper } from './SvgHelper';
 
 export type DiagramEditorMode = 'select' | 'connect';
 
+export interface DiagramEditorEventMap {
+  'renderclick': CustomEvent<RenderEventData>;
+}
+
+export interface RenderEventData {
+  state: DiagramState;
+}
+
 export class DiagramEditor extends HTMLElement {
   private _container?: HTMLDivElement;
   private _toolbarContainer?: HTMLDivElement;
@@ -51,6 +59,9 @@ export class DiagramEditor extends HTMLElement {
     //   });
     // }
   }
+
+  private _availableStencilTypes: typeof StencilBase[] = [ StencilBase ];
+  private _availableConnectorTypes: typeof ConnectorBase[] = [ ConnectorBase ];
 
   constructor() {
     super();
@@ -168,7 +179,11 @@ export class DiagramEditor extends HTMLElement {
         break;
       }
       case 'save': {
-        console.log(this.getState());
+        this.dispatchEvent(
+          new CustomEvent<RenderEventData>('renderclick', {
+            detail: { state: this.getState() },
+          })
+        );        
         break;
       }
     }
@@ -547,6 +562,22 @@ export class DiagramEditor extends HTMLElement {
     );
   }
 
+  addEventListener<T extends keyof DiagramEditorEventMap>(
+    // the event name, a key of DiagramEditorEventMap
+    type: T,
+
+    // the listener, using a value of DiagramEditorEventMap
+    listener: (this: Button, ev: DiagramEditorEventMap[T]) => void,
+
+    // any options
+    options?: boolean | AddEventListenerOptions
+  ): void;
+  addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => void, options?: boolean | AddEventListenerOptions | undefined): void;
+  addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void {
+      super.addEventListener(type, listener, options);
+  }
+
+
   public getState(): DiagramState {
     const result: DiagramState = {
       width: this.width,
@@ -561,4 +592,56 @@ export class DiagramEditor extends HTMLElement {
 
     return result;
   }  
+
+  public restoreState(state: DiagramState): void {
+    this._stencilEditors.splice(0);
+    while (this._objectLayer?.lastChild) {
+      this._objectLayer.removeChild(this._objectLayer.lastChild);
+    }
+    this._connectorEditors.splice(0);
+    while (this._connectorLayer?.lastChild) {
+      this._connectorLayer.removeChild(this._connectorLayer.lastChild);
+    }
+
+    state.stencils.forEach((stencilState) => {
+      const stencilType = this._availableStencilTypes.find(
+        (sType) => sType.typeName === stencilState.typeName
+      );
+      if (stencilType !== undefined) {
+        const stencilEditor = this.addNewStencil(stencilType);
+        stencilEditor.restoreState(stencilState);
+        stencilEditor.onStencilChanged = this.stencilChanged;
+        this._stencilEditors.push(stencilEditor);
+      }
+    });    
+
+    state.connectors.forEach((conState) => {
+      const conType = this._availableConnectorTypes.find(
+        (cType) => cType.typeName === conState.typeName
+      );
+      if (conType !== undefined) {
+        const startStencil = this._stencilEditors.find(se => se.stencil.IId === conState.startStencilId);
+        const endStencil = this._stencilEditors.find(se => se.stencil.IId === conState.endStencilId);
+
+        if (startStencil && endStencil && conState.startPortLocation && conState.endPortLocation) {
+          const startPort = startStencil.stencil.ports.get(conState.startPortLocation);
+          const endPort = endStencil.stencil.ports.get(conState.endPortLocation);
+
+          if (startPort && endPort) {
+            const conEditor = this.addNewConnector(conType);
+            conEditor.connector.restoreState(conState, {
+              startStencil: startStencil.stencil,
+              startPort: startPort,
+              endStencil: endStencil.stencil,
+              endPort: endPort
+            });
+            this._connectorEditors.push(conEditor);
+            startPort.connectors.push(conEditor);
+            endPort.connectors.push(conEditor);
+          }
+        }
+      }
+    });    
+
+  }
 }

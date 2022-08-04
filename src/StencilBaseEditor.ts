@@ -3,6 +3,7 @@ import { PortLocation } from './Port';
 import { PortConnector } from "./PortConnector";
 import { GripLocation, ResizeGrip } from './ResizeGrip';
 import { StencilBase } from './StencilBase';
+import { StencilBaseState } from './StencilBaseState';
 import { SvgHelper } from './SvgHelper';
 
 export type StencilEditorState = 'new' | 'creating' | 'select' | 'move' | 'resize' | 'edit' | 'connect';
@@ -572,4 +573,10 @@ export class StencilBaseEditor {
     this._controlBox.style.display = 'none';    
   }
 
+  public restoreState(state: StencilBaseState): void {
+    this.stencil.restoreState(state);
+    this.adjustControlBox();
+    this.adjustPortBox();
+    this._state = 'select';
+  }
 }

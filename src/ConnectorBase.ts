@@ -1,4 +1,4 @@
-import { ConnectorBaseState } from './ConnectorBaseState';
+import { ConnectorBaseState, ConnectorEndPoints } from './ConnectorBaseState';
 import { IPoint } from './IPoint';
 import { Port } from './Port';
 import { StencilBase } from './StencilBase';
@@ -89,6 +89,18 @@ export class ConnectorBase {
     }
   }
 
+  public adjustPoints(): void {
+    if (this.startStencil && this.startPort && this.endStencil && this.endPort) {
+      const start = this.startStencil.getPortPosition(this.startPort.location);
+      const end = this.endStencil.getPortPosition(this.endPort.location);
+
+      this.x1 = start.x;
+      this.y1 = start.y;
+      this.x2 = end.x;
+      this.y2 = end.y;
+    }
+  }
+
   public adjustVisual(): void {
     if (this.selectorLine && this.visibleLine) {
       this.selectorLine.setAttribute('x1', this.x1.toString());
@@ -143,6 +155,23 @@ export class ConnectorBase {
       strokeWidth: this.strokeWidth,
       strokeDasharray: this.strokeDasharray
     }
+  }
+
+  public restoreState(state: ConnectorBaseState, endPoints: ConnectorEndPoints) {
+    this._iid = state.iid;
+
+    this.strokeColor = state.strokeColor;
+    this.strokeWidth = state.strokeWidth;
+    this.strokeDasharray = state.strokeDasharray;
+
+    this.startStencil = endPoints.startStencil;
+    this.startPort = endPoints.startPort;
+    this.endStencil = endPoints.endStencil;
+    this.endPort = endPoints.endPort;
+
+    this.createVisual();
+    this.adjustPoints();
+    this.adjustVisual();
   }
 
 }
