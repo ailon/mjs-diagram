@@ -51,6 +51,7 @@ export class StencilBaseEditor {
   protected _portBox = SvgHelper.createGroup();
 
   constructor(
+    iid: number,
     container: SVGGElement,
     overlayContainer: HTMLDivElement,
     stencilType: typeof StencilBase,
@@ -59,7 +60,7 @@ export class StencilBaseEditor {
     this._container = container;
     this._overlayContainer = overlayContainer;
     this._stencilType = stencilType;
-    this._stencil = stencil ?? new stencilType(container);
+    this._stencil = stencil ?? new stencilType(iid, container);
 
     this.setupPortBox();
     this.setupControlBox();

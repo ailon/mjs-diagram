@@ -1,6 +1,7 @@
 import { Button, Panel, Toolbar, ToolbarBlock, ButtonEventData } from 'mjs-toolbar';
 import { ConnectorBase } from './ConnectorBase';
 import { ConnectorBaseEditor } from './ConnectorBaseEditor';
+import { DiagramState } from './DiagramState';
 import { IPoint } from './IPoint';
 import { PortConnector } from './PortConnector';
 import { StencilBase } from './StencilBase';
@@ -78,6 +79,11 @@ export class DiagramEditor extends HTMLElement {
     this.attachShadow({ mode: 'open' });
   }
 
+  private _iid = 0;
+  public getNewIId(): number {
+    return ++this._iid;
+  }
+
   private createLayout() {
     this.style.display = 'block';
     this.style.width = '100%';
@@ -135,7 +141,7 @@ export class DiagramEditor extends HTMLElement {
 
     const button21 = new Button({ text: 'click me', command: 'text' });
     block2.appendButton(button21);
-    const button22 = new Button({ icon: checkSVG });
+    const button22 = new Button({ icon: checkSVG, command: 'save' });
     block2.appendButton(button22);
 
     toolbar.appendBlock(block1);
@@ -161,6 +167,10 @@ export class DiagramEditor extends HTMLElement {
         this.switchToConnectMode();
         break;
       }
+      case 'save': {
+        console.log(this.getState());
+        break;
+      }
     }
     console.log(`'${ev.detail.button.command}' button clicked.`);
   }
@@ -176,20 +186,23 @@ export class DiagramEditor extends HTMLElement {
     this._stencilEditors.forEach(se => se.switchConnectModeOff());
   }
 
+  private width = 0;
+  private height = 0;
+
   private addMainCanvas() {
-    const w = this._contentContainer?.clientWidth || 0;
-    const h = this._contentContainer?.clientHeight || 0;
+    this.width = this._contentContainer?.clientWidth || 0;
+    this.height = this._contentContainer?.clientHeight || 0;
 
     this._mainCanvas = document.createElementNS(
       'http://www.w3.org/2000/svg',
       'svg'
     );
     this._mainCanvas.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    this._mainCanvas.setAttribute('width', w.toString());
-    this._mainCanvas.setAttribute('height', h.toString());
+    this._mainCanvas.setAttribute('width', this.width.toString());
+    this._mainCanvas.setAttribute('height', this.height.toString());
     this._mainCanvas.setAttribute(
       'viewBox',
-      '0 0 ' + w.toString() + ' ' + h.toString()
+      '0 0 ' + this.width.toString() + ' ' + this.height.toString()
     );
     this._mainCanvas.style.pointerEvents = 'auto';
 
@@ -311,6 +324,7 @@ export class DiagramEditor extends HTMLElement {
           if (this.connectionStartPort !== undefined) {
             this._currentConnectorEditor = this.addNewConnector(ConnectorBase);
             this._currentConnectorEditor.onConnectorCreated = this.connectorCreated;
+            this._currentConnectorEditor.connector.startStencil = hitEditor.stencil;
             this._currentConnectorEditor.connector.startPort = this.connectionStartPort.port;
             this._currentConnectorEditor.pointerDown(
               { 
@@ -364,6 +378,7 @@ export class DiagramEditor extends HTMLElement {
       if (hitEditor !== undefined) {
         this.connectionEndPort = hitEditor.getTargetPort(ev.target);
         if (this._currentConnectorEditor !== undefined && this.connectionEndPort !== undefined) {
+          this._currentConnectorEditor.connector.endStencil = hitEditor.stencil;
           this._currentConnectorEditor.connector.endPort = this.connectionEndPort.port;
           this._currentConnectorEditor.pointerUp(
             { 
@@ -470,6 +485,7 @@ export class DiagramEditor extends HTMLElement {
   private connectorCreated(connectorEditor: ConnectorBaseEditor) {
     connectorEditor.connector.startPort?.connectors.push(connectorEditor);
     connectorEditor.connector.endPort?.connectors.push(connectorEditor);
+    this._connectorEditors.push(connectorEditor);
     this._objectLayer?.removeChild(connectorEditor.connector.container);
     this._connectorLayer?.appendChild(connectorEditor.connector.container);
   }
@@ -512,6 +528,7 @@ export class DiagramEditor extends HTMLElement {
     this._objectLayer?.appendChild(g);
 
     return new StencilBaseEditor(
+      this.getNewIId(),
       g,
       document.createElement('div') /* @todo this.overlayContainer */,
       stencilType,
@@ -523,9 +540,25 @@ export class DiagramEditor extends HTMLElement {
     this._objectLayer?.appendChild(g);
 
     return new ConnectorBaseEditor(
+      this.getNewIId(),
       g, 
       document.createElement('div') /* @todo this.overlayContainer */,
       connectorType
     );
   }
+
+  public getState(): DiagramState {
+    const result: DiagramState = {
+      width: this.width,
+      height: this.height,
+
+      stencils: [],
+      connectors: []
+    };
+
+    this._stencilEditors.forEach(se => result.stencils.push(se.stencil.getState()));
+    this._connectorEditors.forEach(ce => result.connectors.push(ce.connector.getState()));
+
+    return result;
+  }  
 }

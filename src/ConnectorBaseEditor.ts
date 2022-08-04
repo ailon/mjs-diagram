@@ -44,12 +44,13 @@ export class ConnectorBaseEditor {
   protected overlayContainer: HTMLDivElement;
 
   constructor(
+    iid: number,
     container: SVGGElement, 
     overlayContainer: HTMLDivElement, 
     connectorType: typeof ConnectorBase, 
     connector?: ConnectorBase
   ) {
-    this.connector = connector ?? new connectorType(container);
+    this.connector = connector ?? new connectorType(iid, container);
     this.connector.container = container;
     this.overlayContainer = overlayContainer;
 

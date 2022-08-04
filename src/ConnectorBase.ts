@@ -1,5 +1,7 @@
+import { ConnectorBaseState } from './ConnectorBaseState';
 import { IPoint } from './IPoint';
 import { Port } from './Port';
+import { StencilBase } from './StencilBase';
 import { SvgHelper } from './SvgHelper';
 
 export class ConnectorBase {
@@ -9,9 +11,16 @@ export class ConnectorBase {
     return Object.getPrototypeOf(this).constructor.typeName;
   }
 
+  private _iid: number;
+  public get IId(): number {
+    return this._iid;
+  }
+
   public container: SVGGElement;
 
+  public startStencil?: StencilBase;
   public startPort?: Port;
+  public endStencil?: StencilBase;
   public endPort?: Port;
 
   public x1 = 0;
@@ -27,7 +36,8 @@ export class ConnectorBase {
   public strokeWidth = 1;
   public strokeDasharray = '';
 
-  constructor(container: SVGGElement) {
+  constructor(iid: number, container: SVGGElement) {
+    this._iid = iid;
     this.container = container;
 
     this.createVisual();
@@ -118,6 +128,21 @@ export class ConnectorBase {
     this.adjustVisual();
   }
   
+  public getState(): ConnectorBaseState {
+    return {
+      typeName: this.typeName,
+      iid: this.IId,
 
+      startStencilId: this.startStencil?.IId,
+      startPortLocation: this.startPort?.location,
+
+      endStencilId: this.endStencil?.IId,
+      endPortLocation: this.endPort?.location,
+
+      strokeColor: this.strokeColor,
+      strokeWidth: this.strokeWidth,
+      strokeDasharray: this.strokeDasharray
+    }
+  }
 
 }

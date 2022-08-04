@@ -1,5 +1,6 @@
 import { IPoint } from './IPoint';
 import { Port, PortLocation } from './Port';
+import { StencilBaseState } from './StencilBaseState';
 import { SvgHelper } from './SvgHelper';
 
 export class StencilBase {
@@ -10,6 +11,11 @@ export class StencilBase {
   }
 
   public static title: string;
+
+  private _iid: number;
+  public get IId(): number {
+    return this._iid;
+  }
 
   protected _container: SVGGElement;
   public get container(): SVGGElement {
@@ -52,18 +58,19 @@ export class StencilBase {
 
   public ports = new Map<PortLocation, Port>(
     [
-      ['topleft', new Port()],
-      ['topcenter', new Port()],
-      ['topright', new Port()],
-      ['leftcenter', new Port()],
-      ['rightcenter', new Port()],
-      ['bottomleft', new Port()],
-      ['bottomcenter', new Port()],
-      ['bottomright', new Port()],
+      ['topleft', new Port('topleft')],
+      ['topcenter', new Port('topcenter')],
+      ['topright', new Port('topright')],
+      ['leftcenter', new Port('leftcenter')],
+      ['rightcenter', new Port('rightcenter')],
+      ['bottomleft', new Port('bottomleft')],
+      ['bottomcenter', new Port('bottomcenter')],
+      ['bottomright', new Port('bottomright')],
     ]
   )
 
-  constructor(container: SVGGElement) {
+  constructor(iid: number, container: SVGGElement) {
+    this._iid = iid;
     this._container = container;
 
     this.setStrokeColor = this.setStrokeColor.bind(this);
@@ -159,5 +166,23 @@ export class StencilBase {
     if (this.visual) {
       SvgHelper.setAttributes(this.visual, [['stroke-dasharray', this.strokeDasharray]]);
     }
+  }
+
+  public getState(): StencilBaseState {
+    return {
+      typeName: this.typeName,
+      iid: this.IId,
+      notes: this.notes,
+
+      left: this.left,
+      top: this.top,
+      width: this.width,
+      height: this.height,
+
+      fillColor: this.fillColor,
+      strokeColor: this.strokeColor,
+      strokeWidth: this.strokeWidth,
+      strokeDasharray: this.strokeDasharray
+    };
   }
 }
