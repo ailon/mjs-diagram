@@ -78,10 +78,10 @@ export class ConnectorBase {
     this.visual.appendChild(this.selectorLine);
     this.visual.appendChild(this.visibleLine);
 
-    this.addMarkerVisualToContainer(this.visual);
+    this.addVisualToContainer(this.visual);
   }
 
-  public addMarkerVisualToContainer(element: SVGElement): void {
+  public addVisualToContainer(element: SVGElement): void {
     if (this.container.childNodes.length > 0) {
       this.container.insertBefore(element, this.container.childNodes[0]);
     } else {
@@ -89,13 +89,20 @@ export class ConnectorBase {
     }
   }
 
-  public adjustPoints(): void {
-    if (this.startStencil && this.startPort && this.endStencil && this.endPort) {
-      const start = this.startStencil.getPortPosition(this.startPort.location);
-      const end = this.endStencil.getPortPosition(this.endPort.location);
+  public adjust(): void {
+    this.adjustPoints();
+    this.adjustVisual();
+  }
 
+  public adjustPoints(): void {
+    if (this.startStencil && this.startPort) {
+      const start = this.startStencil.getPortPosition(this.startPort.location);
       this.x1 = start.x;
       this.y1 = start.y;
+    }
+    if (this.endStencil && this.endPort) {
+      const end = this.endStencil.getPortPosition(this.endPort.location);
+
       this.x2 = end.x;
       this.y2 = end.y;
     }

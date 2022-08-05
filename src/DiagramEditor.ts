@@ -480,19 +480,7 @@ export class DiagramEditor extends HTMLElement {
   private stencilChanged(stencilEditor: StencilBaseEditor) {
     stencilEditor.stencil.ports.forEach(port => {
       if (port.enabled) {
-        port.connectors.forEach(c => {
-          if (c.connector.startPort === port) {
-            c.connector.setStartPosition({
-              x: stencilEditor.stencil.left + port.x,
-              y: stencilEditor.stencil.top + port.y
-            });
-          } else {
-            c.connector.setEndPosition({
-              x: stencilEditor.stencil.left + port.x,
-              y: stencilEditor.stencil.top + port.y
-            });
-          }
-        })
+        port.connectors.forEach(c => c.connector.adjust());
       }
     })
   }
