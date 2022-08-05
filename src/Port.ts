@@ -1,4 +1,4 @@
-import { ConnectorBaseEditor } from './ConnectorBaseEditor';
+import { ConnectorBase } from './ConnectorBase';
 
 export type PortLocation =
   | 'topleft'
@@ -13,7 +13,7 @@ export type PortLocation =
 export class Port {
   public location: PortLocation;
   public enabled = true;
-  public connectors: ConnectorBaseEditor[] = [];
+  public connectors: ConnectorBase[] = [];
   public x = 0;
   public y = 0;
 

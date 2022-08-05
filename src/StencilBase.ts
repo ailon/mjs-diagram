@@ -256,5 +256,6 @@ export class StencilBase {
 
     this.createVisual();
     this.setSize();
+    this.positionPorts();
   }
 }

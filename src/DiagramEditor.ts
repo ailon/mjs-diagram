@@ -480,14 +480,14 @@ export class DiagramEditor extends HTMLElement {
   private stencilChanged(stencilEditor: StencilBaseEditor) {
     stencilEditor.stencil.ports.forEach(port => {
       if (port.enabled) {
-        port.connectors.forEach(c => c.connector.adjust());
+        port.connectors.forEach(c => c.adjust());
       }
     })
   }
 
   private connectorCreated(connectorEditor: ConnectorBaseEditor) {
-    connectorEditor.connector.startPort?.connectors.push(connectorEditor);
-    connectorEditor.connector.endPort?.connectors.push(connectorEditor);
+    connectorEditor.connector.startPort?.connectors.push(connectorEditor.connector);
+    connectorEditor.connector.endPort?.connectors.push(connectorEditor.connector);
     this._connectorEditors.push(connectorEditor);
     this._objectLayer?.removeChild(connectorEditor.connector.container);
     this._connectorLayer?.appendChild(connectorEditor.connector.container);
@@ -624,8 +624,8 @@ export class DiagramEditor extends HTMLElement {
               endPort: endPort
             });
             this._connectorEditors.push(conEditor);
-            startPort.connectors.push(conEditor);
-            endPort.connectors.push(conEditor);
+            startPort.connectors.push(conEditor.connector);
+            endPort.connectors.push(conEditor.connector);
           }
         }
       }

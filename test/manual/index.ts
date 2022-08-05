@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { DiagramEditor, DiagramState } from '../../src/index';
+import { DiagramEditor, DiagramState, DiagramViewer } from '../../src/index';
 
 export * from './../../src/index';
 
@@ -49,18 +49,24 @@ export class Experiments {
   };
 
   editor?: DiagramEditor;
+  viewer?: DiagramViewer;
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public setup(): void {
     this.editor = <DiagramEditor>document.getElementById('mjsDia');
 
-    this.editor.addEventListener('renderclick', (ev) =>
-      console.log(JSON.stringify(ev.detail.state))
-    );
+    this.editor.addEventListener('renderclick', (ev) => {
+      console.log(JSON.stringify(ev.detail.state));
+      this.oldState = ev.detail.state;
+      this.viewer?.show(this.oldState);
+    });
 
     document
       .getElementById('restoreStateButton')
       ?.addEventListener('click', () => {
         this.editor?.restoreState(this.oldState);
       });
+
+    this.viewer = <DiagramViewer>document.getElementById('mjsDiaView');
+    this.viewer.show(this.oldState);
   }
 }
