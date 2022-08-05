@@ -178,6 +178,50 @@ export class StencilBase {
     return result;
   }
 
+  public positionPorts(): void {
+    const left = 0;
+    const top = left;
+    const cx = this.width / 2;
+    const cy = this.height / 2;
+    const bottom = this.height;
+    const right = this.width;
+
+    this.positionPort(this.ports.get('topleft'), left, top);
+    this.positionPort(this.ports.get('topcenter'), cx, top);
+    this.positionPort(this.ports.get('topright'), right, top);
+    this.positionPort(this.ports.get('leftcenter'), left, cy);
+    this.positionPort(this.ports.get('rightcenter'), right, cy);
+    this.positionPort(
+      this.ports.get('bottomleft'),
+      left,
+      bottom
+    );
+    this.positionPort(
+      this.ports.get('bottomcenter'),
+      cx,
+      bottom
+    );
+    this.positionPort(
+      this.ports.get('bottomright'),
+      right,
+      bottom
+    );
+
+  }
+
+  private positionPort(
+    port: Port | undefined,
+    x: number,
+    y: number
+  ) {
+    if (port !== undefined) {
+      port.x = x;
+      port.y = y;
+    }
+  }
+
+
+
   public getState(): StencilBaseState {
     return {
       typeName: this.typeName,

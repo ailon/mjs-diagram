@@ -79,7 +79,6 @@ export class StencilBaseEditor {
     this.positionGrips = this.positionGrips.bind(this);
     this.positionPorts = this.positionPorts.bind(this);
     this.positionGrip = this.positionGrip.bind(this);
-    this.positionPort = this.positionPort.bind(this);
     this.hideControlBox = this.hideControlBox.bind(this);
     this.showControlBox = this.showControlBox.bind(this);
     this.hidePortBox = this.hidePortBox.bind(this);
@@ -232,33 +231,8 @@ export class StencilBaseEditor {
 
   private positionPorts() {
     if (this._stencil) {
-      const left = 0;
-      const top = left;
-      const cx = this._stencil.width / 2;
-      const cy = this._stencil.height / 2;
-      const bottom = this._stencil.height;
-      const right = this._stencil.width;
-
-      this.positionPort(this.portConnectors.get('topleft'), left, top);
-      this.positionPort(this.portConnectors.get('topcenter'), cx, top);
-      this.positionPort(this.portConnectors.get('topright'), right, top);
-      this.positionPort(this.portConnectors.get('leftcenter'), left, cy);
-      this.positionPort(this.portConnectors.get('rightcenter'), right, cy);
-      this.positionPort(
-        this.portConnectors.get('bottomleft'),
-        left,
-        bottom
-      );
-      this.positionPort(
-        this.portConnectors.get('bottomcenter'),
-        cx,
-        bottom
-      );
-      this.positionPort(
-        this.portConnectors.get('bottomright'),
-        right,
-        bottom
-      );
+      this._stencil.positionPorts();
+      this.portConnectors.forEach(pc => pc.adjustVisual());
     }
   }
 
@@ -271,20 +245,6 @@ export class StencilBaseEditor {
       const translate = grip.transform.baseVal.getItem(0);
       translate.setTranslate(x, y);
       grip.transform.baseVal.replaceItem(translate, 0);
-    }
-  }
-
-  private positionPort(
-    portConnector: PortConnector | undefined,
-    x: number,
-    y: number
-  ) {
-    if (portConnector !== undefined) {
-      portConnector.port.x = x;
-      portConnector.port.y = y;
-      const translate = portConnector.visual.transform.baseVal.getItem(0);
-      translate.setTranslate(x - portConnector.PORT_SIZE / 2, y - portConnector.PORT_SIZE / 2);
-      portConnector.visual.transform.baseVal.replaceItem(translate, 0);
     }
   }
 

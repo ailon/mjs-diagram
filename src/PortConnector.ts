@@ -23,6 +23,9 @@ export class PortConnector {
         ['stroke-opacity', '0.7']
       ])
     );
+
+    this.ownsTarget = this.ownsTarget.bind(this);
+    this.adjustVisual = this.adjustVisual.bind(this);
   }
 
   public ownsTarget(el: EventTarget): boolean {
@@ -34,4 +37,11 @@ export class PortConnector {
       return false;
     }
   }
+
+  public adjustVisual(): void {
+    const translate = this.visual.transform.baseVal.getItem(0);
+    translate.setTranslate(this.port.x - this.PORT_SIZE / 2, this.port.y - this.PORT_SIZE / 2);
+    this.visual.transform.baseVal.replaceItem(translate, 0);
+  }
+
 }
