@@ -7,6 +7,8 @@ import { PortConnector } from './PortConnector';
 import { StencilBase } from './StencilBase';
 import { StencilBaseEditor } from './StencilBaseEditor';
 import { SvgHelper } from './SvgHelper';
+import { TextStencil } from './TextStencil';
+import { TextStencilEditor } from './TextStencilEditor';
 
 export type DiagramEditorMode = 'select' | 'connect';
 
@@ -30,6 +32,8 @@ export class DiagramEditor extends HTMLElement {
   private _groupLayer?: SVGGElement;
   private _connectorLayer?: SVGGElement;
   private _objectLayer?: SVGGElement;
+
+  private overlayContainer!: HTMLDivElement;
 
   private _currentStencilEditor?: StencilBaseEditor;
   private _stencilEditors: StencilBaseEditor[] = [];
@@ -60,7 +64,12 @@ export class DiagramEditor extends HTMLElement {
     // }
   }
 
-  private _availableStencilTypes: typeof StencilBase[] = [ StencilBase ];
+  private _availableStencilTypes: typeof StencilBase[] = [ StencilBase, TextStencil ];
+  private _availableStencilEditors = new Map<typeof StencilBase, typeof StencilBaseEditor>([
+    [StencilBase, StencilBaseEditor],
+    [TextStencil, TextStencilEditor]
+  ]);
+
   private _availableConnectorTypes: typeof ConnectorBase[] = [ ConnectorBase ];
 
   constructor() {
@@ -145,8 +154,10 @@ export class DiagramEditor extends HTMLElement {
 
     const button11 = new Button({ icon: checkSVG, command: 'run' });
     block1.appendButton(button11);
-    const button12 = new Button({ text: 'Add', command: 'add' });
+    const button12 = new Button({ text: 'Base', command: 'add-base' });
     block1.appendButton(button12);
+    const button121 = new Button({ text: 'Text', command: 'add-text' });
+    block1.appendButton(button121);
     const button13 = new Button({ text: "Connect", command: 'connect' });
     block1.appendButton(button13);
 
@@ -170,8 +181,12 @@ export class DiagramEditor extends HTMLElement {
     }
 
     switch (ev.detail.button.command) {
-      case 'add': {
-        this.createNewStencil(typeof StencilBase);
+      case 'add-base': {
+        this.createNewStencil(StencilBase);
+        break;
+      }
+      case 'add-text': {
+        this.createNewStencil(TextStencil);
         break;
       }
       case 'connect': {
@@ -232,10 +247,23 @@ export class DiagramEditor extends HTMLElement {
     this._contentContainer?.appendChild(this._mainCanvas);
   }
 
+  private initOverlay(): void {
+    this.overlayContainer = document.createElement('div');
+    this.overlayContainer.style.position = 'absolute';
+    this.overlayContainer.style.left = '0px';
+    this.overlayContainer.style.top = '0px';
+    this.overlayContainer.style.width = `${this.width}px`;
+    this.overlayContainer.style.height = `${this.height}px`;
+    this.overlayContainer.style.display = 'flex';
+    this._mainCanvas?.appendChild(this.overlayContainer);
+  }
+
+
   private connectedCallback() {
     this.createLayout();
     this.addToolbar();
     this.addMainCanvas();
+    this.initOverlay();
     this.attachEvents();
   }
 
@@ -430,14 +458,15 @@ export class DiagramEditor extends HTMLElement {
   }
 
   public createNewStencil(steniclType: typeof StencilBase | string): void {
-    let sType: typeof StencilBase;
+    let sType: typeof StencilBase = StencilBase;
 
     if (typeof steniclType === 'string') {
-      sType = StencilBase; // @todo remove hardcoded
-      // @todo implement search
-      // mType = this._availableMarkerTypes.find(
-      //   (mt) => mt.typeName === markerType
-      // );
+      const st = this._availableStencilTypes.find(
+        (st) => st.typeName === steniclType
+      );
+      if (st !== undefined) {
+        sType = st;
+      }
     } else {
       sType = steniclType;
     }
@@ -530,10 +559,12 @@ export class DiagramEditor extends HTMLElement {
     const g = SvgHelper.createGroup();
     this._objectLayer?.appendChild(g);
 
-    return new StencilBaseEditor(
+    const editor = this._availableStencilEditors.get(stencilType) || StencilBaseEditor;
+    
+    return new editor(
       this.getNewIId(),
       g,
-      document.createElement('div') /* @todo this.overlayContainer */,
+      this.overlayContainer,
       stencilType,
     );
   }
@@ -545,7 +576,7 @@ export class DiagramEditor extends HTMLElement {
     return new ConnectorBaseEditor(
       this.getNewIId(),
       g, 
-      document.createElement('div') /* @todo this.overlayContainer */,
+      this.overlayContainer,
       connectorType
     );
   }

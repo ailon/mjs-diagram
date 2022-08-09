@@ -81,7 +81,7 @@ export class StencilBase {
     this.setStrokeDasharray = this.setStrokeDasharray.bind(this);
     this.createVisual = this.createVisual.bind(this);
 
-    this.createVisual();
+    //this.createVisual();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

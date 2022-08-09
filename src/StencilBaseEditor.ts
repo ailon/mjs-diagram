@@ -62,6 +62,7 @@ export class StencilBaseEditor {
     this._overlayContainer = overlayContainer;
     this._stencilType = stencilType;
     this._stencil = stencil ?? new stencilType(iid, container);
+    this._stencil.createVisual();
 
     this.setupPortBox();
     this.setupControlBox();
