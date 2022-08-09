@@ -379,7 +379,7 @@ export class StencilBaseEditor {
           this._state = 'move';
         }
       } else {
-        this._stencil.createVisual();
+        // this._stencil.createVisual();
   
         this._stencil.moveVisual(point);
   

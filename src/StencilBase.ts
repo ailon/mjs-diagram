@@ -40,6 +40,8 @@ export class StencilBase {
     return this.top + this.height / 2;
   }  
 
+  private _frame!: SVGRectElement;
+
   // @todo: proper initializer needed or accept undefined?
   private _visual: SVGGraphicsElement = SvgHelper.createGroup();
   protected get visual(): SVGGraphicsElement {
@@ -79,11 +81,12 @@ export class StencilBase {
     this.setStrokeDasharray = this.setStrokeDasharray.bind(this);
     this.createVisual = this.createVisual.bind(this);
 
+    this.createVisual();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public ownsTarget(el: EventTarget): boolean {
-    if (el === this.visual) {
+    if (el === this.visual || el === this._frame) {
       return true;
     } else {
       return false;
@@ -114,12 +117,13 @@ export class StencilBase {
   }
 
   public createVisual(): void {
-    this.visual = SvgHelper.createRect(1, 1, [
+    this._frame = SvgHelper.createRect(1, 1, [
       ['fill', this.fillColor],
       ['stroke', this.strokeColor],
       ['stroke-width', this.strokeWidth.toString()],
       ['stroke-dasharray', this.strokeDasharray]
     ]);
+    this.visual.appendChild(this._frame);
     this.addVisualToContainer(this.visual);
   }
 
@@ -137,7 +141,7 @@ export class StencilBase {
 
   public setSize(): void {
     this.moveVisual({x: this.left, y: this.top});
-    SvgHelper.setAttributes(this.visual, [
+    SvgHelper.setAttributes(this._frame, [
       ['width', this.width.toString()],
       ['height', this.height.toString()],
     ]);
@@ -145,27 +149,19 @@ export class StencilBase {
 
   protected setStrokeColor(color: string): void {
     this.strokeColor = color;
-    if (this.visual) {
-      SvgHelper.setAttributes(this.visual, [['stroke', this.strokeColor]]);
-    }
+    SvgHelper.setAttributes(this._frame, [['stroke', this.strokeColor]]);
   }
   protected setFillColor(color: string): void {
     this.fillColor = color;
-    if (this.visual) {
-      SvgHelper.setAttributes(this.visual, [['fill', this.fillColor]]);
-    }
+    SvgHelper.setAttributes(this._frame, [['fill', this.fillColor]]);
   }
   protected setStrokeWidth(width: number): void {
     this.strokeWidth = width;
-    if (this.visual) {
-      SvgHelper.setAttributes(this.visual, [['stroke-width', this.strokeWidth.toString()]]);
-    }
+    SvgHelper.setAttributes(this._frame, [['stroke-width', this.strokeWidth.toString()]]);
   }
   protected setStrokeDasharray(dashes: string): void {
     this.strokeDasharray = dashes;
-    if (this.visual) {
-      SvgHelper.setAttributes(this.visual, [['stroke-dasharray', this.strokeDasharray]]);
-    }
+    SvgHelper.setAttributes(this._frame, [['stroke-dasharray', this.strokeDasharray]]);
   }
 
   public getPortPosition(location: PortLocation): IPoint {
