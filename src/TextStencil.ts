@@ -8,7 +8,7 @@ export class TextStencil extends StencilBase {
 
   public static title = 'Text stencil';
 
-  public color = '#000000';
+  public color = 'transparent';
   public fontFamily = 'Helvetica, Arial, sans-serif';
 
   private readonly DEFAULT_TEXT = 'your text here';

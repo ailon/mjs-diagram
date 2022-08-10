@@ -29,8 +29,7 @@ export class TextStencilEditor extends StencilBaseEditor {
     this.showTextEditor = this.showTextEditor.bind(this);
     this.setSize = this.setSize.bind(this);
     this.positionTextEditor = this.positionTextEditor.bind(this);
-
-  }  
+  }
 
   public pointerDown(point: IPoint, target?: EventTarget): void {
     super.pointerDown(point, target);
@@ -42,7 +41,15 @@ export class TextStencilEditor extends StencilBaseEditor {
     if (this.state === 'new') {
       this.stencil.moveVisual(point);
       this._state = 'creating';
+    } else if (this.state === 'creating') {
+      this.setColor('#000000');
     }
+  }
+
+  public dblClick(point: IPoint, target?: EventTarget): void {
+    super.dblClick(point, target);
+
+    this.showTextEditor();
   }
 
   public manipulate(point: IPoint): void {
@@ -147,18 +154,17 @@ export class TextStencilEditor extends StencilBaseEditor {
       } else {
         this.stencil.textElement.style.display = '';
         const textScale = this.stencil.getTextScale();
-        // const rPosition = this.rotatePoint({
-        //   x: this.left + this.width / 2,
-        //   y: this.top + this.height / 2,
-        // });
-        // const textSize = this.textElement.getBBox();
-        // const rWH = {
-        //   x: textSize.width * textScale,
-        //   y: textSize.height * textScale,
-        // };
-        // rPosition.x -= rWH.x / 2;
-        // rPosition.y -= rWH.y / 2;
-        const rPosition = { x: this.stencil.left, y: this.stencil.top}
+        const rPosition = {
+          x: this.stencil.left + this.stencil.width / 2,
+          y: this.stencil.top + this.stencil.height / 2,
+        };
+        const textSize = this.stencil.textElement.getBBox();
+        const rWH = {
+          x: textSize.width * textScale,
+          y: textSize.height * textScale,
+        };
+        rPosition.x -= rWH.x / 2;
+        rPosition.y -= rWH.y / 2;
 
         this.textEditor.style.top = `${rPosition.y}px`;
         this.textEditor.style.left = `${rPosition.x}px`;
@@ -185,7 +191,7 @@ export class TextStencilEditor extends StencilBaseEditor {
   }
 
   public select(): void {
-    super.select();    
+    super.select();
     if (this.state === 'edit') {
       this.textEditDivClicked(this.textEditor.innerText);
     }

@@ -386,10 +386,11 @@ export class StencilBaseEditor {
   
         this._state = 'creating';
       }      
-
-
     }
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
+  public dblClick(point: IPoint, target?: EventTarget):void {}
 
   protected findGripByVisual(target: SVGGraphicsElement): ResizeGrip | undefined {
     let result: ResizeGrip | undefined;

@@ -26,14 +26,14 @@ export class DiagramEditor extends HTMLElement {
   private _contentContainer?: HTMLDivElement;
   private _toolboxContainer?: HTMLDivElement;
 
+  private overlayContainer!: HTMLDivElement;
+
   private mode: DiagramEditorMode = 'select';
 
   private _mainCanvas?: SVGSVGElement;
   private _groupLayer?: SVGGElement;
   private _connectorLayer?: SVGGElement;
   private _objectLayer?: SVGGElement;
-
-  private overlayContainer!: HTMLDivElement;
 
   private _currentStencilEditor?: StencilBaseEditor;
   private _stencilEditors: StencilBaseEditor[] = [];
@@ -79,7 +79,7 @@ export class DiagramEditor extends HTMLElement {
     this.connectorCreated = this.connectorCreated.bind(this);
     this.setCurrentStencil = this.setCurrentStencil.bind(this);
     this.onPointerDown = this.onPointerDown.bind(this);
-    //this.onDblClick = this.onDblClick.bind(this);
+    this.onDblClick = this.onDblClick.bind(this);
     this.onPointerMove = this.onPointerMove.bind(this);
     this.onStencilPointerUp = this.onStencilPointerUp.bind(this);
     this.onPointerUp = this.onPointerUp.bind(this);
@@ -115,6 +115,7 @@ export class DiagramEditor extends HTMLElement {
     this._container.style.width = '100%';
     this._container.style.height = '100%';
     this._container.style.backgroundColor = 'green';
+    this._container.style.userSelect = 'none';
 
     this._toolbarContainer = document.createElement('div');
     this._toolbarContainer.style.display = 'flex';
@@ -123,6 +124,7 @@ export class DiagramEditor extends HTMLElement {
 
     this._contentContainer = document.createElement('div');
     this._contentContainer.style.display = 'flex';
+    this._contentContainer.style.position = 'relative';
     this._contentContainer.style.flexGrow = '2';
     this._contentContainer.style.flexShrink = '1';
     this._contentContainer.style.backgroundColor = 'magenta';
@@ -250,12 +252,13 @@ export class DiagramEditor extends HTMLElement {
   private initOverlay(): void {
     this.overlayContainer = document.createElement('div');
     this.overlayContainer.style.position = 'absolute';
+    this.overlayContainer.style.pointerEvents = 'none';
     this.overlayContainer.style.left = '0px';
     this.overlayContainer.style.top = '0px';
     this.overlayContainer.style.width = `${this.width}px`;
     this.overlayContainer.style.height = `${this.height}px`;
     this.overlayContainer.style.display = 'flex';
-    this._mainCanvas?.appendChild(this.overlayContainer);
+    this._contentContainer?.appendChild(this.overlayContainer);
   }
 
 
@@ -274,8 +277,7 @@ export class DiagramEditor extends HTMLElement {
   private attachEvents() {
     this._mainCanvas?.addEventListener('pointerdown', this.onPointerDown);
     this._mainCanvas?.addEventListener('pointerup', this.onStencilPointerUp);
-    // @todo
-    // this._mainCanvas?.addEventListener('dblclick', this.onDblClick);
+    this._mainCanvas?.addEventListener('dblclick', this.onDblClick);
     this.attachWindowEvents();
   }
 
@@ -293,8 +295,7 @@ export class DiagramEditor extends HTMLElement {
   private detachEvents() {
     this._mainCanvas?.removeEventListener('pointerdown', this.onPointerDown);
     this._mainCanvas?.removeEventListener('pointerdown', this.onStencilPointerUp);
-    // @todo
-    // this._mainCanvas?.removeEventListener('dblclick', this.onDblClick);
+    this._mainCanvas?.removeEventListener('dblclick', this.onDblClick);
     this.detachWindowEvents();
   }
 
@@ -386,6 +387,28 @@ export class DiagramEditor extends HTMLElement {
       }
     }
   }
+
+  private onDblClick(ev: MouseEvent) {
+    // @todo
+    // if (!this._isFocused) {
+    //   this.focus();
+    // }
+
+    if (this.mode === 'select') {
+      const hitEditor = this._stencilEditors.find((se) => se.ownsTarget(ev.target));
+      if (hitEditor !== undefined && hitEditor !== this._currentStencilEditor) {
+        this.setCurrentStencil(hitEditor);
+      }
+      if (this._currentStencilEditor !== undefined && ev.target) {
+        this._currentStencilEditor.dblClick(
+          this.clientToLocalCoordinates(ev.clientX, ev.clientY),
+          ev.target
+        );
+      } else {
+        this.setCurrentStencil();
+      }
+    }
+  }  
 
   private onPointerMove(ev: PointerEvent) {
     if (this.touchPoints === 1 || ev.pointerType !== 'touch') {

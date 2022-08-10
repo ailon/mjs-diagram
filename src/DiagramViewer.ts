@@ -3,6 +3,7 @@ import { DiagramState } from './DiagramState';
 import { IPoint } from './IPoint';
 import { StencilBase } from './StencilBase';
 import { SvgHelper } from './SvgHelper';
+import { TextStencil } from './TextStencil';
 
 export class DiagramViewer extends HTMLElement {
   private _container?: HTMLDivElement;
@@ -39,7 +40,7 @@ export class DiagramViewer extends HTMLElement {
     // }
   }
 
-  private _availableStencilTypes: typeof StencilBase[] = [ StencilBase ];
+  private _availableStencilTypes: typeof StencilBase[] = [ StencilBase, TextStencil ];
   private _availableConnectorTypes: typeof ConnectorBase[] = [ ConnectorBase ];
 
   constructor() {
