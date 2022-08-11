@@ -1,9 +1,9 @@
+import { basicStencilSet } from './BasicStencilSet';
 import { ConnectorBase } from './ConnectorBase';
 import { DiagramState } from './DiagramState';
 import { IPoint } from './IPoint';
 import { StencilBase } from './StencilBase';
 import { SvgHelper } from './SvgHelper';
-import { TextStencil } from './TextStencil';
 
 export class DiagramViewer extends HTMLElement {
   private _container?: HTMLDivElement;
@@ -40,8 +40,7 @@ export class DiagramViewer extends HTMLElement {
     // }
   }
 
-  private _availableStencilTypes: typeof StencilBase[] = [ StencilBase, TextStencil ];
-  private _availableConnectorTypes: typeof ConnectorBase[] = [ ConnectorBase ];
+  private _stencilSet = basicStencilSet;
 
   constructor() {
     super();
@@ -234,21 +233,17 @@ export class DiagramViewer extends HTMLElement {
     }
 
     state.stencils.forEach((stencilState) => {
-      const stencilType = this._availableStencilTypes.find(
-        (sType) => sType.typeName === stencilState.typeName
-      );
-      if (stencilType !== undefined) {
-        const stencil = this.addNewStencil(stencilType);
+      const sp = this._stencilSet.getStencilProperties(stencilState.typeName);
+      if (sp !== undefined) {
+        const stencil = this.addNewStencil(sp.stencilType);
         stencil.restoreState(stencilState);
         this._stencils.push(stencil);
       }
     });    
 
     state.connectors.forEach((conState) => {
-      const conType = this._availableConnectorTypes.find(
-        (cType) => cType.typeName === conState.typeName
-      );
-      if (conType !== undefined) {
+      const cp = this._stencilSet.getConnectorProperties(conState.typeName);
+      if (cp !== undefined) {
         const startStencil = this._stencils.find(s => s.IId === conState.startStencilId);
         const endStencil = this._stencils.find(s => s.IId === conState.endStencilId);
 
@@ -257,7 +252,7 @@ export class DiagramViewer extends HTMLElement {
           const endPort = endStencil.ports.get(conState.endPortLocation);
 
           if (startPort && endPort) {
-            const connector = this.addNewConnector(conType);
+            const connector = this.addNewConnector(cp.connectorType);
             connector.restoreState(conState, {
               startStencil: startStencil,
               startPort: startPort,

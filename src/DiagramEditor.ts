@@ -1,4 +1,5 @@
 import { Button, Panel, Toolbar, ToolbarBlock, ButtonEventData } from 'mjs-toolbar';
+import { basicStencilEditorSet } from './BasicStencilEditorSet';
 import { ConnectorBase } from './ConnectorBase';
 import { ConnectorBaseEditor } from './ConnectorBaseEditor';
 import { DiagramState } from './DiagramState';
@@ -8,7 +9,6 @@ import { StencilBase } from './StencilBase';
 import { StencilBaseEditor } from './StencilBaseEditor';
 import { SvgHelper } from './SvgHelper';
 import { TextStencil } from './TextStencil';
-import { TextStencilEditor } from './TextStencilEditor';
 
 export type DiagramEditorMode = 'select' | 'connect';
 
@@ -64,14 +64,8 @@ export class DiagramEditor extends HTMLElement {
     // }
   }
 
-  private _availableStencilTypes: typeof StencilBase[] = [ StencilBase, TextStencil ];
-  private _availableStencilEditors = new Map<typeof StencilBase, typeof StencilBaseEditor>([
-    [StencilBase, StencilBaseEditor],
-    [TextStencil, TextStencilEditor]
-  ]);
-
-  private _availableConnectorTypes: typeof ConnectorBase[] = [ ConnectorBase ];
-
+  private _stencilEditorSet = basicStencilEditorSet;
+  
   constructor() {
     super();
 
@@ -481,24 +475,14 @@ export class DiagramEditor extends HTMLElement {
   }
 
   public createNewStencil(steniclType: typeof StencilBase | string): void {
-    let sType: typeof StencilBase = StencilBase;
 
-    if (typeof steniclType === 'string') {
-      const st = this._availableStencilTypes.find(
-        (st) => st.typeName === steniclType
-      );
-      if (st !== undefined) {
-        sType = st;
-      }
-    } else {
-      sType = steniclType;
-    }
+    const sType = this._stencilEditorSet.stencilSet.getStencilProperties(steniclType);
 
     if (sType) {
       this.setCurrentStencil();
       // @todo
       // this.addUndoStep();
-      this._currentStencilEditor = this.addNewStencil(sType);
+      this._currentStencilEditor = this.addNewStencil(sType.stencilType);
       this._currentStencilEditor.onStencilCreated = this.stencilCreated;
       if (this._mainCanvas) {
         this._mainCanvas.style.cursor = 'crosshair';
@@ -582,7 +566,7 @@ export class DiagramEditor extends HTMLElement {
     const g = SvgHelper.createGroup();
     this._objectLayer?.appendChild(g);
 
-    const editor = this._availableStencilEditors.get(stencilType) || StencilBaseEditor;
+    const editor = this._stencilEditorSet.getStencilEditor(stencilType);
     
     return new editor(
       this.getNewIId(),
@@ -596,7 +580,8 @@ export class DiagramEditor extends HTMLElement {
     const g = SvgHelper.createGroup();
     this._objectLayer?.appendChild(g);
 
-    return new ConnectorBaseEditor(
+    const connectorEditorType = this._stencilEditorSet.getConnectorEditor(connectorType);
+    return new connectorEditorType(
       this.getNewIId(),
       g, 
       this.overlayContainer,
@@ -646,11 +631,9 @@ export class DiagramEditor extends HTMLElement {
     }
 
     state.stencils.forEach((stencilState) => {
-      const stencilType = this._availableStencilTypes.find(
-        (sType) => sType.typeName === stencilState.typeName
-      );
+      const stencilType = this._stencilEditorSet.stencilSet.getStencilProperties(stencilState.typeName);
       if (stencilType !== undefined) {
-        const stencilEditor = this.addNewStencil(stencilType);
+        const stencilEditor = this.addNewStencil(stencilType.stencilType);
         stencilEditor.restoreState(stencilState);
         stencilEditor.onStencilChanged = this.stencilChanged;
         this._stencilEditors.push(stencilEditor);
@@ -658,10 +641,8 @@ export class DiagramEditor extends HTMLElement {
     });    
 
     state.connectors.forEach((conState) => {
-      const conType = this._availableConnectorTypes.find(
-        (cType) => cType.typeName === conState.typeName
-      );
-      if (conType !== undefined) {
+      const cp = this._stencilEditorSet.stencilSet.getConnectorProperties(conState.typeName);
+      if (cp !== undefined) {
         const startStencil = this._stencilEditors.find(se => se.stencil.IId === conState.startStencilId);
         const endStencil = this._stencilEditors.find(se => se.stencil.IId === conState.endStencilId);
 
@@ -670,7 +651,7 @@ export class DiagramEditor extends HTMLElement {
           const endPort = endStencil.stencil.ports.get(conState.endPortLocation);
 
           if (startPort && endPort) {
-            const conEditor = this.addNewConnector(conType);
+            const conEditor = this.addNewConnector(cp.connectorType);
             conEditor.connector.restoreState(conState, {
               startStencil: startStencil.stencil,
               startPort: startPort,
