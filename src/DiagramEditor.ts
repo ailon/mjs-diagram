@@ -629,12 +629,14 @@ export class DiagramEditor extends HTMLElement {
     while (this._connectorLayer?.lastChild) {
       this._connectorLayer.removeChild(this._connectorLayer.lastChild);
     }
+    this._iid = 0;
 
     state.stencils.forEach((stencilState) => {
       const stencilType = this._stencilEditorSet.stencilSet.getStencilProperties(stencilState.typeName);
       if (stencilType !== undefined) {
         const stencilEditor = this.addNewStencil(stencilType.stencilType);
         stencilEditor.restoreState(stencilState);
+        this._iid = Math.max(this._iid, stencilEditor.stencil.IId); // adjust current iid counter
         stencilEditor.onStencilChanged = this.stencilChanged;
         this._stencilEditors.push(stencilEditor);
       }
@@ -659,12 +661,12 @@ export class DiagramEditor extends HTMLElement {
               endPort: endPort
             });
             this._connectorEditors.push(conEditor);
+            this._iid = Math.max(this._iid, conEditor.connector.IId); // adjust current iid counter
             startPort.connectors.push(conEditor.connector);
             endPort.connectors.push(conEditor.connector);
           }
         }
       }
-    });    
-
+    });
   }
 }
