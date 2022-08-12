@@ -576,9 +576,9 @@ export class DiagramEditor extends HTMLElement {
     );
   }
 
-  private addNewConnector(connectorType: typeof ConnectorBase): ConnectorBaseEditor {
+  private addNewConnector(connectorType: typeof ConnectorBase, toLayer?: SVGGElement): ConnectorBaseEditor {
     const g = SvgHelper.createGroup();
-    this._objectLayer?.appendChild(g);
+    toLayer?.appendChild(g) ?? this._objectLayer?.appendChild(g);
 
     const connectorEditorType = this._stencilEditorSet.getConnectorEditor(connectorType);
     return new connectorEditorType(
@@ -653,7 +653,7 @@ export class DiagramEditor extends HTMLElement {
           const endPort = endStencil.stencil.ports.get(conState.endPortLocation);
 
           if (startPort && endPort) {
-            const conEditor = this.addNewConnector(cp.connectorType);
+            const conEditor = this.addNewConnector(cp.connectorType, this._connectorLayer);
             conEditor.connector.restoreState(conState, {
               startStencil: startStencil.stencil,
               startPort: startPort,
