@@ -26,7 +26,8 @@ export class DiagramEditor extends HTMLElement {
   private _contentContainer?: HTMLDivElement;
   private _toolboxContainer?: HTMLDivElement;
 
-  private overlayContainer!: HTMLDivElement;
+  private _overlayContainer!: HTMLDivElement;
+  private _internalUiContainer!: HTMLDivElement;
 
   private mode: DiagramEditorMode = 'select';
 
@@ -89,13 +90,50 @@ export class DiagramEditor extends HTMLElement {
 
     this.switchToConnectMode = this.switchToConnectMode.bind(this);
     this.switchConnectModeOff = this.switchConnectModeOff.bind(this);
+    this.showAddDialog = this.showAddDialog.bind(this);
+    this.addDialogStencilTypeClicked = this.addDialogStencilTypeClicked.bind(this);
+    this.hideAddDialog = this.hideAddDialog.bind(this);
+
+    this.addStyles = this.addStyles.bind(this);
 
     this.attachShadow({ mode: 'open' });
+
+    this.addStyles();
   }
 
   private _iid = 0;
   public getNewIId(): number {
     return ++this._iid;
+  }
+
+  private addStyles() {
+    const styleSheet = document.createElement('style');
+    styleSheet.innerHTML = `
+      div.add-item-dialog {
+        pointer-events: auto;
+        background-color: #333;
+        color: #eee;
+        font-size: 1rem;
+        margin: 10px auto;
+        width: 90%;
+        max-width: 500px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      div.add-item-dialog ul {
+        flex-grow: 2;
+      }
+
+      div.add-item-dialog button {
+        background-color: #333;
+        color: #eee;
+        display: block;
+        margin: 10px auto;        
+      }
+    `;
+
+    this.shadowRoot?.appendChild(styleSheet);    
   }
 
   private createLayout() {
@@ -150,6 +188,8 @@ export class DiagramEditor extends HTMLElement {
 
     const button11 = new Button({ icon: checkSVG, command: 'run' });
     block1.appendButton(button11);
+    const addButton = new Button({ text: '+', command: 'add' });
+    block1.appendButton(addButton);
     const button12 = new Button({ text: 'Base', command: 'add-base' });
     block1.appendButton(button12);
     const button121 = new Button({ text: 'Text', command: 'add-text' });
@@ -177,6 +217,10 @@ export class DiagramEditor extends HTMLElement {
     }
 
     switch (ev.detail.button.command) {
+      case 'add': {
+        this.showAddDialog();
+        break;
+      }
       case 'add-base': {
         this.createNewStencil(StencilBase);
         break;
@@ -199,6 +243,49 @@ export class DiagramEditor extends HTMLElement {
       }
     }
     console.log(`'${ev.detail.button.command}' button clicked.`);
+  }
+
+  private _addItemDialog?: HTMLDivElement;
+
+  private showAddDialog() {
+    this._addItemDialog = document.createElement('div');
+    this._addItemDialog.className = 'add-item-dialog';
+    this._addItemDialog.style.pointerEvents = 'auto';
+
+    const stencilTypeList = document.createElement('ul');
+    this._addItemDialog.appendChild(stencilTypeList);
+
+    this._stencilEditorSet.stencilSet.stencilTypes.forEach(st => {
+      const listItem = document.createElement('li');
+      listItem.innerText = st.displayName ?? st.stencilType.title;
+      listItem.setAttribute('data-stencil-type', st.stencilType.typeName);
+      listItem.addEventListener('click', this.addDialogStencilTypeClicked);
+      stencilTypeList.appendChild(listItem);
+    });
+
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'close';
+    closeButton.addEventListener('click', this.hideAddDialog);
+    this._addItemDialog.appendChild(closeButton);
+
+    this._internalUiContainer.appendChild(this._addItemDialog);
+  }
+  
+  private addDialogStencilTypeClicked(ev: MouseEvent) {
+    const listItem = <HTMLLIElement>ev.target;
+
+    const stencilType = listItem.getAttribute('data-stencil-type');
+    if (stencilType) {
+      this.createNewStencil(stencilType);
+    }
+
+    this.hideAddDialog();
+  }
+
+  private hideAddDialog() {
+    if (this._addItemDialog) {
+      this._internalUiContainer.removeChild(this._addItemDialog);
+    }
   }
 
   private switchToConnectMode() {
@@ -244,15 +331,27 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private initOverlay(): void {
-    this.overlayContainer = document.createElement('div');
-    this.overlayContainer.style.position = 'absolute';
-    this.overlayContainer.style.pointerEvents = 'none';
-    this.overlayContainer.style.left = '0px';
-    this.overlayContainer.style.top = '0px';
-    this.overlayContainer.style.width = `${this.width}px`;
-    this.overlayContainer.style.height = `${this.height}px`;
-    this.overlayContainer.style.display = 'flex';
-    this._contentContainer?.appendChild(this.overlayContainer);
+    this._overlayContainer = document.createElement('div');
+    this._overlayContainer.style.position = 'absolute';
+    this._overlayContainer.style.pointerEvents = 'none';
+    this._overlayContainer.style.left = '0px';
+    this._overlayContainer.style.top = '0px';
+    this._overlayContainer.style.width = `${this.width}px`;
+    this._overlayContainer.style.height = `${this.height}px`;
+    this._overlayContainer.style.display = 'flex';
+    this._contentContainer?.appendChild(this._overlayContainer);
+  }
+
+  private initUiLayer(): void {
+    this._internalUiContainer = document.createElement('div');
+    this._internalUiContainer.style.position = 'absolute';
+    this._internalUiContainer.style.pointerEvents = 'none';
+    this._internalUiContainer.style.left = '0px';
+    this._internalUiContainer.style.top = '0px';
+    this._internalUiContainer.style.width = `${this.width}px`;
+    this._internalUiContainer.style.height = `${this.height}px`;
+    this._internalUiContainer.style.display = 'flex';
+    this._contentContainer?.appendChild(this._internalUiContainer);
   }
 
 
@@ -261,6 +360,7 @@ export class DiagramEditor extends HTMLElement {
     this.addToolbar();
     this.addMainCanvas();
     this.initOverlay();
+    this.initUiLayer();
     this.attachEvents();
   }
 
@@ -571,7 +671,7 @@ export class DiagramEditor extends HTMLElement {
     return new editor(
       this.getNewIId(),
       g,
-      this.overlayContainer,
+      this._overlayContainer,
       stencilType,
     );
   }
@@ -584,7 +684,7 @@ export class DiagramEditor extends HTMLElement {
     return new connectorEditorType(
       this.getNewIId(),
       g, 
-      this.overlayContainer,
+      this._overlayContainer,
       connectorType
     );
   }
