@@ -1,10 +1,11 @@
-import { Button, Panel, Toolbar, ToolbarBlock, ButtonEventData } from 'mjs-toolbar';
+import { Button, Panel, Toolbar, ToolbarBlock, ButtonEventData, ContentBlock } from 'mjs-toolbar';
 import { basicStencilEditorSet } from './BasicStencilEditorSet';
 import { ConnectorBase } from './ConnectorBase';
 import { ConnectorBaseEditor } from './ConnectorBaseEditor';
 import { DiagramState } from './DiagramState';
 import { IPoint } from './IPoint';
 import { PortConnector } from './PortConnector';
+import { PropertyPanelBase } from './PropertyPanelBase';
 import { StencilBase } from './StencilBase';
 import { StencilBaseEditor } from './StencilBaseEditor';
 import { SvgHelper } from './SvgHelper';
@@ -66,6 +67,8 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private _stencilEditorSet = basicStencilEditorSet;
+
+  private _toolboxPanel!: Panel;
   
   constructor() {
     super();
@@ -95,6 +98,8 @@ export class DiagramEditor extends HTMLElement {
     this.hideAddDialog = this.hideAddDialog.bind(this);
 
     this.addStyles = this.addStyles.bind(this);
+
+    this.addToolboxPanels = this.addToolboxPanels.bind(this);
 
     this.attachShadow({ mode: 'open' });
 
@@ -131,6 +136,13 @@ export class DiagramEditor extends HTMLElement {
         display: block;
         margin: 10px auto;        
       }
+      mjstb-panel::part(content-block) {
+        background-color: gainsboro;
+        border: 5px solid red;
+      }
+      mjstb-panel::part(content-block):hover {
+          background-color: orangered;
+        }    
     `;
 
     this.shadowRoot?.appendChild(styleSheet);    
@@ -140,6 +152,7 @@ export class DiagramEditor extends HTMLElement {
     this.style.display = 'block';
     this.style.width = '100%';
     this.style.height = '100%';
+    this.style.position = 'relative';
 
     this._container = document.createElement('div');
     this._container.style.display = 'flex';
@@ -164,8 +177,14 @@ export class DiagramEditor extends HTMLElement {
 
     this._toolboxContainer = document.createElement('div');
     this._toolboxContainer.style.display = 'flex';
+    this._toolboxContainer.style.position = 'absolute';
+    this._toolboxContainer.style.right = '0px';
+    this._toolboxContainer.style.top = '0px';
+    this._toolboxContainer.style.minWidth = '200px';
+    this._toolboxContainer.style.maxWidth = '500px';
+    this._toolboxContainer.style.height = '100%';
     this._toolboxContainer.style.backgroundColor = 'cyan';
-    this._container.appendChild(this._toolboxContainer);
+    this._contentContainer.appendChild(this._toolboxContainer);
 
     this._container.setAttribute('part', 'container');
 
@@ -209,6 +228,22 @@ export class DiagramEditor extends HTMLElement {
     panel.appendToolbar(toolbar);
 
     this._toolbarContainer?.appendChild(panel);
+  }
+
+  private addToolbox() {
+    this._toolboxPanel = <Panel>document.createElement('mjstb-panel');
+
+    this._toolboxContainer?.appendChild(this._toolboxPanel);
+  }
+
+  private addToolboxPanels(panels: PropertyPanelBase[]) {
+    this._toolboxPanel.clear();
+    panels.forEach(p => {
+      const cb = new ContentBlock();
+      cb.title = p.title;
+      cb.appendChild(p.getUi());
+      this._toolboxPanel.appendChild(cb);
+    })
   }
 
   private toolbarButtonClicked(ev: CustomEvent<ButtonEventData>) {
@@ -358,6 +393,7 @@ export class DiagramEditor extends HTMLElement {
   private connectedCallback() {
     this.createLayout();
     this.addToolbar();
+    this.addToolbox();
     this.addMainCanvas();
     this.initOverlay();
     this.initUiLayer();
@@ -636,7 +672,7 @@ export class DiagramEditor extends HTMLElement {
         this._currentStencilEditor.deselect();
         // @todo
         // this.toolbar.setCurrentMarker();
-        // this.toolbox.setPanelButtons([]);
+        this.addToolboxPanels([]);
         // @todo
         // if (!this._isResizing) {
         //   this.eventListeners['markerdeselect'].forEach((listener) =>
@@ -652,7 +688,7 @@ export class DiagramEditor extends HTMLElement {
       }
       // @todo
       // this.toolbar.setCurrentMarker(this.currentMarker);
-      // this.toolbox.setPanelButtons(this.currentMarker.toolboxPanels);
+      this.addToolboxPanels(this._currentStencilEditor.propertyPanels);
 
       // if (!this._isResizing) {
       //   this.eventListeners['markerselect'].forEach((listener) =>

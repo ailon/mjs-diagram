@@ -147,11 +147,11 @@ export class StencilBase {
     ]);
   } 
 
-  protected setStrokeColor(color: string): void {
+  public setStrokeColor(color: string): void {
     this.strokeColor = color;
     SvgHelper.setAttributes(this._frame, [['stroke', this.strokeColor]]);
   }
-  protected setFillColor(color: string): void {
+  public setFillColor(color: string): void {
     this.fillColor = color;
     SvgHelper.setAttributes(this._frame, [['fill', this.fillColor]]);
   }

@@ -1,6 +1,8 @@
+import { ColorPickerPanel } from './ColorPickerPanel';
 import { IPoint } from './IPoint';
 import { PortLocation } from './Port';
 import { PortConnector } from "./PortConnector";
+import { PropertyPanelBase } from './PropertyPanelBase';
 import { GripLocation, ResizeGrip } from './ResizeGrip';
 import { StencilBase } from './StencilBase';
 import { StencilBaseState } from './StencilBaseState';
@@ -51,6 +53,9 @@ export class StencilBaseEditor {
 
   protected _portBox = SvgHelper.createGroup();
 
+  private strokePanel: ColorPickerPanel;
+  private fillPanel: ColorPickerPanel;
+
   constructor(
     iid: number,
     container: SVGGElement,
@@ -66,6 +71,20 @@ export class StencilBaseEditor {
 
     this.setupPortBox();
     this.setupControlBox();
+
+    this.strokePanel = new ColorPickerPanel(
+      'Line color',
+      ['red', 'blue', 'green'],
+      'blue'
+    );
+    this.strokePanel.onColorChanged = this._stencil.setStrokeColor;
+
+    this.fillPanel = new ColorPickerPanel(
+      'Fill color',
+      ['#cccccc', '#ffcccc', '#ccffcc', '#ccccff', 'transparent'],
+      'blue'
+    );
+    this.fillPanel.onColorChanged = this._stencil.setFillColor;
 
     this.findGripByVisual = this.findGripByVisual.bind(this);
     this.ownsTarget = this.ownsTarget.bind(this);
@@ -533,6 +552,10 @@ export class StencilBaseEditor {
     this.container.style.cursor = 'default';
     this._isSelected = false;
     this._controlBox.style.display = 'none';    
+  }
+
+  public get propertyPanels(): PropertyPanelBase[] {
+    return [this.strokePanel, this.fillPanel];
   }
 
   public restoreState(state: StencilBaseState): void {
