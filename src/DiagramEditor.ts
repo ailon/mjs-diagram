@@ -1,15 +1,15 @@
 import { Button, Panel, Toolbar, ToolbarBlock, ButtonEventData, ContentBlock } from 'mjs-toolbar';
-import { basicStencilEditorSet } from './BasicStencilEditorSet';
-import { ConnectorBase } from './ConnectorBase';
-import { ConnectorBaseEditor } from './ConnectorBaseEditor';
-import { DiagramState } from './DiagramState';
-import { IPoint } from './IPoint';
-import { PortConnector } from './PortConnector';
-import { PropertyPanelBase } from './PropertyPanelBase';
-import { StencilBase } from './StencilBase';
-import { StencilBaseEditor } from './StencilBaseEditor';
-import { SvgHelper } from './SvgHelper';
-import { TextStencil } from './TextStencil';
+import { basicStencilEditorSet } from './editor/BasicStencilEditorSet';
+import { ConnectorBase } from './core/ConnectorBase';
+import { ConnectorBaseEditor } from './editor/ConnectorBaseEditor';
+import { DiagramState } from './core/DiagramState';
+import { IPoint } from './core/IPoint';
+import { PortConnector } from './editor/PortConnector';
+import { PropertyPanelBase } from './editor/panels/PropertyPanelBase';
+import { StencilBase } from './core/StencilBase';
+import { StencilBaseEditor } from './editor/StencilBaseEditor';
+import { SvgHelper } from './core/SvgHelper';
+import { TextStencil } from './core/TextStencil';
 
 export type DiagramEditorMode = 'select' | 'connect';
 

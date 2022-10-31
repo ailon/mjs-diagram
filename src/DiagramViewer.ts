@@ -1,9 +1,9 @@
-import { basicStencilSet } from './BasicStencilSet';
-import { ConnectorBase } from './ConnectorBase';
-import { DiagramState } from './DiagramState';
-import { IPoint } from './IPoint';
-import { StencilBase } from './StencilBase';
-import { SvgHelper } from './SvgHelper';
+import { basicStencilSet } from './core/BasicStencilSet';
+import { ConnectorBase } from './core/ConnectorBase';
+import { DiagramState } from './core/DiagramState';
+import { IPoint } from './core/IPoint';
+import { StencilBase } from './core/StencilBase';
+import { SvgHelper } from './core/SvgHelper';
 
 export class DiagramViewer extends HTMLElement {
   private _container?: HTMLDivElement;

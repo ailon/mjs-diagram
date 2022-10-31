@@ -1,12 +1,12 @@
-import { ColorPickerPanel } from './ColorPickerPanel';
-import { IPoint } from './IPoint';
-import { PortLocation } from './Port';
+import { ColorPickerPanel } from './panels/ColorPickerPanel';
+import { IPoint } from '../core/IPoint';
+import { PortLocation } from '../core/Port';
 import { PortConnector } from "./PortConnector";
-import { PropertyPanelBase } from './PropertyPanelBase';
+import { PropertyPanelBase } from './panels/PropertyPanelBase';
 import { GripLocation, ResizeGrip } from './ResizeGrip';
-import { StencilBase } from './StencilBase';
-import { StencilBaseState } from './StencilBaseState';
-import { SvgHelper } from './SvgHelper';
+import { StencilBase } from '../core/StencilBase';
+import { StencilBaseState } from '../core/StencilBaseState';
+import { SvgHelper } from '../core/SvgHelper';
 
 export type StencilEditorState = 'new' | 'creating' | 'select' | 'move' | 'resize' | 'edit' | 'connect';
 

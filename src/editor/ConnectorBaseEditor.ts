@@ -1,7 +1,7 @@
-import { ConnectorBase } from './ConnectorBase';
-import { IPoint } from './IPoint';
+import { ConnectorBase } from '../core/ConnectorBase';
+import { IPoint } from '../core/IPoint';
 import { ResizeGrip } from './ResizeGrip';
-import { SvgHelper } from './SvgHelper';
+import { SvgHelper } from '../core/SvgHelper';
 
 export type ConnectorState = 'new' | 'creating' | 'select' | 'move';
 

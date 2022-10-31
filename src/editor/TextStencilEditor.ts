@@ -1,6 +1,6 @@
-import { IPoint } from './IPoint';
+import { IPoint } from '../core/IPoint';
 import { StencilBaseEditor } from './StencilBaseEditor';
-import { TextStencil } from './TextStencil';
+import { TextStencil } from '../core/TextStencil';
 
 export class TextStencilEditor extends StencilBaseEditor {
   public get stencil(): TextStencil {

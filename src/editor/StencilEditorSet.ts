@@ -1,8 +1,8 @@
-import { ConnectorBase } from './ConnectorBase';
+import { ConnectorBase } from '../core/ConnectorBase';
 import { ConnectorBaseEditor } from './ConnectorBaseEditor';
-import { StencilBase } from './StencilBase';
+import { StencilBase } from '../core/StencilBase';
 import { StencilBaseEditor } from './StencilBaseEditor';
-import { IStencilSet, StencilSet } from './StencilSet';
+import { IStencilSet, StencilSet } from '../core/StencilSet';
 
 export interface IStencilEditorSet {
   stencilSet: StencilSet;
