@@ -1,5 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { DiagramEditor, DiagramState, DiagramViewer } from '../../src/index';
+import { DiagramEditor } from '../../src/editor_index';
+import { DiagramState, DiagramViewer } from '../../src/viewer_index';
 
 export * from './../../src/index';
 
