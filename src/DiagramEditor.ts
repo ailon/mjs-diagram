@@ -136,6 +136,28 @@ export class DiagramEditor extends HTMLElement {
         display: block;
         margin: 10px auto;        
       }
+
+      mjstb-panel.toolbar-panel::part(panel) {
+        background-color: #333;
+        border-bottom: 2px solid #383838;
+      }
+      mjstb-panel.toolbar-panel::part(toolbar) {
+        padding: 5px;
+        justify-content: space-between;
+      }
+      mjstb-panel.toolbar-panel::part(toolbar-block) {
+        margin-right: 5px;
+      }
+      mjstb-panel.toolbar-panel::part(button) {
+        width: 36px;
+        height: 36px;
+        border-radius: 3px;
+        border: 2px solid #333;
+      }
+      mjstb-panel.toolbar-panel::part(button):hover {
+        background-color: #383838;
+        border-color: #222;
+      }
       mjstb-panel::part(content-block) {
         background-color: gainsboro;
         border: 5px solid red;
@@ -197,6 +219,7 @@ export class DiagramEditor extends HTMLElement {
 
   private addToolbar() {
     const panel = <Panel>document.createElement('mjstb-panel');
+    panel.className = 'toolbar-panel';
     panel.style.width = '100%';
 
     const toolbar = new Toolbar();
