@@ -74,7 +74,7 @@ export class StencilBaseEditor {
 
     this.strokePanel = new ColorPickerPanel(
       'Line color',
-      ['red', 'blue', 'green'],
+      ['red', 'orange', 'yellow', 'green', 'lightblue', 'blue', 'magenta', 'black', 'white', 'brown'],
       'blue'
     );
     this.strokePanel.onColorChanged = this._stencil.setStrokeColor;

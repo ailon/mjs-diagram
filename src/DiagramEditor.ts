@@ -137,8 +137,13 @@ export class DiagramEditor extends HTMLElement {
         margin: 10px auto;        
       }
 
+      mjstb-panel {
+        --i-mjstb-accent-color: var(--mjstb-accent-color, #cceeff);
+        --i-mjstb-background-color: var(--mjstb-background-color, #333);
+      }
+
       mjstb-panel.toolbar-panel::part(panel) {
-        background-color: #333;
+        background-color: var(--i-mjstb-background-color);
         border-bottom: 2px solid #383838;
       }
       mjstb-panel.toolbar-panel::part(toolbar) {
@@ -157,12 +162,32 @@ export class DiagramEditor extends HTMLElement {
         background-color: #383838;
         border-color: #222;
       }
-      mjstb-panel::part(content-block) {
-        background-color: gainsboro;
-        border: 5px solid red;
+
+      mjstb-panel.toolbox-panel {
+        width: 100%;
+      }
+      mjstb-panel.toolbox-panel::part(panel) {
+        background-color: #333;
+        border-left: 2px solid #383838;
+      }
+      mjstb-panel.toolbox-panel::part(content-block) {
+        background-color: #333;
+        padding: 5px;
+        border: 2px solid #444;
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      mjstb-panel.toolbox-panel::part(content-block-title) {
+        margin: -5px;
+        margin-bottom: 5px;
+        padding: 5px;
+        border-bottom: 1px solid #444;
+        color: #ccc;
+        font-family: Helvetica, Arial, Sans-Serif;
+        font-size: 0.8rem;
       }
       mjstb-panel::part(content-block):hover {
-          background-color: orangered;
+        border-color: #555;
       }    
       
       mjstb-toolbar {
@@ -201,12 +226,12 @@ export class DiagramEditor extends HTMLElement {
     this._container.appendChild(this._contentContainer);
 
     this._toolboxContainer = document.createElement('div');
-    this._toolboxContainer.style.display = 'flex';
+    this._toolboxContainer.style.display = 'none'; //'flex';
     this._toolboxContainer.style.position = 'absolute';
     this._toolboxContainer.style.right = '0px';
     this._toolboxContainer.style.top = '0px';
     this._toolboxContainer.style.minWidth = '200px';
-    this._toolboxContainer.style.maxWidth = '500px';
+    this._toolboxContainer.style.maxWidth = '250px';
     this._toolboxContainer.style.height = '100%';
     this._toolboxContainer.style.backgroundColor = 'cyan';
     this._contentContainer.appendChild(this._toolboxContainer);
@@ -293,12 +318,16 @@ export class DiagramEditor extends HTMLElement {
 
   private addToolbox() {
     this._toolboxPanel = <Panel>document.createElement('mjstb-panel');
+    this._toolboxPanel.className = 'toolbox-panel';
 
     this._toolboxContainer?.appendChild(this._toolboxPanel);
   }
 
   private addToolboxPanels(panels: PropertyPanelBase[]) {
     this._toolboxPanel.clear();
+    if (this._toolboxContainer !== undefined) {
+      this._toolboxContainer.style.display = panels.length > 0 ? 'flex' : 'none';
+    }
     panels.forEach(p => {
       const cb = new ContentBlock();
       cb.title = p.title;
