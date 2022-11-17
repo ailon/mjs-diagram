@@ -146,7 +146,6 @@ export class DiagramEditor extends HTMLElement {
         justify-content: space-between;
       }
       mjstb-panel.toolbar-panel::part(toolbar-block) {
-        margin-right: 5px;
       }
       mjstb-panel.toolbar-panel::part(button) {
         width: 36px;
