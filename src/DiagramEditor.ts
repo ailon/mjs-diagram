@@ -25,6 +25,7 @@ export class DiagramEditor extends HTMLElement {
   private _container?: HTMLDivElement;
   private _toolbarContainer?: HTMLDivElement;
   private _contentContainer?: HTMLDivElement;
+  private _canvasContainer?: HTMLDivElement;
   private _toolboxContainer?: HTMLDivElement;
 
   private _overlayContainer!: HTMLDivElement;
@@ -43,27 +44,27 @@ export class DiagramEditor extends HTMLElement {
   private _currentConnectorEditor?: ConnectorBaseEditor;
   private _connectorEditors: ConnectorBaseEditor[] = [];
 
-  public zoomSteps = [1, 1.5, 2, 4];
+  public zoomSteps = [0.5, 0.8, 1, 1.5, 2, 4];
   private _zoomLevel = 1;
   public get zoomLevel(): number {
     return this._zoomLevel;
   }
   public set zoomLevel(value: number) {
     this._zoomLevel = value;
-    // @todo
-    // if (this.editorCanvas && this.contentDiv) {
-    //   this.editorCanvas.style.transform = `scale(${this._zoomLevel})`;
-    //   this.contentDiv.scrollTo({
-    //     left:
-    //       (this.editorCanvas.clientWidth * this._zoomLevel -
-    //         this.contentDiv.clientWidth) /
-    //       2,
-    //     top:
-    //       (this.editorCanvas.clientHeight * this._zoomLevel -
-    //         this.contentDiv.clientHeight) /
-    //       2,
-    //   });
-    // }
+    if (this._canvasContainer && this._contentContainer && this._mainCanvas) {
+      this._mainCanvas.style.transform = `scale(${this._zoomLevel})`;
+      // @todo scroll to selected object or center
+      // this._canvasContainer.scrollTo({
+      //   left:
+      //     (this._mainCanvas.clientWidth * this._zoomLevel -
+      //       this._canvasContainer.clientWidth) /
+      //     2,
+      //   top:
+      //     (this._mainCanvas.clientHeight * this._zoomLevel -
+      //       this._canvasContainer.clientHeight) /
+      //     2,
+      // });
+    }
   }
 
   private _stencilEditorSet = basicStencilEditorSet;
@@ -100,6 +101,8 @@ export class DiagramEditor extends HTMLElement {
     this.addStyles = this.addStyles.bind(this);
 
     this.addToolboxPanels = this.addToolboxPanels.bind(this);
+
+    this.zoom = this.zoom.bind(this);
 
     this.attachShadow({ mode: 'open' });
 
@@ -223,17 +226,31 @@ export class DiagramEditor extends HTMLElement {
     this._contentContainer.style.flexGrow = '2';
     this._contentContainer.style.flexShrink = '1';
     this._contentContainer.style.backgroundColor = 'magenta';
+    this._contentContainer.style.overflow = 'hidden';
     this._container.appendChild(this._contentContainer);
+
+    this._canvasContainer = document.createElement('div');
+    this._canvasContainer.style.display = 'grid';
+    this._canvasContainer.style.flexGrow = '2';
+    this._canvasContainer.style.flexShrink = '2';
+    this._canvasContainer.style.backgroundColor = '#aaa';
+    this._canvasContainer.style.justifyContent = 'center';
+    this._canvasContainer.style.alignItems = 'center';
+    this._canvasContainer.style.overflow = 'auto';
+    this._contentContainer.appendChild(this._canvasContainer);
 
     this._toolboxContainer = document.createElement('div');
     this._toolboxContainer.style.display = 'none'; //'flex';
-    this._toolboxContainer.style.position = 'absolute';
-    this._toolboxContainer.style.right = '0px';
-    this._toolboxContainer.style.top = '0px';
+    // this._toolboxContainer.style.position = 'absolute';
+    // this._toolboxContainer.style.right = '0px';
+    // this._toolboxContainer.style.top = '0px';
     this._toolboxContainer.style.minWidth = '200px';
     this._toolboxContainer.style.maxWidth = '250px';
     this._toolboxContainer.style.height = '100%';
     this._toolboxContainer.style.backgroundColor = 'cyan';
+    this._toolboxContainer.style.zIndex = '10';
+    this._toolboxContainer.style.filter = 'drop-shadow(-2px 0px 4px #333)';
+
     this._contentContainer.appendChild(this._toolboxContainer);
 
     this._container.setAttribute('part', 'container');
@@ -366,6 +383,18 @@ export class DiagramEditor extends HTMLElement {
         );        
         break;
       }
+      case 'zoomin': {
+        this.zoom(1);
+        break;
+      }
+      case 'zoomout': {
+        this.zoom(-1);
+        break;
+      }
+      case 'zoomreset': {
+        this.zoom(0);
+        break;
+      }
     }
     console.log(`'${ev.detail.button.command}' button clicked.`);
   }
@@ -427,6 +456,9 @@ export class DiagramEditor extends HTMLElement {
   private width = 0;
   private height = 0;
 
+  private documentWidth = 640;
+  private documentHeight = 360;
+
   private addMainCanvas() {
     this.width = this._contentContainer?.clientWidth || 0;
     this.height = this._contentContainer?.clientHeight || 0;
@@ -436,13 +468,16 @@ export class DiagramEditor extends HTMLElement {
       'svg'
     );
     this._mainCanvas.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    this._mainCanvas.setAttribute('width', this.width.toString());
-    this._mainCanvas.setAttribute('height', this.height.toString());
+    this._mainCanvas.setAttribute('width', this.documentWidth.toString());
+    this._mainCanvas.setAttribute('height', this.documentHeight.toString());
     this._mainCanvas.setAttribute(
       'viewBox',
-      '0 0 ' + this.width.toString() + ' ' + this.height.toString()
+      '0 0 ' + this.documentWidth.toString() + ' ' + this.documentHeight.toString()
     );
     this._mainCanvas.style.pointerEvents = 'auto';
+    this._mainCanvas.style.backgroundColor = 'white';
+    this._mainCanvas.style.filter = 'drop-shadow(2px 2px 8px #333)';
+    this._mainCanvas.style.transform = `scale(${this._zoomLevel})`;
 
     this._groupLayer = SvgHelper.createGroup();
     this._connectorLayer = SvgHelper.createGroup();
@@ -452,7 +487,7 @@ export class DiagramEditor extends HTMLElement {
     this._mainCanvas.appendChild(this._connectorLayer);
     this._mainCanvas.appendChild(this._objectLayer);
 
-    this._contentContainer?.appendChild(this._mainCanvas);
+    this._canvasContainer?.appendChild(this._mainCanvas);
   }
 
   private initOverlay(): void {
@@ -894,5 +929,16 @@ export class DiagramEditor extends HTMLElement {
         }
       }
     });
+  }
+
+  public zoom(factor: number): void {
+    const currentLevelIndex = this.zoomSteps.indexOf(this.zoomLevel);
+    if (factor === 0 || currentLevelIndex === -1) {
+      this.zoomLevel = 1;
+    } else if (factor > 0 && (currentLevelIndex < this.zoomSteps.length - 1)) {
+      this.zoomLevel = this.zoomSteps[currentLevelIndex + 1];
+    } else if (factor < 0 && currentLevelIndex > 0) {
+      this.zoomLevel = this.zoomSteps[currentLevelIndex - 1];
+    }
   }
 }
