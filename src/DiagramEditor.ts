@@ -29,6 +29,7 @@ export class DiagramEditor extends HTMLElement {
   private _toolboxContainer?: HTMLDivElement;
 
   private _overlayContainer!: HTMLDivElement;
+  private _overlayContentContainer!: HTMLDivElement;
   private _internalUiContainer!: HTMLDivElement;
 
   private mode: DiagramEditorMode = 'select';
@@ -231,10 +232,11 @@ export class DiagramEditor extends HTMLElement {
 
     this._canvasContainer = document.createElement('div');
     this._canvasContainer.style.display = 'grid';
+    this._canvasContainer.style.gridTemplateColumns = '1fr';
     this._canvasContainer.style.flexGrow = '2';
     this._canvasContainer.style.flexShrink = '2';
     this._canvasContainer.style.backgroundColor = '#aaa';
-    this._canvasContainer.style.justifyContent = 'center';
+    this._canvasContainer.style.justifyItems = 'center';
     this._canvasContainer.style.alignItems = 'center';
     this._canvasContainer.style.overflow = 'auto';
     this._contentContainer.appendChild(this._canvasContainer);
@@ -474,6 +476,8 @@ export class DiagramEditor extends HTMLElement {
       'viewBox',
       '0 0 ' + this.documentWidth.toString() + ' ' + this.documentHeight.toString()
     );
+    this._mainCanvas.style.gridColumnStart = '1';
+    this._mainCanvas.style.gridRowStart = '1';
     this._mainCanvas.style.pointerEvents = 'auto';
     this._mainCanvas.style.backgroundColor = 'white';
     this._mainCanvas.style.filter = 'drop-shadow(2px 2px 8px #333)';
@@ -492,14 +496,32 @@ export class DiagramEditor extends HTMLElement {
 
   private initOverlay(): void {
     this._overlayContainer = document.createElement('div');
-    this._overlayContainer.style.position = 'absolute';
+    // this._overlayContainer.style.position = 'absolute';
     this._overlayContainer.style.pointerEvents = 'none';
-    this._overlayContainer.style.left = '0px';
-    this._overlayContainer.style.top = '0px';
-    this._overlayContainer.style.width = `${this.width}px`;
-    this._overlayContainer.style.height = `${this.height}px`;
+    // this._overlayContainer.style.left = '0px';
+    // this._overlayContainer.style.top = '0px';
+    // if (this._mainCanvas !== undefined) {
+    //   const canvasPosition = this._mainCanvas.getBBox();
+    //   this._overlayContainer.style.left = `${canvasPosition.left}px`;
+    //   this._overlayContainer.style.top = `${canvasPosition.top}px`;
+    // }
+    // this._overlayContainer.style.width = `${this.width}px`;
+    // this._overlayContainer.style.height = `${this.height}px`;
     this._overlayContainer.style.display = 'flex';
-    this._contentContainer?.appendChild(this._overlayContainer);
+    this._overlayContainer.style.alignItems = 'center';
+    this._overlayContainer.style.justifyContent = 'center';
+    this._overlayContainer.style.gridRowStart = '1';
+    this._overlayContainer.style.gridColumnStart = '1';
+
+    this._canvasContainer?.appendChild(this._overlayContainer);
+
+    this._overlayContentContainer = document.createElement('div');
+    this._overlayContentContainer.style.position = 'relative';
+    this._overlayContentContainer.style.width = `${this.documentWidth}px`;
+    this._overlayContentContainer.style.height = `${this.documentHeight}px`;
+    this._overlayContentContainer.style.border = `1px solid red`;
+    this._overlayContainer.appendChild(this._overlayContentContainer);
+
   }
 
   private initUiLayer(): void {
@@ -832,7 +854,7 @@ export class DiagramEditor extends HTMLElement {
     return new editor(
       this.getNewIId(),
       g,
-      this._overlayContainer,
+      this._overlayContentContainer,
       stencilType,
     );
   }
@@ -845,7 +867,7 @@ export class DiagramEditor extends HTMLElement {
     return new connectorEditorType(
       this.getNewIId(),
       g, 
-      this._overlayContainer,
+      this._overlayContentContainer,
       connectorType
     );
   }

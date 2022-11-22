@@ -300,4 +300,23 @@ export class SvgHelper {
 
     return path;
   }
+
+  /**
+   * Creaes an SVG text element.
+   * @param attributes - additional attributes.
+   */
+   public static createForeignObject(
+    attributes?: Array<[string, string]>
+  ): SVGForeignObjectElement {
+    const obj = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+    obj.setAttribute('x', '0');
+    obj.setAttribute('y', '0');
+
+    if (attributes) {
+      SvgHelper.setAttributes(obj, attributes);
+    }
+
+    return obj;
+  }
+
 }

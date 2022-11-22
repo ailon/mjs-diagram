@@ -65,7 +65,7 @@ export class TextStencilEditor extends StencilBaseEditor {
     super.resize(point);
     this.isMoved = true;
     this.setSize();
-    this.stencil.sizeText();
+    // this.stencil.sizeText();
   }
 
   public pointerUp(point: IPoint): void {
@@ -99,6 +99,10 @@ export class TextStencilEditor extends StencilBaseEditor {
 
     this.textEditor = document.createElement('div');
     this.textEditor.style.position = 'absolute';
+    this.textEditor.style.width = `${this.stencil.width}px`;
+    this.textEditor.style.height = `${this.stencil.height}px`;
+    this.textEditor.style.overflowY = 'scroll';
+    this.textEditor.style.textAlign = 'center';
     this.textEditor.style.fontFamily = this.stencil.fontFamily;
     this.textEditor.style.lineHeight = '1em';
     this.textEditor.innerText = this.stencil.text;
@@ -109,17 +113,17 @@ export class TextStencilEditor extends StencilBaseEditor {
     this.textEditor.addEventListener('pointerup', (ev) => {
       ev.stopPropagation();
     });
-    this.textEditor.addEventListener('input', () => {
-      let fontSize = Number.parseFloat(this.textEditor.style.fontSize);
-      while (
-        this.textEditor.clientWidth >=
-          Number.parseInt(this.textEditor.style.maxWidth) &&
-        fontSize > 0.9
-      ) {
-        fontSize -= 0.1;
-        this.textEditor.style.fontSize = `${Math.max(fontSize, 0.9)}em`;
-      }
-    });
+    // this.textEditor.addEventListener('input', () => {
+    //   let fontSize = Number.parseFloat(this.textEditor.style.fontSize);
+    //   while (
+    //     this.textEditor.clientWidth >=
+    //       Number.parseInt(this.textEditor.style.maxWidth) &&
+    //     fontSize > 0.9
+    //   ) {
+    //     fontSize -= 0.1;
+    //     this.textEditor.style.fontSize = `${Math.max(fontSize, 0.9)}em`;
+    //   }
+    // });
     this.textEditor.addEventListener('keyup', (ev) => {
       ev.cancelBubble = true;
     });
@@ -153,7 +157,7 @@ export class TextStencilEditor extends StencilBaseEditor {
         this.showTextEditor();
       } else {
         this.stencil.textElement.style.display = '';
-        const textScale = this.stencil.getTextScale();
+        const textScale = 1; // this.stencil.getTextScale();
         const rPosition = {
           x: this.stencil.left + this.stencil.width / 2,
           y: this.stencil.top + this.stencil.height / 2,
@@ -168,9 +172,11 @@ export class TextStencilEditor extends StencilBaseEditor {
 
         this.textEditor.style.top = `${rPosition.y}px`;
         this.textEditor.style.left = `${rPosition.x}px`;
-        this.textEditor.style.maxWidth = `${
-          this.overlayContainer.offsetWidth - rPosition.x
-        }px`;
+        this.textEditor.style.maxWidth = `${this.stencil.width}px`;
+        this.textEditor.style.maxHeight = `${this.stencil.height}px`;
+        // this.textEditor.style.maxWidth = `${
+        //   this.overlayContainer.offsetWidth - rPosition.x
+        // }px`;
         this.textEditor.style.fontSize = `${Math.max(16 * textScale, 12)}px`;
         this.stencil.textElement.style.display = 'none';
       }
