@@ -157,27 +157,27 @@ export class TextStencilEditor extends StencilBaseEditor {
         this.showTextEditor();
       } else {
         this.stencil.textElement.style.display = '';
-        const textScale = 1; // this.stencil.getTextScale();
-        const rPosition = {
-          x: this.stencil.left + this.stencil.width / 2,
-          y: this.stencil.top + this.stencil.height / 2,
-        };
-        const textSize = this.stencil.textElement.getBBox();
-        const rWH = {
-          x: textSize.width * textScale,
-          y: textSize.height * textScale,
-        };
-        rPosition.x -= rWH.x / 2;
-        rPosition.y -= rWH.y / 2;
+        // const textScale = 1; // this.stencil.getTextScale();
+        // const rPosition = {
+        //   x: this.stencil.left + this.stencil.width / 2,
+        //   y: this.stencil.top + this.stencil.height / 2,
+        // };
+        // const textSize = this.stencil.textElement.getBBox();
+        // const rWH = {
+        //   x: textSize.width * textScale,
+        //   y: textSize.height * textScale,
+        // };
+        // rPosition.x -= rWH.x / 2;
+        // rPosition.y -= rWH.y / 2;
 
-        this.textEditor.style.top = `${rPosition.y}px`;
-        this.textEditor.style.left = `${rPosition.x}px`;
-        this.textEditor.style.maxWidth = `${this.stencil.width}px`;
-        this.textEditor.style.maxHeight = `${this.stencil.height}px`;
+        this.textEditor.style.top = `${this.stencil.top + this.stencil.textBoundingBox.top}px`;
+        this.textEditor.style.left = `${this.stencil.left + this.stencil.textBoundingBox.left}px`;
+        this.textEditor.style.maxWidth = `${this.stencil.textBoundingBox.width}px`;
+        this.textEditor.style.maxHeight = `${this.stencil.textBoundingBox.height}px`;
         // this.textEditor.style.maxWidth = `${
         //   this.overlayContainer.offsetWidth - rPosition.x
         // }px`;
-        this.textEditor.style.fontSize = `${Math.max(16 * textScale, 12)}px`;
+        this.textEditor.style.fontSize = `1rem`; // @todo - configurable in stencil
         this.stencil.textElement.style.display = 'none';
       }
     }

@@ -15,6 +15,8 @@ export class TextStencil extends StencilBase {
 
   protected padding = 5;
 
+  public textBoundingBox: DOMRect;
+
   public textElement!: SVGForeignObjectElement;
   public textContainer!: HTMLDivElement;
 
@@ -25,6 +27,8 @@ export class TextStencil extends StencilBase {
     this.setFont = this.setFont.bind(this);
     this.renderText = this.renderText.bind(this);
     this.setSize = this.setSize.bind(this);
+
+    this.textBoundingBox = new DOMRect();
   }
 
   public ownsTarget(el: EventTarget): boolean {
@@ -49,10 +53,10 @@ export class TextStencil extends StencilBase {
     super.createVisual();
 
     this.textElement = SvgHelper.createForeignObject([
-      ['x', '0'],
-      ['y', '0'],
-      ['width', this.width.toString()],
-      ['height', this.height.toString()],
+      ['x', this.textBoundingBox.x.toString()],
+      ['y', this.textBoundingBox.y.toString()],
+      ['width', this.textBoundingBox.width.toString()],
+      ['height', this.textBoundingBox.height.toString()],
     ]);
     this.textElement.transform.baseVal.appendItem(SvgHelper.createTransform()); // translate transorm
     this.textElement.transform.baseVal.appendItem(SvgHelper.createTransform()); // scale transorm
@@ -71,7 +75,21 @@ export class TextStencil extends StencilBase {
     this.textElement.appendChild(this.textContainer);
 
     this.renderText();
-  }  
+  } 
+  
+  protected setTextBoundingBox() {
+    this.textBoundingBox.x = this.padding;
+    this.textBoundingBox.y = this.padding;
+    this.textBoundingBox.width = this.width - this.padding * 2;
+    this.textBoundingBox.height = this.height - this.padding * 2;
+
+    SvgHelper.setAttributes(this.textElement, [
+      ['x', this.textBoundingBox.x.toString()],
+      ['y', this.textBoundingBox.y.toString()],
+      ['width', this.textBoundingBox.width.toString()],
+      ['height', this.textBoundingBox.height.toString()],
+    ]);
+  }
 
   public setSize(): void {
     super.setSize();
@@ -79,14 +97,12 @@ export class TextStencil extends StencilBase {
       ['width', this.width.toString()],
       ['height', this.height.toString()],
     ]);
+    this.setTextBoundingBox();
   }
 
   public renderText() {
     this.textContainer.innerText = this.text;
-    SvgHelper.setAttributes(this.textElement, [
-      ['width', this.width.toString()],
-      ['height', this.height.toString()],
-    ]);
+    this.setSize();
   }
 
   public setColor(color: string): void {
