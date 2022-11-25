@@ -597,6 +597,7 @@ export class DiagramEditor extends HTMLElement {
     this._overlayContentContainer.style.position = 'relative';
     this._overlayContentContainer.style.width = `${this.documentWidth}px`;
     this._overlayContentContainer.style.height = `${this.documentHeight}px`;
+    this._overlayContentContainer.style.display = 'flex';
     this._overlayContainer.appendChild(this._overlayContentContainer);
   }
 
