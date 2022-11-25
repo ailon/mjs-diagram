@@ -1,14 +1,22 @@
 import { ColorPickerPanel } from './panels/ColorPickerPanel';
 import { IPoint } from '../core/IPoint';
 import { PortLocation } from '../core/Port';
-import { PortConnector } from "./PortConnector";
+import { PortConnector } from './PortConnector';
 import { PropertyPanelBase } from './panels/PropertyPanelBase';
 import { GripLocation, ResizeGrip } from './ResizeGrip';
 import { StencilBase } from '../core/StencilBase';
 import { StencilBaseState } from '../core/StencilBaseState';
 import { SvgHelper } from '../core/SvgHelper';
 
-export type StencilEditorState = 'new' | 'creating' | 'select' | 'move' | 'resize' | 'edit' | 'connect';
+export type StencilEditorState =
+  | 'new'
+  | 'creating'
+  | 'select'
+  | 'focus'
+  | 'move'
+  | 'resize'
+  | 'edit'
+  | 'connect';
 
 export class StencilBaseEditor {
   // @todo switch type to use the generic
@@ -48,6 +56,7 @@ export class StencilBaseEditor {
   protected portConnectors = new Map<PortLocation, PortConnector>();
 
   protected _controlBox = SvgHelper.createGroup();
+  protected _gripBox = SvgHelper.createGroup();
   private readonly CB_DISTANCE: number = 10;
   private _controlRect?: SVGRectElement;
 
@@ -74,7 +83,18 @@ export class StencilBaseEditor {
 
     this.strokePanel = new ColorPickerPanel(
       'Line color',
-      ['red', 'orange', 'yellow', 'green', 'lightblue', 'blue', 'magenta', 'black', 'white', 'brown'],
+      [
+        'red',
+        'orange',
+        'yellow',
+        'green',
+        'lightblue',
+        'blue',
+        'magenta',
+        'black',
+        'white',
+        'brown',
+      ],
       'blue'
     );
     this.strokePanel.onColorChanged = this._stencil.setStrokeColor;
@@ -88,7 +108,7 @@ export class StencilBaseEditor {
 
     this.findGripByVisual = this.findGripByVisual.bind(this);
     this.ownsTarget = this.ownsTarget.bind(this);
-    
+
     this.switchToConnectMode = this.switchToConnectMode.bind(this);
     this.switchConnectModeOff = this.switchConnectModeOff.bind(this);
 
@@ -105,6 +125,11 @@ export class StencilBaseEditor {
     this.showPortBox = this.showPortBox.bind(this);
     this.adjustControlBox = this.adjustControlBox.bind(this);
     this.adjustPortBox = this.adjustPortBox.bind(this);
+
+    this.select = this.select.bind(this);
+    this.deselect = this.deselect.bind(this);
+    this.focus = this.focus.bind(this);
+    this.blur = this.blur.bind(this);
   }
 
   public ownsTarget(el: EventTarget | null): boolean {
@@ -194,10 +219,12 @@ export class StencilBaseEditor {
   }
 
   private addResizeGrips() {
+    this._controlBox.appendChild(this._gripBox);
+
     this.resizeGrips.forEach((grip) => {
       if (grip.enabled) {
         grip.visual.transform.baseVal.appendItem(SvgHelper.createTransform());
-        this._controlBox.appendChild(grip.visual);
+        this._gripBox.appendChild(grip.visual);
       }
     });
 
@@ -252,7 +279,7 @@ export class StencilBaseEditor {
   private positionPorts() {
     if (this._stencil) {
       this._stencil.positionPorts();
-      this.portConnectors.forEach(pc => pc.adjustVisual());
+      this.portConnectors.forEach((pc) => pc.adjustVisual());
     }
   }
 
@@ -305,10 +332,7 @@ export class StencilBaseEditor {
   private adjustPortBox() {
     if (this._stencil !== undefined) {
       const translate = this._portBox.transform.baseVal.getItem(0);
-      translate.setTranslate(
-        this._stencil.left,
-        this._stencil.top
-      );
+      translate.setTranslate(this._stencil.left, this._stencil.top);
       this._portBox.transform.baseVal.replaceItem(translate, 0);
       this.positionPorts();
     }
@@ -338,38 +362,37 @@ export class StencilBaseEditor {
   /**
    * x coordinate of the top-left corner at the start of manipulation.
    */
-   protected manipulationStartLeft = 0;
-   /**
-    * y coordinate of the top-left corner at the start of manipulation.
-    */
-   protected manipulationStartTop = 0;
-   /**
-    * Width at the start of manipulation.
-    */
-   protected manipulationStartWidth = 0;
-   /**
-    * Height at the start of manipulation.
-    */
-   protected manipulationStartHeight = 0;
- 
-   /**
-    * x coordinate of the pointer at the start of manipulation.
-    */
-   protected manipulationStartX = 0;
-   /**
-    * y coordinate of the pointer at the start of manipulation.
-    */
-   protected manipulationStartY = 0;
- 
-   /**
-    * Pointer's horizontal distance from the top left corner.
-    */
-   protected offsetX = 0;
-   /**
-    * Pointer's vertical distance from the top left corner.
-    */
-   protected offsetY = 0;
- 
+  protected manipulationStartLeft = 0;
+  /**
+   * y coordinate of the top-left corner at the start of manipulation.
+   */
+  protected manipulationStartTop = 0;
+  /**
+   * Width at the start of manipulation.
+   */
+  protected manipulationStartWidth = 0;
+  /**
+   * Height at the start of manipulation.
+   */
+  protected manipulationStartHeight = 0;
+
+  /**
+   * x coordinate of the pointer at the start of manipulation.
+   */
+  protected manipulationStartX = 0;
+  /**
+   * y coordinate of the pointer at the start of manipulation.
+   */
+  protected manipulationStartY = 0;
+
+  /**
+   * Pointer's horizontal distance from the top left corner.
+   */
+  protected offsetX = 0;
+  /**
+   * Pointer's vertical distance from the top left corner.
+   */
+  protected offsetY = 0;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public pointerDown(point: IPoint, target?: EventTarget): void {
@@ -391,7 +414,7 @@ export class StencilBaseEditor {
       this.offsetY = point.y - this._stencil.top;
 
       if (this.state !== 'new') {
-        this.select();
+        //this.select();
         this.activeGrip = this.findGripByVisual(target as SVGGraphicsElement);
         if (this.activeGrip !== undefined) {
           this._state = 'resize';
@@ -400,21 +423,23 @@ export class StencilBaseEditor {
         }
       } else {
         // this._stencil.createVisual();
-  
+
         this._stencil.moveVisual(point);
-  
+
         this._state = 'creating';
-      }      
+      }
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
-  public dblClick(point: IPoint, target?: EventTarget):void {}
+  public dblClick(point: IPoint, target?: EventTarget): void {}
 
-  protected findGripByVisual(target: SVGGraphicsElement): ResizeGrip | undefined {
+  protected findGripByVisual(
+    target: SVGGraphicsElement
+  ): ResizeGrip | undefined {
     let result: ResizeGrip | undefined;
 
-    this.resizeGrips.forEach(grip => {
+    this.resizeGrips.forEach((grip) => {
       if (grip.ownsTarget(target)) {
         result = grip;
       }
@@ -437,7 +462,10 @@ export class StencilBaseEditor {
           this.manipulationStartTop +
           (point.y - this.manipulationStartTop) -
           this.offsetY;
-        this._stencil.moveVisual({x: this._stencil.left, y: this._stencil.top});
+        this._stencil.moveVisual({
+          x: this._stencil.left,
+          y: this._stencil.top,
+        });
         this.adjustControlBox();
         this.adjustPortBox();
         if (this.onStencilChanged) {
@@ -459,34 +487,38 @@ export class StencilBaseEditor {
       let newY = this.manipulationStartTop;
       let newHeight = this.manipulationStartHeight;
 
-      switch(this.activeGrip) {
+      switch (this.activeGrip) {
         case this.resizeGrips.get('bottomleft'):
         case this.resizeGrips.get('leftcenter'):
         case this.resizeGrips.get('topleft'):
           newX = this.manipulationStartLeft + point.x - this.manipulationStartX;
-          newWidth = this.manipulationStartWidth + this.manipulationStartLeft - newX;
-          break; 
+          newWidth =
+            this.manipulationStartWidth + this.manipulationStartLeft - newX;
+          break;
         case this.resizeGrips.get('bottomright'):
         case this.resizeGrips.get('rightcenter'):
         case this.resizeGrips.get('topright'):
         case undefined:
-          newWidth = this.manipulationStartWidth + point.x - this.manipulationStartX;
-          break; 
+          newWidth =
+            this.manipulationStartWidth + point.x - this.manipulationStartX;
+          break;
       }
 
-      switch(this.activeGrip) {
+      switch (this.activeGrip) {
         case this.resizeGrips.get('topcenter'):
         case this.resizeGrips.get('topleft'):
         case this.resizeGrips.get('topright'):
           newY = this.manipulationStartTop + point.y - this.manipulationStartY;
-          newHeight = this.manipulationStartHeight + this.manipulationStartTop - newY;
-          break; 
+          newHeight =
+            this.manipulationStartHeight + this.manipulationStartTop - newY;
+          break;
         case this.resizeGrips.get('bottomcenter'):
         case this.resizeGrips.get('bottomleft'):
         case this.resizeGrips.get('bottomright'):
         case undefined:
-          newHeight = this.manipulationStartHeight + point.y - this.manipulationStartY;
-          break; 
+          newHeight =
+            this.manipulationStartHeight + point.y - this.manipulationStartY;
+          break;
       }
 
       if (newWidth >= 0) {
@@ -506,7 +538,7 @@ export class StencilBaseEditor {
 
       this.setSize();
     }
-  }  
+  }
 
   protected setSize(): void {
     if (this._stencil) {
@@ -521,7 +553,11 @@ export class StencilBaseEditor {
     if (this._stencil) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const inState = this.state;
-      if (this.state === 'creating' && this._stencil.width < 10 && this._stencil.height < 10) {
+      if (
+        this.state === 'creating' &&
+        this._stencil.width < 10 &&
+        this._stencil.height < 10
+      ) {
         this._stencil.width = this._stencil.defaultSize.x;
         this._stencil.height = this._stencil.defaultSize.y;
       } else {
@@ -529,7 +565,11 @@ export class StencilBaseEditor {
       }
       this._state = 'select';
 
-      if (inState === 'creating' && this.onStencilCreated && this._suppressStencilCreateEvent === false) {
+      if (
+        inState === 'creating' &&
+        this.onStencilCreated &&
+        this._suppressStencilCreateEvent === false
+      ) {
         this.onStencilCreated(this);
       }
     }
@@ -539,6 +579,10 @@ export class StencilBaseEditor {
   public get isSelected(): boolean {
     return this._isSelected;
   }
+  protected _isFocused = false;
+  public get isFocused(): boolean {
+    return this._isFocused;
+  }
 
   public select(): void {
     this.container.style.cursor = 'move';
@@ -546,12 +590,28 @@ export class StencilBaseEditor {
 
     this.adjustControlBox();
     this._controlBox.style.display = '';
+    if (this._controlRect) {
+      this._controlRect.style.display = '';
+    }
+    this._gripBox.style.display = 'none';
   }
 
   public deselect(): void {
     this.container.style.cursor = 'default';
     this._isSelected = false;
-    this._controlBox.style.display = 'none';    
+    this._controlBox.style.display = 'none';
+    this.blur();
+  }
+
+  public focus(): void {
+    this.select();
+    this._isFocused = true;
+    this._gripBox.style.display = '';
+  }
+
+  public blur(): void {
+    this._gripBox.style.display = 'none';
+    this._isFocused = false;
   }
 
   public get propertyPanels(): PropertyPanelBase[] {

@@ -47,6 +47,7 @@ export class DiagramEditor extends HTMLElement {
   private _objectLayer?: SVGGElement;
 
   private _currentStencilEditor?: StencilBaseEditor;
+  private _selectedStencilEditors: StencilBaseEditor[] = [];
   private _stencilEditors: StencilBaseEditor[] = [];
 
   private _currentConnectorEditor?: ConnectorBaseEditor;
@@ -85,6 +86,9 @@ export class DiagramEditor extends HTMLElement {
     this.stencilCreated = this.stencilCreated.bind(this);
     this.connectorCreated = this.connectorCreated.bind(this);
     this.setCurrentStencil = this.setCurrentStencil.bind(this);
+    this.selectStencil = this.selectStencil.bind(this);
+    this.deselectStencil = this.deselectStencil.bind(this);
+
     this.onPointerDown = this.onPointerDown.bind(this);
     this.onDblClick = this.onDblClick.bind(this);
     this.onPointerMove = this.onPointerMove.bind(this);
@@ -701,14 +705,22 @@ export class DiagramEditor extends HTMLElement {
           m.ownsTarget(ev.target)
         );
         if (hitEditor !== undefined) {
-          this.setCurrentStencil(hitEditor);
+          if (!ev.shiftKey) {
+            this.deselectStencil();
+            this.setCurrentStencil(hitEditor);
+          }
+          this.selectStencil(hitEditor);
+          if (this._currentStencilEditor !== undefined) {
+            this._currentStencilEditor.focus();
+          }
           this.isDragging = true;
           this._currentStencilEditor?.pointerDown(
             this.clientToLocalCoordinates(ev.clientX, ev.clientY),
             ev.target
           );
         } else {
-          this.setCurrentStencil();
+          //this.setCurrentStencil();
+          this.deselectStencil();
           this.isDragging = true;
           // @todo
           // this.prevPanPoint = { x: ev.clientX, y: ev.clientY };
@@ -848,6 +860,7 @@ export class DiagramEditor extends HTMLElement {
       this._stencilEditorSet.stencilSet.getStencilProperties(steniclType);
 
     if (sType) {
+      this.deselectStencil();
       this.setCurrentStencil();
       // @todo
       // this.addUndoStep();
@@ -872,6 +885,7 @@ export class DiagramEditor extends HTMLElement {
     }
     stencilEditor.onStencilChanged = this.stencilChanged;
     this._stencilEditors.push(stencilEditor);
+    this.selectStencil(stencilEditor);
     this.setCurrentStencil(stencilEditor);
 
     // @todo
@@ -906,7 +920,7 @@ export class DiagramEditor extends HTMLElement {
     if (this._currentStencilEditor !== stencilEditor) {
       // no need to deselect if not changed
       if (this._currentStencilEditor !== undefined) {
-        this._currentStencilEditor.deselect();
+        this._currentStencilEditor.blur();
         // @todo
         // this.toolbar.setCurrentMarker();
         this.addToolboxPanels([]);
@@ -921,10 +935,10 @@ export class DiagramEditor extends HTMLElement {
     this._currentStencilEditor = stencilEditor;
     if (
       this._currentStencilEditor !== undefined &&
-      !this._currentStencilEditor.isSelected
+      !this._currentStencilEditor.isFocused
     ) {
       if (this._currentStencilEditor.state !== 'new') {
-        this._currentStencilEditor.select();
+        this._currentStencilEditor.focus();
       }
       // @todo
       // this.toolbar.setCurrentMarker(this.currentMarker);
@@ -935,6 +949,36 @@ export class DiagramEditor extends HTMLElement {
       //     listener(new MarkerEvent(this, this.currentMarker))
       //   );
       // }
+    }
+  }
+
+  public selectStencil(stencilEditor: StencilBaseEditor): void {
+    if (this._selectedStencilEditors.indexOf(stencilEditor) < 0) {
+      this._selectedStencilEditors.push(stencilEditor);
+      stencilEditor.select();
+      if (this._selectedStencilEditors.length > 1) {
+        this.setCurrentStencil();
+      }
+    } else {
+      this.deselectStencil(stencilEditor);
+    }
+  }
+
+  public deselectStencil(stencilEditor?: StencilBaseEditor): void {
+    if (stencilEditor !== undefined) {
+      const i = this._selectedStencilEditors.indexOf(stencilEditor);
+      if (i > -1) {
+        this._selectedStencilEditors[i].deselect();
+        this._selectedStencilEditors.splice(i, 1);
+        if (this._selectedStencilEditors.length === 1) {
+          this.setCurrentStencil(this._selectedStencilEditors[0]);
+        }
+      }
+    } else {
+      // remove all
+      this._selectedStencilEditors.forEach(se => se.deselect());
+      this._selectedStencilEditors.splice(0);
+      this.setCurrentStencil();
     }
   }
 
