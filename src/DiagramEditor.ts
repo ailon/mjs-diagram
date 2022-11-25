@@ -80,6 +80,9 @@ export class DiagramEditor extends HTMLElement {
 
   private _toolboxPanel!: Panel;
 
+  protected _manipulationStartX = 0;
+  protected _manipulationStartY = 0;
+
   constructor() {
     super();
 
@@ -693,6 +696,9 @@ export class DiagramEditor extends HTMLElement {
     //   this.focus();
     // }
 
+    this._manipulationStartX = ev.clientX;
+    this._manipulationStartY = ev.clientY;
+
     const localCoordinates = this.clientToLocalCoordinates(
       ev.clientX,
       ev.clientY
@@ -721,12 +727,9 @@ export class DiagramEditor extends HTMLElement {
           //   this._currentStencilEditor.focus();
           // }
           this.isDragging = true;
-          hitEditor.pointerDown(
-            localCoordinates,
-            ev.target
-          );
-          this._selectedStencilEditors.forEach(se => { 
-            if (se !== hitEditor) { 
+          hitEditor.pointerDown(localCoordinates, ev.target);
+          this._selectedStencilEditors.forEach((se) => {
+            if (se !== hitEditor) {
               se.state = 'move';
               se.initManipulation(localCoordinates);
             }
@@ -851,17 +854,23 @@ export class DiagramEditor extends HTMLElement {
         console.log(this.connectionEndPort);
       }
     } else if (this.mode === 'select' && ev.target) {
-      const hitEditor = this._stencilEditors.find((m) =>
-        m.ownsTarget(ev.target)
-      );
-      if (hitEditor !== undefined) {
-        if (!ev.shiftKey) {
-          this.deselectStencil();
-          this.setCurrentStencil(hitEditor);
-        }
-        this.selectStencil(hitEditor);
-        if (this._currentStencilEditor !== undefined) {
-          this._currentStencilEditor.focus();
+      // only change selection if stencils didn't move
+      const moved =
+        Math.abs(ev.clientX - this._manipulationStartX) > 1 ||
+        Math.abs(ev.clientY - this._manipulationStartY) > 1;
+      if (!moved) {
+        const hitEditor = this._stencilEditors.find((m) =>
+          m.ownsTarget(ev.target)
+        );
+        if (hitEditor !== undefined) {
+          if (!ev.shiftKey) {
+            this.deselectStencil();
+            this.setCurrentStencil(hitEditor);
+          }
+          this.selectStencil(hitEditor);
+          if (this._currentStencilEditor !== undefined) {
+            this._currentStencilEditor.focus();
+          }
         }
       }
     }
