@@ -40,6 +40,9 @@ export class StencilBaseEditor {
   public get state(): StencilEditorState {
     return this._state;
   }
+  public set state(value: StencilEditorState) {
+    this._state = value;
+  }
 
   protected resizeGrips = new Map<GripLocation, ResizeGrip>([
     ['topleft', new ResizeGrip()],
@@ -130,6 +133,8 @@ export class StencilBaseEditor {
     this.deselect = this.deselect.bind(this);
     this.focus = this.focus.bind(this);
     this.blur = this.blur.bind(this);
+
+    this.initManipulation = this.initManipulation.bind(this);
   }
 
   public ownsTarget(el: EventTarget | null): boolean {
@@ -394,6 +399,19 @@ export class StencilBaseEditor {
    */
   protected offsetY = 0;
 
+  public initManipulation(point: IPoint): void {
+    this.manipulationStartLeft = this._stencil.left;
+    this.manipulationStartTop = this._stencil.top;
+    this.manipulationStartWidth = this._stencil.width;
+    this.manipulationStartHeight = this._stencil.height;
+
+    this.manipulationStartX = point.x;
+    this.manipulationStartY = point.y;
+
+    this.offsetX = point.x - this._stencil.left;
+    this.offsetY = point.y - this._stencil.top;
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public pointerDown(point: IPoint, target?: EventTarget): void {
     if (this._stencil !== undefined) {
@@ -402,16 +420,7 @@ export class StencilBaseEditor {
         this._stencil.top = point.y;
       }
 
-      this.manipulationStartLeft = this._stencil.left;
-      this.manipulationStartTop = this._stencil.top;
-      this.manipulationStartWidth = this._stencil.width;
-      this.manipulationStartHeight = this._stencil.height;
-
-      this.manipulationStartX = point.x;
-      this.manipulationStartY = point.y;
-
-      this.offsetX = point.x - this._stencil.left;
-      this.offsetY = point.y - this._stencil.top;
+      this.initManipulation(point);
 
       if (this.state !== 'new') {
         //this.select();

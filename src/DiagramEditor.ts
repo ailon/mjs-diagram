@@ -89,10 +89,10 @@ export class DiagramEditor extends HTMLElement {
     this.selectStencil = this.selectStencil.bind(this);
     this.deselectStencil = this.deselectStencil.bind(this);
 
-    this.onPointerDown = this.onPointerDown.bind(this);
+    this.onCanvasPointerDown = this.onCanvasPointerDown.bind(this);
     this.onDblClick = this.onDblClick.bind(this);
     this.onPointerMove = this.onPointerMove.bind(this);
-    this.onStencilPointerUp = this.onStencilPointerUp.bind(this);
+    this.onCanvasPointerUp = this.onCanvasPointerUp.bind(this);
     this.onPointerUp = this.onPointerUp.bind(this);
     this.onPointerOut = this.onPointerOut.bind(this);
     //this.onKeyUp = this.onKeyUp.bind(this);
@@ -627,8 +627,8 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private attachEvents() {
-    this._mainCanvas?.addEventListener('pointerdown', this.onPointerDown);
-    this._mainCanvas?.addEventListener('pointerup', this.onStencilPointerUp);
+    this._mainCanvas?.addEventListener('pointerdown', this.onCanvasPointerDown);
+    this._mainCanvas?.addEventListener('pointerup', this.onCanvasPointerUp);
     this._mainCanvas?.addEventListener('dblclick', this.onDblClick);
     this.attachWindowEvents();
   }
@@ -645,10 +645,13 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private detachEvents() {
-    this._mainCanvas?.removeEventListener('pointerdown', this.onPointerDown);
     this._mainCanvas?.removeEventListener(
       'pointerdown',
-      this.onStencilPointerUp
+      this.onCanvasPointerDown
+    );
+    this._mainCanvas?.removeEventListener(
+      'pointerdown',
+      this.onCanvasPointerUp
     );
     this._mainCanvas?.removeEventListener('dblclick', this.onDblClick);
     this.detachWindowEvents();
@@ -683,11 +686,16 @@ export class DiagramEditor extends HTMLElement {
   private connectionStartPort?: PortConnector;
   private connectionEndPort?: PortConnector;
 
-  private onPointerDown(ev: PointerEvent) {
+  private onCanvasPointerDown(ev: PointerEvent) {
     // @todo
     // if (!this._isFocused) {
     //   this.focus();
     // }
+
+    const localCoordinates = this.clientToLocalCoordinates(
+      ev.clientX,
+      ev.clientY
+    );
 
     this.touchPoints++;
     if (this.touchPoints === 1 || ev.pointerType !== 'touch') {
@@ -697,27 +705,31 @@ export class DiagramEditor extends HTMLElement {
           this._currentStencilEditor.state === 'creating')
       ) {
         this.isDragging = true;
-        this._currentStencilEditor.pointerDown(
-          this.clientToLocalCoordinates(ev.clientX, ev.clientY)
-        );
+        this._currentStencilEditor.pointerDown(localCoordinates);
       } else if (this.mode === 'select' && ev.target) {
         const hitEditor = this._stencilEditors.find((m) =>
           m.ownsTarget(ev.target)
         );
         if (hitEditor !== undefined) {
-          if (!ev.shiftKey) {
-            this.deselectStencil();
-            this.setCurrentStencil(hitEditor);
-          }
-          this.selectStencil(hitEditor);
-          if (this._currentStencilEditor !== undefined) {
-            this._currentStencilEditor.focus();
-          }
+          // if (!ev.shiftKey) {
+          //   this.deselectStencil();
+          //   this.setCurrentStencil(hitEditor);
+          // }
+          // this.selectStencil(hitEditor);
+          // if (this._currentStencilEditor !== undefined) {
+          //   this._currentStencilEditor.focus();
+          // }
           this.isDragging = true;
-          this._currentStencilEditor?.pointerDown(
-            this.clientToLocalCoordinates(ev.clientX, ev.clientY),
+          hitEditor.pointerDown(
+            localCoordinates,
             ev.target
           );
+          this._selectedStencilEditors.forEach(se => { 
+            if (se !== hitEditor) { 
+              se.state = 'move';
+              se.initManipulation(localCoordinates);
+            }
+          });
         } else {
           //this.setCurrentStencil();
           this.deselectStencil();
@@ -792,9 +804,16 @@ export class DiagramEditor extends HTMLElement {
           ev.preventDefault();
         }
 
+        const localCoordinates = this.clientToLocalCoordinates(
+          ev.clientX,
+          ev.clientY
+        );
         if (this._currentStencilEditor !== undefined) {
-          this._currentStencilEditor.manipulate(
-            this.clientToLocalCoordinates(ev.clientX, ev.clientY)
+          this._currentStencilEditor.manipulate(localCoordinates);
+        }
+        if (this._selectedStencilEditors.length > 1) {
+          this._selectedStencilEditors.forEach((se) =>
+            se.manipulate(localCoordinates)
           );
         }
         // @todo - handle zoomed state
@@ -809,7 +828,7 @@ export class DiagramEditor extends HTMLElement {
       }
     }
   }
-  private onStencilPointerUp(ev: PointerEvent) {
+  private onCanvasPointerUp(ev: PointerEvent) {
     if (this.mode === 'connect' && ev.target) {
       const hitEditor = this._stencilEditors.find((m) =>
         m.ownsTarget(ev.target)
@@ -829,6 +848,20 @@ export class DiagramEditor extends HTMLElement {
           });
         }
         console.log(this.connectionEndPort);
+      }
+    } else if (this.mode === 'select' && ev.target) {
+      const hitEditor = this._stencilEditors.find((m) =>
+        m.ownsTarget(ev.target)
+      );
+      if (hitEditor !== undefined) {
+        if (!ev.shiftKey) {
+          this.deselectStencil();
+          this.setCurrentStencil(hitEditor);
+        }
+        this.selectStencil(hitEditor);
+        if (this._currentStencilEditor !== undefined) {
+          this._currentStencilEditor.focus();
+        }
       }
     }
   }
@@ -976,7 +1009,7 @@ export class DiagramEditor extends HTMLElement {
       }
     } else {
       // remove all
-      this._selectedStencilEditors.forEach(se => se.deselect());
+      this._selectedStencilEditors.forEach((se) => se.deselect());
       this._selectedStencilEditors.splice(0);
       this.setCurrentStencil();
     }
