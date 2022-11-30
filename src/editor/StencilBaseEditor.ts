@@ -345,6 +345,7 @@ export class StencilBaseEditor {
 
   public switchToConnectMode(): void {
     this._state = 'connect';
+    this.hideControlBox();
     this.showPortBox();
     console.log('connect');
   }
