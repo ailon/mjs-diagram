@@ -108,6 +108,7 @@ export class DiagramEditor extends HTMLElement {
     // this.onWindowResize = this.onWindowResize.bind(this);
     this.toolbarButtonClicked = this.toolbarButtonClicked.bind(this);
 
+    this.toggleConnectMode = this.toggleConnectMode.bind(this);
     this.switchToConnectMode = this.switchToConnectMode.bind(this);
     this.switchConnectModeOff = this.switchConnectModeOff.bind(this);
     this.showAddDialog = this.showAddDialog.bind(this);
@@ -449,7 +450,7 @@ export class DiagramEditor extends HTMLElement {
         break;
       }
       case 'connect': {
-        this.switchToConnectMode();
+        this.toggleConnectMode();
         break;
       }
       case 'save': {
@@ -523,6 +524,14 @@ export class DiagramEditor extends HTMLElement {
     }
   }
 
+  private toggleConnectMode() {
+    if (this.mode === 'connect') {
+      this.switchConnectModeOff();
+    } else {
+      this.switchToConnectMode();
+    }
+  }
+
   private switchToConnectMode() {
     if (this._currentStencilEditor !== undefined) {
       this._currentStencilEditor.switchToConnectMode();
@@ -537,6 +546,7 @@ export class DiagramEditor extends HTMLElement {
     this.mode = 'select';
     if (this._currentStencilEditor !== undefined) {
       this._currentStencilEditor.switchConnectModeOff();
+      this._currentStencilEditor.focus();
     }
 
     // this._stencilEditors.forEach((se) => se.switchConnectModeOff());
