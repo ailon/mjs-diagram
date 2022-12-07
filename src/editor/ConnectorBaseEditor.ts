@@ -55,18 +55,29 @@ export class ConnectorBaseEditor {
     this.overlayContainer = overlayContainer;
 
     this.setupControlBox();    
+
+    this.select = this.select.bind(this);
+    this.deselect = this.deselect.bind(this);
+    this.setupControlBox = this.setupControlBox.bind(this);
+    this.adjustControlBox = this.adjustControlBox.bind(this);
+    this.showControlBox = this.showControlBox.bind(this);
+    this.hideControlBox = this.hideControlBox.bind(this);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public ownsTarget(el: EventTarget): boolean {
-    if (
-      this.grip1.ownsTarget(el) || this.grip2.ownsTarget(el) ||
-      this.connector.ownsTarget(el)
-    ) {
-      return true;
-    } else {
-      return false;
+  public ownsTarget(el: EventTarget | null): boolean {
+    let found = false;
+    if (el !== null) {
+      if (
+        this.grip1.ownsTarget(el) || this.grip2.ownsTarget(el) ||
+        this.connector.ownsTarget(el)
+      ) {
+        found = true;
+      } else {
+        found = false;
+      }
     }
+    return found;
   }
 
   protected _isSelected = false;
@@ -78,14 +89,22 @@ export class ConnectorBaseEditor {
     this.connector.container.style.cursor = 'move';
     this._isSelected = true;
     this.adjustControlBox();
-    this.controlBox.style.display = '';
+    this.showControlBox();
   }
 
   public deselect(): void {
     this.connector.container.style.cursor = 'default';
     this._isSelected = false;
+    this.hideControlBox();
+  }
+
+  protected hideControlBox(): void {
     this.controlBox.style.display = 'none';
   }
+  protected showControlBox(): void {
+    this.controlBox.style.display = '';
+  }
+
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
   public pointerDown(point: IPoint, target?: EventTarget):void {
@@ -121,6 +140,7 @@ export class ConnectorBaseEditor {
       }
     } else {
       this.connector.adjustVisual();
+      this.showControlBox();
 
       this._state = 'creating';
       SvgHelper.setAttributes(this.connector.container, [['pointer-events', 'none']]);
@@ -205,9 +225,14 @@ export class ConnectorBaseEditor {
     const inState = this.state;
     this.manipulate(point);
     this._state = 'select';
-    if (inState === 'creating' && this.onConnectorCreated) {
-      this.onConnectorCreated(this);
+    if (inState === 'creating') {
+      this.deselect();
+      if (this.onConnectorCreated) {
+        this.onConnectorCreated(this);
+      }
     }
+
+    SvgHelper.setAttributes(this.connector.container, [['pointer-events', 'auto']]);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function

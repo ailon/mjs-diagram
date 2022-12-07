@@ -116,6 +116,9 @@ export class DiagramEditor extends HTMLElement {
       this.addDialogStencilTypeClicked.bind(this);
     this.hideAddDialog = this.hideAddDialog.bind(this);
 
+    this.selectHitEditor = this.selectHitEditor.bind(this);
+    this.selectHitConnector = this.selectHitConnector.bind(this);
+
     this.addStyles = this.addStyles.bind(this);
 
     this.addToolboxPanels = this.addToolboxPanels.bind(this);
@@ -710,9 +713,10 @@ export class DiagramEditor extends HTMLElement {
   private connectionStartPort?: PortConnector;
   private connectionEndPort?: PortConnector;
 
-  private selectHitEditor(ev: PointerEvent, localCoordinates: IPoint) {
+  private selectHitEditor(ev: PointerEvent, localCoordinates: IPoint): StencilBaseEditor | undefined {
     const hitEditor = this.getHitEditor(ev.target);
     if (hitEditor !== undefined) {
+      this.deselectCurrentConnector();
       if (ev.shiftKey) {
         this.selectStencil(hitEditor);
       } else if (!hitEditor.isSelected) {
@@ -740,6 +744,46 @@ export class DiagramEditor extends HTMLElement {
       // @todo
       // this.prevPanPoint = { x: ev.clientX, y: ev.clientY };
     }
+
+    return hitEditor;
+  }
+
+  private pushToConnectorLayer(connectorEditor: ConnectorBaseEditor) {
+    if (this._objectLayer?.contains(connectorEditor.connector.container)) {
+      this._objectLayer?.removeChild(connectorEditor.connector.container);
+      this._connectorLayer?.appendChild(connectorEditor.connector.container);
+    }
+  }
+
+  private popFromConnectorLayer(connectorEditor: ConnectorBaseEditor) {
+    if (this._connectorLayer?.contains(connectorEditor.connector.container)) {
+      this._connectorLayer?.removeChild(connectorEditor.connector.container);
+      this._objectLayer?.appendChild(connectorEditor.connector.container);
+    }
+  }
+
+  private deselectCurrentConnector() {
+    if (this._currentConnectorEditor !== undefined) {
+      this._currentConnectorEditor.deselect();
+      this.pushToConnectorLayer(this._currentConnectorEditor);
+      this._currentConnectorEditor = undefined;
+    }
+  }
+
+  private selectHitConnector(ev: PointerEvent, localCoordinates: IPoint): ConnectorBaseEditor | undefined {
+    const hitConnector = this.getHitConnector(ev.target);
+    if (hitConnector !== undefined) {
+      if (this._currentConnectorEditor !== hitConnector) {
+        this.deselectStencil();
+        this._currentConnectorEditor = hitConnector;
+        this.popFromConnectorLayer(this._currentConnectorEditor);
+        hitConnector.select();
+      }
+    } else {
+      this.deselectCurrentConnector();
+    }
+
+    return hitConnector;
   }
 
   private onCanvasPointerDown(ev: PointerEvent) {
@@ -766,13 +810,18 @@ export class DiagramEditor extends HTMLElement {
         this.isDragging = true;
         this._currentStencilEditor.pointerDown(localCoordinates);
       } else if (this.mode === 'select' && ev.target) {
-        this.selectHitEditor(ev, localCoordinates);
+        const hitEditor = this.selectHitEditor(ev, localCoordinates);
+        if (hitEditor === undefined) {
+          // const hitConnector = 
+          this.selectHitConnector(ev, localCoordinates);
+        }
       } else if (this.mode === 'connect' && ev.target) {
         const hitEditor = this.getHitEditor(ev.target);
         if (hitEditor !== undefined) {
           this.connectionStartPort = hitEditor.getTargetPort(ev.target);
           if (this.connectionStartPort !== undefined) {
             this.deselectStencil();
+            this.deselectCurrentConnector();
             this._currentConnectorEditor = this.addNewConnector(ConnectorBase);
             this._currentConnectorEditor.onConnectorCreated =
               this.connectorCreated;
@@ -904,6 +953,9 @@ export class DiagramEditor extends HTMLElement {
   private getHitEditor(target: EventTarget | null) {
     return this._stencilEditors.find((m) => m.ownsTarget(target));
   }
+  private getHitConnector(target: EventTarget | null) {
+    return this._connectorEditors.find((m) => m.ownsTarget(target));
+  }
 
   private onPointerUp(ev: PointerEvent) {
     if (this.touchPoints > 0) {
@@ -984,8 +1036,8 @@ export class DiagramEditor extends HTMLElement {
       connectorEditor.connector
     );
     this._connectorEditors.push(connectorEditor);
-    this._objectLayer?.removeChild(connectorEditor.connector.container);
-    this._connectorLayer?.appendChild(connectorEditor.connector.container);
+    this.pushToConnectorLayer(connectorEditor)
+    this.deselectCurrentConnector();
   }
 
   public setCurrentStencil(stencilEditor?: StencilBaseEditor): void {
