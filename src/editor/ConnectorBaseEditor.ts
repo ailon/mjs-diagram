@@ -2,6 +2,7 @@ import { ConnectorBase } from '../core/ConnectorBase';
 import { IPoint } from '../core/IPoint';
 import { ResizeGrip } from './ResizeGrip';
 import { SvgHelper } from '../core/SvgHelper';
+import { Port } from '../core/Port';
 
 export type ConnectorState = 'new' | 'creating' | 'select' | 'move';
 
@@ -12,6 +13,7 @@ export class ConnectorBaseEditor {
   }
 
   public onConnectorCreated?: (connector: ConnectorBaseEditor) => void;
+  public onConnectorUpdated?: (connector: ConnectorBaseEditor) => void;
 
   protected manipulationStartX = 0;
   protected manipulationStartY = 0;
@@ -39,7 +41,8 @@ export class ConnectorBaseEditor {
    */
   protected activeGrip?: ResizeGrip;
 
-  public connector: ConnectorBase
+  public connector: ConnectorBase;
+  public movingPort?: Port;
 
   protected overlayContainer: HTMLDivElement;
 
@@ -127,14 +130,18 @@ export class ConnectorBaseEditor {
       this.select();
       if (target && this.grip1.ownsTarget(target)) {
         this.activeGrip = this.grip1;
+        this.movingPort = this.connector.startPort;
       } else if (target && this.grip2.ownsTarget(target)) {
         this.activeGrip = this.grip2;
+        this.movingPort = this.connector.endPort;
       } else {
         this.activeGrip = undefined;
+        this.movingPort = undefined;
       }
 
       if (this.activeGrip) {
         this._state = 'move';
+        SvgHelper.setAttributes(this.connector.container, [['pointer-events', 'none']]);
       } else {
         this._state = 'select';
       }
@@ -155,14 +162,17 @@ export class ConnectorBaseEditor {
     if (this.state === 'creating') {
       this.resize(point);
     } else if (this.state === 'move') {
-      this.connector.setStartPosition({ 
+      if (this.activeGrip === this.grip1) {
+        this.connector.setStartPosition({ 
           x: this.manipulationStartX1 + point.x - this.manipulationStartX,
           y: this.manipulationStartY1 + point.y - this.manipulationStartY
-      });
-      this.connector.setEndPosition({ 
-        x: this.manipulationStartX2 + point.x - this.manipulationStartX,
-        y: this.manipulationStartY2 + point.y - this.manipulationStartY
-      });
+        });
+      } else if (this.activeGrip === this.grip2) {
+        this.connector.setEndPosition({ 
+          x: this.manipulationStartX2 + point.x - this.manipulationStartX,
+          y: this.manipulationStartY2 + point.y - this.manipulationStartY
+        });
+      }
       this.adjustControlBox();
     }
   }
@@ -229,6 +239,13 @@ export class ConnectorBaseEditor {
       this.deselect();
       if (this.onConnectorCreated) {
         this.onConnectorCreated(this);
+      }
+    } else if (inState === 'move') {
+      this.deselect();
+      this.connector.adjustPoints();
+      this.connector.adjustVisual();
+      if (this.onConnectorUpdated) {
+        this.onConnectorUpdated(this);
       }
     }
 
