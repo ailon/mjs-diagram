@@ -126,6 +126,11 @@ export class DiagramEditor extends HTMLElement {
     this.addToolboxPanels = this.addToolboxPanels.bind(this);
     this.toggleToolbox = this.toggleToolbox.bind(this);
 
+    this.deleteSelected = this.deleteSelected.bind(this);
+    this.deleteConnector = this.deleteConnector.bind(this);
+    this.deleteStencilEditor = this.deleteStencilEditor.bind(this);
+    this.findConnectorEditor = this.findConnectorEditor.bind(this);
+
     this.zoom = this.zoom.bind(this);
 
     this.attachShadow({ mode: 'open' });
@@ -458,6 +463,10 @@ export class DiagramEditor extends HTMLElement {
         this.toggleConnectMode();
         break;
       }
+      case 'delete': {
+        this.deleteSelected();
+        break;
+      }
       case 'save': {
         this.dispatchEvent(
           new CustomEvent<RenderEventData>('renderclick', {
@@ -555,6 +564,71 @@ export class DiagramEditor extends HTMLElement {
     }
 
     // this._stencilEditors.forEach((se) => se.switchConnectModeOff());
+  }
+
+  private deleteSelected() {
+    if (this._currentConnectorEditor !== undefined) {
+      // delete connector
+      this.deleteConnector(this._currentConnectorEditor);
+    } else if (this._selectedStencilEditors.length > 0) {
+      this._selectedStencilEditors.forEach((se) =>
+        this.deleteStencilEditor(se)
+      );
+      this.deselectStencil();
+    }
+  }
+
+  private findConnectorEditor(
+    connector: ConnectorBase
+  ): ConnectorBaseEditor | undefined {
+    return this._connectorEditors.find((ce) => ce.connector === connector);
+  }
+
+  private deleteStencilEditor(stencilEditor: StencilBaseEditor): void {
+    stencilEditor.stencil.ports.forEach((port) => {
+      // copy connectors to avoid removal side-effects
+      const cCopy = new Array<ConnectorBase>(...port.connectors);
+      cCopy.forEach((c) => {
+        const ce = this.findConnectorEditor(c);
+        if (ce !== undefined) {
+          this.deleteConnector(ce);
+        }
+      });
+    });
+
+    if (this._objectLayer?.contains(stencilEditor.stencil.container)) {
+      this._objectLayer.removeChild(stencilEditor.stencil.container);
+    }
+    const sei = this._stencilEditors.indexOf(stencilEditor);
+    if (sei > -1) {
+      this._stencilEditors.splice(sei, 1);
+    }
+  }
+
+  private deleteConnector(connectorEditor: ConnectorBaseEditor) {
+    connectorEditor.connector.startPort?.removeConnector(
+      connectorEditor.connector
+    );
+    connectorEditor.connector.endPort?.removeConnector(
+      connectorEditor.connector
+    );
+
+    if (this._objectLayer?.contains(connectorEditor.connector.container)) {
+      this._objectLayer.removeChild(connectorEditor.connector.container);
+    } else if (
+      this._connectorLayer?.contains(connectorEditor.connector.container)
+    ) {
+      this._connectorLayer.removeChild(connectorEditor.connector.container);
+    }
+
+    const cei = this._connectorEditors.indexOf(connectorEditor);
+    if (cei > -1) {
+      this._connectorEditors.splice(cei, 1);
+    }
+
+    if (this._currentConnectorEditor === connectorEditor) {
+      this._currentConnectorEditor = undefined;
+    }
   }
 
   private width = 0;
@@ -715,7 +789,10 @@ export class DiagramEditor extends HTMLElement {
   private connectionStartPort?: PortConnector;
   private connectionEndPort?: PortConnector;
 
-  private selectHitEditor(ev: PointerEvent, localCoordinates: IPoint): StencilBaseEditor | undefined {
+  private selectHitEditor(
+    ev: PointerEvent,
+    localCoordinates: IPoint
+  ): StencilBaseEditor | undefined {
     const hitEditor = this.getHitEditor(ev.target);
     if (hitEditor !== undefined) {
       this.deselectCurrentConnector();
@@ -772,7 +849,11 @@ export class DiagramEditor extends HTMLElement {
     }
   }
 
-  private selectHitConnector(ev: PointerEvent, localCoordinates: IPoint): ConnectorBaseEditor | undefined {
+  private selectHitConnector(
+    ev: PointerEvent,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    localCoordinates: IPoint
+  ): ConnectorBaseEditor | undefined {
     const hitConnector = this.getHitConnector(ev.target);
     if (hitConnector !== undefined) {
       if (this._currentConnectorEditor !== hitConnector) {
@@ -945,11 +1026,14 @@ export class DiagramEditor extends HTMLElement {
       const hitEditor = this.getHitEditor(ev.target);
       if (hitEditor !== undefined) {
         const targetPort = hitEditor.getTargetPort(ev.target);
-        if (this._currentConnectorEditor !== undefined && targetPort !== undefined) {
-
+        if (
+          this._currentConnectorEditor !== undefined &&
+          targetPort !== undefined
+        ) {
           if (this._currentConnectorEditor.state === 'creating') {
             this.connectionEndPort = targetPort;
-            this._currentConnectorEditor.connector.endStencil = hitEditor.stencil;
+            this._currentConnectorEditor.connector.endStencil =
+              hitEditor.stencil;
             this._currentConnectorEditor.connector.endPort =
               this.connectionEndPort.port;
             this._currentConnectorEditor.pointerUp({
@@ -958,16 +1042,35 @@ export class DiagramEditor extends HTMLElement {
             });
             console.log(this.connectionEndPort);
           } else if (this._currentConnectorEditor.state === 'move') {
-            if (this._currentConnectorEditor.movingPort === this._currentConnectorEditor.connector.endPort) {
-              if (this._currentConnectorEditor.connector.endPort !== targetPort.port) {
-                this.removeConnectorFromPort(this._currentConnectorEditor.connector, this._currentConnectorEditor.connector.endPort);
-                this._currentConnectorEditor.connector.endStencil = hitEditor.stencil;
-                this._currentConnectorEditor.connector.endPort = targetPort.port
+            if (
+              this._currentConnectorEditor.movingPort ===
+              this._currentConnectorEditor.connector.endPort
+            ) {
+              if (
+                this._currentConnectorEditor.connector.endPort !==
+                targetPort.port
+              ) {
+                this.removeConnectorFromPort(
+                  this._currentConnectorEditor.connector,
+                  this._currentConnectorEditor.connector.endPort
+                );
+                this._currentConnectorEditor.connector.endStencil =
+                  hitEditor.stencil;
+                this._currentConnectorEditor.connector.endPort =
+                  targetPort.port;
               }
-            } else if (this._currentConnectorEditor.movingPort === this._currentConnectorEditor.connector.startPort) {
-              this.removeConnectorFromPort(this._currentConnectorEditor.connector, this._currentConnectorEditor.connector.startPort);
-              this._currentConnectorEditor.connector.startStencil = hitEditor.stencil;
-              this._currentConnectorEditor.connector.startPort = targetPort.port
+            } else if (
+              this._currentConnectorEditor.movingPort ===
+              this._currentConnectorEditor.connector.startPort
+            ) {
+              this.removeConnectorFromPort(
+                this._currentConnectorEditor.connector,
+                this._currentConnectorEditor.connector.startPort
+              );
+              this._currentConnectorEditor.connector.startStencil =
+                hitEditor.stencil;
+              this._currentConnectorEditor.connector.startPort =
+                targetPort.port;
             }
             this._currentConnectorEditor.pointerUp({
               x: hitEditor.stencil.left + targetPort.port.x,
@@ -1067,7 +1170,7 @@ export class DiagramEditor extends HTMLElement {
       connectorEditor.connector
     );
     this._connectorEditors.push(connectorEditor);
-    this.pushToConnectorLayer(connectorEditor)
+    this.pushToConnectorLayer(connectorEditor);
     this.deselectCurrentConnector();
   }
 
@@ -1078,7 +1181,7 @@ export class DiagramEditor extends HTMLElement {
     connectorEditor.connector.endPort?.connectors.push(
       connectorEditor.connector
     );
-    this.pushToConnectorLayer(connectorEditor)
+    this.pushToConnectorLayer(connectorEditor);
     this.deselectCurrentConnector();
   }
 
