@@ -59,6 +59,12 @@ export class Experiments {
       console.log(JSON.stringify(ev.detail.state));
       this.oldState = ev.detail.state;
       this.viewer?.show(this.oldState);
+      this.editor?.render().then(result => {
+        const rasterImg = document.getElementById('rasterDiagram') as HTMLImageElement;
+        if (result !== undefined) {
+          rasterImg.src = result;
+        }
+      })
     });
 
     document

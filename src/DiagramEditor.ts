@@ -18,6 +18,7 @@ import { StencilBaseEditor } from './editor/StencilBaseEditor';
 import { SvgHelper } from './core/SvgHelper';
 import { TextStencil } from './core/TextStencil';
 import { Port } from './core/Port';
+import { Renderer } from './editor/Renderer';
 
 export type DiagramEditorMode = 'select' | 'connect';
 
@@ -1403,6 +1404,31 @@ export class DiagramEditor extends HTMLElement {
       this.zoomLevel = this.zoomSteps[currentLevelIndex + 1];
     } else if (factor < 0 && currentLevelIndex > 0) {
       this.zoomLevel = this.zoomSteps[currentLevelIndex - 1];
+    }
+  }
+
+  public async render(
+    width?: number,
+    height?: number,
+    imageType = 'image/png',
+    quality?: number
+  ): Promise<string | undefined> {
+    // this.setCurrentMarker();
+
+    if (this._mainCanvas !== undefined) {
+      const renderer = new Renderer();
+      renderer.imageType = imageType;
+      renderer.imageQuality = quality;
+      renderer.width = width;
+      renderer.height = height;
+
+      // workaround for an issue in Safari where FreeHand marker
+      // is not rendered on the first try for some reason
+      // await renderer.rasterize(this._mainCanvas);
+
+      return await renderer.rasterize(this._mainCanvas);
+    } else {
+      return undefined;
     }
   }
 }
