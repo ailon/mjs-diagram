@@ -17,7 +17,8 @@ export class TextStencil extends StencilBase {
 
   public textBoundingBox: DOMRect;
 
-  public textElement!: SVGForeignObjectElement;
+  // public textElement!: SVGForeignObjectElement;
+  public textElement!: SVGTextElement;
   public textContainer!: HTMLDivElement;
 
   constructor(iid: number, container: SVGGElement) {
@@ -27,16 +28,13 @@ export class TextStencil extends StencilBase {
     this.setFont = this.setFont.bind(this);
     this.renderText = this.renderText.bind(this);
     this.setSize = this.setSize.bind(this);
+    this.positionText = this.positionText.bind(this);
 
     this.textBoundingBox = new DOMRect();
   }
 
   public ownsTarget(el: EventTarget): boolean {
-    if (
-      super.ownsTarget(el) ||
-      el === this.visual ||
-      el === this.textElement
-    ) {
+    if (super.ownsTarget(el) || el === this.visual || el === this.textElement) {
       return true;
     } else {
       let found = false;
@@ -52,58 +50,78 @@ export class TextStencil extends StencilBase {
   public createVisual(): void {
     super.createVisual();
 
-    this.textElement = SvgHelper.createForeignObject([
-      ['x', this.textBoundingBox.x.toString()],
-      ['y', this.textBoundingBox.y.toString()],
-      ['width', this.textBoundingBox.width.toString()],
-      ['height', this.textBoundingBox.height.toString()],
-    ]);
+    this.textElement = SvgHelper.createText();
+    this.textElement.style.fontSize = '1rem';
+    this.textElement.style.textAnchor = 'middle';
+    this.textElement.style.dominantBaseline = 'hanging';
     this.textElement.transform.baseVal.appendItem(SvgHelper.createTransform()); // translate transorm
     this.textElement.transform.baseVal.appendItem(SvgHelper.createTransform()); // scale transorm
 
     this.visual.appendChild(this.textElement);
 
-    this.textContainer = document.createElement('div');
-    this.textContainer.style.display = 'flex';
-    this.textContainer.style.width = '100%';
-    this.textContainer.style.height = '100%';
-    this.textContainer.style.alignItems = 'center';
-    this.textContainer.style.justifyContent = 'center';
-    this.textContainer.style.textAlign = 'center';
-    this.textContainer.style.fontSize = '1rem';
-
-    this.textElement.appendChild(this.textContainer);
-
     this.renderText();
-  } 
-  
+  }
+
   protected setTextBoundingBox() {
     this.textBoundingBox.x = this.padding;
     this.textBoundingBox.y = this.padding;
     this.textBoundingBox.width = this.width - this.padding * 2;
     this.textBoundingBox.height = this.height - this.padding * 2;
-
-    SvgHelper.setAttributes(this.textElement, [
-      ['x', this.textBoundingBox.x.toString()],
-      ['y', this.textBoundingBox.y.toString()],
-      ['width', this.textBoundingBox.width.toString()],
-      ['height', this.textBoundingBox.height.toString()],
-    ]);
   }
 
   public setSize(): void {
     super.setSize();
-    SvgHelper.setAttributes(this.textElement, [
-      ['width', this.width.toString()],
-      ['height', this.height.toString()],
-    ]);
     this.setTextBoundingBox();
+    this.positionText();
   }
 
   public renderText() {
-    this.textContainer.innerText = this.text;
-    this.setSize();
+    const LINE_SIZE = '1rem';
+
+    if (this.textElement) {
+      while (this.textElement.lastChild) {
+        this.textElement.removeChild(this.textElement.lastChild);
+      }
+
+      const lines = this.text.split(/\r\n|[\n\v\f\r\x85\u2028\u2029]/);
+      lines.forEach((line, lineno) => {
+        this.textElement.appendChild(
+          SvgHelper.createTSpan(
+            // workaround for swallowed empty lines
+            line.trim() === '' ? ' ' : line.trim(),
+            [
+              // ['x', '0'],
+              ['dy', lineno > 0 ? LINE_SIZE : '0'],
+            ]
+          )
+        );
+      });
+
+      setTimeout(this.positionText, 10);
+    }
   }
+
+  public positionText() {
+    const textBBox = this.textElement.getBBox();
+    const centerX =
+      this.textBoundingBox.x +
+      this.textBoundingBox.width / 2;
+    const centerY =
+      this.textBoundingBox.y +
+      this.textBoundingBox.height / 2 - textBBox.height / 2;
+
+    this.textElement.childNodes.forEach((ts) => {
+      const tspan = <SVGTSpanElement>ts;
+      SvgHelper.setAttributes(tspan, [['x', `${centerX}`]]);
+    });
+    SvgHelper.setAttributes(this.textElement, [['x', `${centerX}`]]);
+    SvgHelper.setAttributes(this.textElement, [['y', `${centerY}`]]);
+  }
+
+  // public renderText() {
+  //   this.textContainer.innerText = this.text;
+  //   this.setSize();
+  // }
 
   public setColor(color: string): void {
     if (this.textElement) {
@@ -150,6 +168,5 @@ export class TextStencil extends StencilBase {
     super.scale(scaleX, scaleY);
 
     this.setSize();
-  }  
-
+  }
 }
