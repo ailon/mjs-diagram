@@ -84,6 +84,35 @@ export class StencilBase {
     //this.createVisual();
   }
 
+  public static getThumbnail(width: number, height: number): SVGSVGElement {
+    const result = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'svg'
+    );
+    result.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    result.setAttribute('width', width.toString());
+    result.setAttribute('height', height.toString());
+    result.setAttribute(
+      'viewBox',
+      '0 0 ' +
+        width.toString() +
+        ' ' +
+        height.toString()
+    );
+
+    const rectWidth = width * 0.9;
+    const rectHeight = Math.min(height * 0.9, rectWidth * 0.75);
+
+    const rect = SvgHelper.createRect(rectWidth, rectHeight, [
+      ['x', ((width - rectWidth)/2).toString()],
+      ['y', ((height - rectHeight)/2).toString()]
+    ]);
+
+    result.appendChild(rect);
+
+    return result;
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public ownsTarget(el: EventTarget): boolean {
     if (el === this.visual || el === this._frame) {

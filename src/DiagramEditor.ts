@@ -163,6 +163,18 @@ export class DiagramEditor extends HTMLElement {
         flex-grow: 2;
       }
 
+      div.add-item-dialog ul li.list-item svg {
+        color: red;
+        fill: white;
+        stroke-width: 3px;
+        stroke: blue;        
+      }
+
+      div.add-item-dialog ul li.list-item svg text {
+        fill: black;
+        stroke-width: 0px;
+      }
+
       div.add-item-dialog button {
         background-color: #333;
         color: #eee;
@@ -508,7 +520,10 @@ export class DiagramEditor extends HTMLElement {
 
     this._stencilEditorSet.stencilSet.stencilTypes.forEach((st) => {
       const listItem = document.createElement('li');
-      listItem.innerText = st.displayName ?? st.stencilType.title;
+      listItem.className = 'list-item';
+      const thumbnail = st.stencilType.getThumbnail(150, 100);
+      listItem.appendChild(thumbnail);
+      //listItem.innerText = st.displayName ?? st.stencilType.title;
       listItem.setAttribute('data-stencil-type', st.stencilType.typeName);
       listItem.addEventListener('click', this.addDialogStencilTypeClicked);
       stencilTypeList.appendChild(listItem);
