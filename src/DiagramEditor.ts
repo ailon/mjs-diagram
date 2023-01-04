@@ -154,15 +154,19 @@ export class DiagramEditor extends HTMLElement {
         font-size: 1rem;
         margin: 10px auto;
         width: 90%;
-        max-width: 500px;
+        max-width: 520px;
+        height: 90%;
+        max-height: 500px;
         display: flex;
         flex-direction: column;
+        filter: drop-shadow(2px 2px 8px #444);
       }
 
       div.add-item-dialog ul {
         display: flex;
         flex-grow: 2;
         flex-wrap: wrap;
+        overflow-y: auto;
         align-content: flex-start;
         justify-content: center;
         padding: 10px;
@@ -173,6 +177,7 @@ export class DiagramEditor extends HTMLElement {
         display: block;
         padding: 8px 4px;
         border: 1px solid transparent;
+        cursor: pointer;
       }
       div.add-item-dialog ul li.list-item:hover {
         border-color: #555;        
@@ -532,38 +537,40 @@ export class DiagramEditor extends HTMLElement {
   private _addItemDialog?: HTMLDivElement;
 
   private showAddDialog() {
-    this._addItemDialog = document.createElement('div');
-    this._addItemDialog.className = 'add-item-dialog';
-    this._addItemDialog.style.pointerEvents = 'auto';
+    if (this._addItemDialog === undefined) {
+      this._addItemDialog = document.createElement('div');
+      this._addItemDialog.className = 'add-item-dialog';
+      this._addItemDialog.style.pointerEvents = 'auto';
 
-    const stencilTypeList = document.createElement('ul');
-    this._addItemDialog.appendChild(stencilTypeList);
+      const stencilTypeList = document.createElement('ul');
+      this._addItemDialog.appendChild(stencilTypeList);
 
-    this._stencilEditorSet.stencilSet.stencilTypes.forEach((st) => {
-      const listItem = document.createElement('li');
-      listItem.className = 'list-item';
-      const thumbnail = st.stencilType.getThumbnail(150, 100);
-      listItem.appendChild(thumbnail);
-      const title = document.createElement('p');
-      title.className = 'stencil-title';
-      title.innerText = st.displayName ?? st.stencilType.title;
-      listItem.appendChild(title);
-      //listItem.innerText = st.displayName ?? st.stencilType.title;
-      listItem.setAttribute('data-stencil-type', st.stencilType.typeName);
-      listItem.addEventListener('click', this.addDialogStencilTypeClicked);
-      stencilTypeList.appendChild(listItem);
-    });
+      this._stencilEditorSet.stencilSet.stencilTypes.forEach((st) => {
+        const listItem = document.createElement('li');
+        listItem.className = 'list-item';
+        const thumbnail = st.stencilType.getThumbnail(150, 100);
+        listItem.appendChild(thumbnail);
+        const title = document.createElement('p');
+        title.className = 'stencil-title';
+        title.innerText = st.displayName ?? st.stencilType.title;
+        listItem.appendChild(title);
+        //listItem.innerText = st.displayName ?? st.stencilType.title;
+        listItem.setAttribute('data-stencil-type', st.stencilType.typeName);
+        listItem.addEventListener('click', this.addDialogStencilTypeClicked);
+        stencilTypeList.appendChild(listItem);
+      });
 
-    const closeButton = document.createElement('button');
-    closeButton.textContent = 'close';
-    closeButton.addEventListener('click', this.hideAddDialog);
-    this._addItemDialog.appendChild(closeButton);
+      const closeButton = document.createElement('button');
+      closeButton.textContent = 'close';
+      closeButton.addEventListener('click', this.hideAddDialog);
+      this._addItemDialog.appendChild(closeButton);
 
-    this._internalUiContainer.appendChild(this._addItemDialog);
+      this._internalUiContainer.appendChild(this._addItemDialog);
+    }
   }
 
   private addDialogStencilTypeClicked(ev: MouseEvent) {
-    const listItem = <HTMLLIElement>ev.target;
+    const listItem = <HTMLLIElement>ev.currentTarget;
 
     const stencilType = listItem.getAttribute('data-stencil-type');
     if (stencilType) {
@@ -576,6 +583,7 @@ export class DiagramEditor extends HTMLElement {
   private hideAddDialog() {
     if (this._addItemDialog) {
       this._internalUiContainer.removeChild(this._addItemDialog);
+      this._addItemDialog = undefined;
     }
   }
 
@@ -752,6 +760,8 @@ export class DiagramEditor extends HTMLElement {
     this._internalUiContainer.style.width = `${this.width}px`;
     this._internalUiContainer.style.height = `${this.height}px`;
     this._internalUiContainer.style.display = 'flex';
+    this._internalUiContainer.style.alignItems = 'center';
+    this._internalUiContainer.style.zIndex = '10';
     this._contentContainer?.appendChild(this._internalUiContainer);
   }
 
