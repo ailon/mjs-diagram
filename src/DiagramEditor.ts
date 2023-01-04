@@ -160,14 +160,35 @@ export class DiagramEditor extends HTMLElement {
       }
 
       div.add-item-dialog ul {
+        display: flex;
         flex-grow: 2;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        justify-content: center;
+        padding: 10px;
+        margin: 0px auto;
+      }
+
+      div.add-item-dialog ul li.list-item {
+        display: block;
+        padding: 8px 4px;
+        border: 1px solid transparent;
+      }
+      div.add-item-dialog ul li.list-item:hover {
+        border-color: #555;        
+      }
+      
+      div.add-item-dialog ul li.list-item p.stencil-title {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 0.9rem;
+        text-align: center;
+        margin: 0px;
       }
 
       div.add-item-dialog ul li.list-item svg {
-        color: red;
-        fill: white;
-        stroke-width: 3px;
-        stroke: blue;        
+        fill: #aaa;
+        stroke-width: 2px;
+        stroke: #0a0a0a;
       }
 
       div.add-item-dialog ul li.list-item svg text {
@@ -523,6 +544,10 @@ export class DiagramEditor extends HTMLElement {
       listItem.className = 'list-item';
       const thumbnail = st.stencilType.getThumbnail(150, 100);
       listItem.appendChild(thumbnail);
+      const title = document.createElement('p');
+      title.className = 'stencil-title';
+      title.innerText = st.displayName ?? st.stencilType.title;
+      listItem.appendChild(title);
       //listItem.innerText = st.displayName ?? st.stencilType.title;
       listItem.setAttribute('data-stencil-type', st.stencilType.typeName);
       listItem.addEventListener('click', this.addDialogStencilTypeClicked);
