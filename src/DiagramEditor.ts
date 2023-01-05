@@ -1430,7 +1430,8 @@ export class DiagramEditor extends HTMLElement {
               cp.connectorType,
               this._connectorLayer
             );
-            conEditor.connector.restoreState(conState, {
+            conEditor.onConnectorUpdated = this.connectorUpdated;
+            conEditor.restoreState(conState, {
               startStencil: startStencil.stencil,
               startPort: startPort,
               endStencil: endStencil.stencil,

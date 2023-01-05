@@ -1,6 +1,7 @@
 import { IPoint } from '../core/IPoint';
 import { StencilBaseEditor } from './StencilBaseEditor';
 import { TextStencil } from '../core/TextStencil';
+import { StencilBaseState } from '../core/StencilBaseState';
 
 export class TextStencilEditor extends StencilBaseEditor {
   public get stencil(): TextStencil {
@@ -248,5 +249,9 @@ export class TextStencilEditor extends StencilBaseEditor {
     super.scale(scaleX, scaleY);
 
     this.positionTextEditor();
+  }
+
+  public restoreState(state: StencilBaseState): void {
+    super.restoreState(state);
   }
 }

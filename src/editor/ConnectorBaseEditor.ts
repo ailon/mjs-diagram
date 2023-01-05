@@ -3,6 +3,7 @@ import { IPoint } from '../core/IPoint';
 import { ResizeGrip } from './ResizeGrip';
 import { SvgHelper } from '../core/SvgHelper';
 import { Port } from '../core/Port';
+import { ConnectorBaseState, ConnectorEndPoints } from '../core/ConnectorBaseState';
 
 export type ConnectorState = 'new' | 'creating' | 'select' | 'move';
 
@@ -65,6 +66,7 @@ export class ConnectorBaseEditor {
     this.adjustControlBox = this.adjustControlBox.bind(this);
     this.showControlBox = this.showControlBox.bind(this);
     this.hideControlBox = this.hideControlBox.bind(this);
+    this.restoreState = this.restoreState.bind(this);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -260,5 +262,11 @@ export class ConnectorBaseEditor {
   public scale(scaleX: number, scaleY: number): void {
     this.connector.scale(scaleX, scaleY);
     this.adjustControlBox();
+  }
+
+  public restoreState(state: ConnectorBaseState, endPoints: ConnectorEndPoints): void {
+    this.connector.restoreState(state, endPoints);
+    this.adjustControlBox();
+    this._state = 'select';
   }
 }
