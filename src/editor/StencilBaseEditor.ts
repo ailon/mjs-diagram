@@ -359,8 +359,10 @@ export class StencilBaseEditor {
   }
 
   public switchConnectModeOff(): void {
-    this._state = 'select';
-    this.hidePortBox();
+    if (this._state === 'connect') {
+      this._state = 'select';
+      this.hidePortBox();
+    }
   }
 
   public scale(scaleX: number, scaleY: number): void {

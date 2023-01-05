@@ -1055,9 +1055,11 @@ export class DiagramEditor extends HTMLElement {
           this.mode = 'connect';
           hitEditor.switchToConnectMode();
         }
-      } else if (this._currentHitEditor !== undefined && !this.isDragging) {
+      } else if (this._currentHitEditor !== undefined /*&& !this.isDragging*/) {
         this.mode = 'select';
-        this._currentHitEditor.switchConnectModeOff();
+        if (this._currentHitEditor.state === 'connect') {
+          this._currentHitEditor.switchConnectModeOff();
+        }
       }
       this._currentHitEditor = hitEditor;
     }
