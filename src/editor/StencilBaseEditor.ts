@@ -79,10 +79,10 @@ export class StencilBaseEditor {
     this._overlayContainer = overlayContainer;
     this._stencilType = stencilType;
     this._stencil = stencil ?? new stencilType(iid, container);
-    this._stencil.createVisual();
+    // this._stencil.createVisual();
 
-    this.setupPortBox();
-    this.setupControlBox();
+    // this.setupPortBox();
+    // this.setupControlBox();
 
     this.strokePanel = new ColorPickerPanel(
       'Line color',
@@ -115,6 +115,7 @@ export class StencilBaseEditor {
     this.switchToConnectMode = this.switchToConnectMode.bind(this);
     this.switchConnectModeOff = this.switchConnectModeOff.bind(this);
 
+    this.setupVisuals = this.setupVisuals.bind(this);
     this.setupControlBox = this.setupControlBox.bind(this);
     this.setupPortBox = this.setupPortBox.bind(this);
     this.addResizeGrips = this.addResizeGrips.bind(this);
@@ -175,6 +176,13 @@ export class StencilBaseEditor {
   public onStencilCreated?: (stencilEditor: StencilBaseEditor) => void;
   public onStencilChanged?: (stencilEditor: StencilBaseEditor) => void;
 
+  protected setupVisuals() {
+    this._stencil.createVisual();
+
+    this.setupPortBox();
+    this.setupControlBox();
+  }
+  
   private setupControlBox() {
     if (this._stencil !== undefined) {
       //this._controlBox = SvgHelper.createGroup();
@@ -417,6 +425,7 @@ export class StencilBaseEditor {
   public pointerDown(point: IPoint, target?: EventTarget): void {
     if (this._stencil !== undefined) {
       if (this.state === 'new') {
+        this.setupVisuals();
         this._stencil.left = point.x;
         this._stencil.top = point.y;
       }
@@ -630,6 +639,8 @@ export class StencilBaseEditor {
 
   public restoreState(state: StencilBaseState): void {
     this.stencil.restoreState(state);
+    this.setupControlBox();
+    this.setupPortBox();
     this.adjustControlBox();
     this.adjustPortBox();
     this._state = 'select';
