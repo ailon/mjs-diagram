@@ -1129,8 +1129,20 @@ export class DiagramEditor extends HTMLElement {
             });
             console.log(targetPort);
           }
-        }
+        } else if (
+          this._currentConnectorEditor !== undefined &&
+          this._currentConnectorEditor.state === 'move'
+        ) {
+          // reset connector when released of stencil as if it didn't move
+          this._currentConnectorEditor.pointerUp({ x: 0, y: 0 });
+        } 
       }
+    } else if (
+      this._currentConnectorEditor !== undefined &&
+      this._currentConnectorEditor.state === 'move'
+    ) {
+      // reset connector when released of stencil as if it didn't move
+      this._currentConnectorEditor.pointerUp({ x: 0, y: 0 });
     }
   }
 
