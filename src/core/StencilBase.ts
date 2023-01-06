@@ -80,8 +80,6 @@ export class StencilBase {
     this.setStrokeWidth = this.setStrokeWidth.bind(this);
     this.setStrokeDasharray = this.setStrokeDasharray.bind(this);
     this.createVisual = this.createVisual.bind(this);
-
-    //this.createVisual();
   }
 
   public static getThumbnail(width: number, height: number): SVGSVGElement {
@@ -113,7 +111,6 @@ export class StencilBase {
     return result;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public ownsTarget(el: EventTarget): boolean {
     if (el === this.visual || el === this._frame) {
       return true;

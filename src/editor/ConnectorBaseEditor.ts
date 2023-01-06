@@ -69,7 +69,6 @@ export class ConnectorBaseEditor {
     this.restoreState = this.restoreState.bind(this);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public ownsTarget(el: EventTarget | null): boolean {
     let found = false;
     if (el !== null) {
@@ -110,8 +109,6 @@ export class ConnectorBaseEditor {
     this.controlBox.style.display = '';
   }
 
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
   public pointerDown(point: IPoint, target?: EventTarget):void {
     this.manipulationStartX = point.x;
     this.manipulationStartY = point.y;
@@ -159,7 +156,6 @@ export class ConnectorBaseEditor {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
   public dblClick(point: IPoint, target?: EventTarget):void {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
   public manipulate(point: IPoint):void {
     if (this.state === 'creating') {
       this.resize(point);
@@ -257,8 +253,6 @@ export class ConnectorBaseEditor {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public dispose(): void {}
 
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
   public scale(scaleX: number, scaleY: number): void {
     this.connector.scale(scaleX, scaleY);
     this.adjustControlBox();

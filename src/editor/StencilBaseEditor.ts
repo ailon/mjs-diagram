@@ -79,10 +79,6 @@ export class StencilBaseEditor {
     this._overlayContainer = overlayContainer;
     this._stencilType = stencilType;
     this._stencil = stencil ?? new stencilType(iid, container);
-    // this._stencil.createVisual();
-
-    // this.setupPortBox();
-    // this.setupControlBox();
 
     this.strokePanel = new ColorPickerPanel(
       'Line color',
@@ -185,7 +181,6 @@ export class StencilBaseEditor {
   
   private setupControlBox() {
     if (this._stencil !== undefined) {
-      //this._controlBox = SvgHelper.createGroup();
       const translate = SvgHelper.createTransform();
       translate.setTranslate(-this.CB_DISTANCE / 2, -this.CB_DISTANCE / 2);
       this._controlBox.transform.baseVal.appendItem(translate);
@@ -423,7 +418,6 @@ export class StencilBaseEditor {
     this.offsetY = point.y - this._stencil.top;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public pointerDown(point: IPoint, target?: EventTarget): void {
     if (this._stencil !== undefined) {
       if (this.state === 'new') {
@@ -435,7 +429,6 @@ export class StencilBaseEditor {
       this.initManipulation(point);
 
       if (this.state !== 'new') {
-        //this.select();
         this.activeGrip = this.findGripByVisual(target as SVGGraphicsElement);
         if (this.activeGrip !== undefined) {
           this._state = 'resize';
@@ -443,8 +436,6 @@ export class StencilBaseEditor {
           this._state = 'move';
         }
       } else {
-        // this._stencil.createVisual();
-
         this._stencil.moveVisual(point);
 
         this._state = 'creating';
@@ -572,7 +563,6 @@ export class StencilBaseEditor {
   protected _suppressStencilCreateEvent = false;
   public pointerUp(point: IPoint): void {
     if (this._stencil) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const inState = this.state;
       if (
         this.state === 'creating' &&

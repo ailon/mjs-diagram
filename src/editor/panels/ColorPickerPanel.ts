@@ -22,8 +22,6 @@ export class ColorPickerPanel extends PropertyPanelBase {
     const panelDiv = document.createElement('div');
     panelDiv.style.display = 'flex';
     panelDiv.style.flexWrap = 'wrap';
-    // panelDiv.style.overflow = 'hidden';
-    // panelDiv.style.whiteSpace = 'nowrap';
     this.colors.forEach((color) => {
       const colorBoxContainer = this.getColorBox(color);
       panelDiv.appendChild(colorBoxContainer);
@@ -38,20 +36,6 @@ export class ColorPickerPanel extends PropertyPanelBase {
 
     const buttonPadding = baseHeight / 4;
     const buttonHeight = baseHeight - buttonPadding;
-
-    // const colorBoxContainer = document.createElement('div');
-    // colorBoxContainer.style.display = 'inline-block';
-    //colorBoxContainer.style.boxSizing = 'content-box';
-    // colorBoxContainer.style.width = `${buttonHeight - 2}px`;
-    // colorBoxContainer.style.height = `${buttonHeight - 2}px`;
-    // colorBoxContainer.style.padding = '1px';
-    // colorBoxContainer.style.marginRight = '2px';
-    // colorBoxContainer.style.marginBottom = '2px';
-    // colorBoxContainer.style.borderWidth = '2px';
-    // colorBoxContainer.style.borderStyle = 'solid';
-    //colorBoxContainer.style.borderRadius = `${(buttonHeight + 2) / 2}px`;
-    // colorBoxContainer.style.borderColor =
-    //   color === this.currentColor ? accentColor : 'transparent';
 
     const colorBox = document.createElement('div');
     colorBox.style.display = 'flex';
@@ -72,8 +56,6 @@ export class ColorPickerPanel extends PropertyPanelBase {
     colorBox.addEventListener('click', () => {
       this.setCurrentColor(color, colorBox);
     });
-
-    // colorBoxContainer.appendChild(colorBox);
 
     return colorBox;
   }

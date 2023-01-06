@@ -17,7 +17,6 @@ export class TextStencil extends StencilBase {
 
   public textBoundingBox: DOMRect;
 
-  // public textElement!: SVGForeignObjectElement;
   public textElement!: SVGTextElement;
   public textContainer!: HTMLDivElement;
 
@@ -138,11 +137,6 @@ export class TextStencil extends StencilBase {
     SvgHelper.setAttributes(this.textElement, [['x', `${centerX}`]]);
     SvgHelper.setAttributes(this.textElement, [['y', `${centerY}`]]);
   }
-
-  // public renderText() {
-  //   this.textContainer.innerText = this.text;
-  //   this.setSize();
-  // }
 
   public setColor(color: string): void {
     if (this.textElement) {

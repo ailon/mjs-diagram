@@ -46,18 +46,11 @@ export class DiagramViewer extends HTMLElement {
     super();
 
     this.onPointerDown = this.onPointerDown.bind(this);
-    //this.onDblClick = this.onDblClick.bind(this);
     this.onPointerMove = this.onPointerMove.bind(this);
     this.onStencilPointerUp = this.onStencilPointerUp.bind(this);
     this.onPointerUp = this.onPointerUp.bind(this);
     this.onPointerOut = this.onPointerOut.bind(this);
-    //this.onKeyUp = this.onKeyUp.bind(this);
-    //this.overrideOverflow = this.overrideOverflow.bind(this);
-    //this.restoreOverflow = this.restoreOverflow.bind(this);
-    //this.close = this.close.bind(this);
-    //this.closeUI = this.closeUI.bind(this);
     this.clientToLocalCoordinates = this.clientToLocalCoordinates.bind(this);
-    // this.onWindowResize = this.onWindowResize.bind(this);
 
     this.attachShadow({ mode: 'open' });
   }
