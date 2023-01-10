@@ -564,8 +564,9 @@ export class StencilBaseEditor {
   public pointerUp(point: IPoint): void {
     if (this._stencil) {
       const inState = this.state;
+      this._state = 'select';
       if (
-        this.state === 'creating' &&
+        inState === 'creating' &&
         this._stencil.width < 10 &&
         this._stencil.height < 10
       ) {
@@ -574,7 +575,6 @@ export class StencilBaseEditor {
       } else {
         this.manipulate(point);
       }
-      this._state = 'select';
 
       if (
         inState === 'creating' &&

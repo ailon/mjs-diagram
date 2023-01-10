@@ -19,6 +19,7 @@ import { SvgHelper } from './core/SvgHelper';
 import { TextStencil } from './core/TextStencil';
 import { Port } from './core/Port';
 import { Renderer } from './editor/Renderer';
+import { UndoRedoManager } from './editor/UndoRedoManager';
 
 export type DiagramEditorMode = 'select' | 'connect';
 
@@ -85,10 +86,15 @@ export class DiagramEditor extends HTMLElement {
   protected _manipulationStartX = 0;
   protected _manipulationStartY = 0;
 
+  private undoRedoManager: UndoRedoManager<
+    DiagramState
+  > = new UndoRedoManager<DiagramState>();
+
   constructor() {
     super();
 
     this.stencilCreated = this.stencilCreated.bind(this);
+    this.stencilChanged = this.stencilChanged.bind(this);
     this.connectorCreated = this.connectorCreated.bind(this);
     this.connectorUpdated = this.connectorUpdated.bind(this);
     this.setCurrentStencil = this.setCurrentStencil.bind(this);
@@ -127,6 +133,12 @@ export class DiagramEditor extends HTMLElement {
     this.findConnectorEditor = this.findConnectorEditor.bind(this);
 
     this.zoom = this.zoom.bind(this);
+
+    this.undo = this.undo.bind(this);
+    this.addUndoStep = this.addUndoStep.bind(this);
+    this.undoStep = this.undoStep.bind(this);
+    this.redo = this.redo.bind(this);
+    this.redoStep = this.redoStep.bind(this);
 
     this.attachShadow({ mode: 'open' });
 
@@ -513,6 +525,14 @@ export class DiagramEditor extends HTMLElement {
       }
       case 'properties': {
         this.toggleToolbox();
+        break;
+      }
+      case 'undo': {
+        this.undo();
+        break;
+      }
+      case 'redo': {
+        this.redo();
         break;
       }
     }
@@ -1137,8 +1157,7 @@ export class DiagramEditor extends HTMLElement {
       }
     }
     this.isDragging = false;
-    // @todo
-    // this.addUndoStep();
+    this.addUndoStep();
   }
 
   private onPointerOut(/*ev: PointerEvent*/) {
@@ -1154,8 +1173,7 @@ export class DiagramEditor extends HTMLElement {
     if (sType) {
       this.deselectStencil();
       this.setCurrentStencil();
-      // @todo
-      // this.addUndoStep();
+      this.addUndoStep();
       this._currentStencilEditor = this.addNewStencil(sType.stencilType);
       this._currentStencilEditor.onStencilCreated = this.stencilCreated;
       if (this._mainCanvas) {
@@ -1182,7 +1200,7 @@ export class DiagramEditor extends HTMLElement {
 
     // @todo
     // this.toolbar.setSelectMode();
-    // this.addUndoStep();
+    this.addUndoStep();
     // this.eventListeners['markercreate'].forEach((listener) =>
     //   listener(new MarkerEvent(this, this.currentMarker))
     // );
@@ -1206,6 +1224,7 @@ export class DiagramEditor extends HTMLElement {
     this._connectorEditors.push(connectorEditor);
     this.pushToConnectorLayer(connectorEditor);
     this.deselectCurrentConnector();
+    this.addUndoStep();
   }
 
   private connectorUpdated(connectorEditor: ConnectorBaseEditor) {
@@ -1217,6 +1236,7 @@ export class DiagramEditor extends HTMLElement {
     );
     this.pushToConnectorLayer(connectorEditor);
     this.deselectCurrentConnector();
+    this.addUndoStep();
   }
 
   public setCurrentStencil(stencilEditor?: StencilBaseEditor): void {
@@ -1453,4 +1473,76 @@ export class DiagramEditor extends HTMLElement {
       return undefined;
     }
   }
+
+  /**
+   * Returns true if undo operation can be performed (undo stack is not empty).
+   */
+  public get isUndoPossible(): boolean {
+    if (this.undoRedoManager && this.undoRedoManager.isUndoPossible) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Returns true if redo operation can be performed (redo stack is not empty).
+   */
+   public get isRedoPossible(): boolean {
+    if (this.undoRedoManager && this.undoRedoManager.isRedoPossible) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private addUndoStep() {
+    if (
+      this._currentStencilEditor === undefined ||
+      this._currentStencilEditor.state !== 'edit'
+    ) {
+      const currentState = this.getState();
+      const lastUndoState = this.undoRedoManager.getLastUndoStep();
+      if (
+        lastUndoState &&
+        (lastUndoState.width !== currentState.width ||
+          lastUndoState.height !== currentState.height)
+      ) {
+        // if the size changed just replace the last step with a resized one
+        this.undoRedoManager.replaceLastUndoStep(currentState);
+      } else {
+        this.undoRedoManager.addUndoStep(currentState);
+      }
+    }
+  }
+
+  /**
+   * Undo last action.
+   */
+  public undo(): void {
+    this.addUndoStep();
+    this.undoStep();
+  }
+
+  private undoStep(): void {
+    const stepData = this.undoRedoManager.undo();
+    if (stepData !== undefined) {
+      this.restoreState(stepData);
+    }
+  }  
+
+  /**
+   * Redo previously undone action.
+   */
+  public redo(): void {
+    this.redoStep();
+  }
+
+  private redoStep(): void {
+    const stepData = this.undoRedoManager.redo();
+    if (stepData !== undefined) {
+      this.restoreState(stepData);
+    }
+  }
+
 }
