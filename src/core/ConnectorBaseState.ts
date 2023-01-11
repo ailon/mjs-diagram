@@ -11,6 +11,9 @@ export interface ConnectorBaseState {
   endStencilId?: number;
   endPortLocation?: PortLocation;
 
+  labelOffsetX: number;
+  labelOffsetY: number;
+
   strokeColor: string;
   strokeWidth: number;
   strokeDasharray: string;

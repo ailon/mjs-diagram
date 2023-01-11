@@ -36,25 +36,60 @@ export class ConnectorBase {
   public strokeWidth = 1;
   public strokeDasharray = '';
 
+  public labelText = "label";
+  public textElement!: SVGTextElement;
+  public textBoundingBox= new DOMRect();
+  public labelOffsetX = 0;
+  public labelOffsetY = 0;
+  
   constructor(iid: number, container: SVGGElement) {
     this._iid = iid;
     this.container = container;
 
-    this.createVisual();
+    this.ownsTarget = this.ownsTarget.bind(this);
+    this.labelOwnsTarget = this.labelOwnsTarget.bind(this);
+    this.createVisual = this.createVisual.bind(this);
+    this.adjustVisual = this.adjustVisual.bind(this);
+    this.addVisualToContainer = this.addVisualToContainer.bind(this);
+
+    this.adjust = this.adjust.bind(this);
+    this.adjustPoints = this.adjustPoints.bind(this);
+    this.setStartPosition = this.setStartPosition.bind(this);
+    this.setEndPosition = this.setEndPosition.bind(this);
+    this.renderText = this.renderText.bind(this);
+    this.setTextBoundingBox = this.setTextBoundingBox.bind(this);
+    this.positionText = this.positionText.bind(this);
+    this.moveLabel = this.moveLabel.bind(this);
+
+    this.scale = this.scale.bind(this);
+    this.getState = this.getState.bind(this);
+    this.restoreState = this.restoreState.bind(this);
   }
 
   public ownsTarget(el: EventTarget): boolean {
     if (
       el === this.visual ||
       el === this.selectorLine ||
-      el === this.visibleLine
+      el === this.visibleLine ||
+      el === this.textElement
     ) {
       return true;
     } else {
-      return false;
+      return this.labelOwnsTarget(el);
     }
   }
-  private createVisual() {
+
+  public labelOwnsTarget(el: EventTarget): boolean {
+    let found = false;
+    this.textElement.childNodes.forEach((span) => {
+      if (span === el) {
+        found = true;
+      }
+    });
+    return found;
+  }
+
+  public createVisual() {
     this.selectorLine = SvgHelper.createLine(
       this.x1,
       this.y1,
@@ -77,6 +112,14 @@ export class ConnectorBase {
     );
     this.visual.appendChild(this.selectorLine);
     this.visual.appendChild(this.visibleLine);
+
+    this.textElement = SvgHelper.createText();
+    this.textElement.style.fontSize = '1rem';
+    this.textElement.style.textAnchor = 'middle';
+    this.textElement.style.dominantBaseline = 'hanging';
+    this.visual.appendChild(this.textElement);
+
+    this.renderText();
 
     this.addVisualToContainer(this.visual);
   }
@@ -123,6 +166,8 @@ export class ConnectorBase {
       SvgHelper.setAttributes(this.visibleLine, [['stroke', this.strokeColor]]);
       SvgHelper.setAttributes(this.visibleLine, [['stroke-width', this.strokeWidth.toString()]]);
       SvgHelper.setAttributes(this.visibleLine, [['stroke-dasharray', this.strokeDasharray.toString()]]);
+
+      this.positionText();
     }
   }
 
@@ -137,6 +182,65 @@ export class ConnectorBase {
     this.y2 = point.y;
     this.adjustVisual();
   }
+
+  public renderText() {
+    const LINE_SIZE = '1rem';
+
+    if (this.textElement) {
+      while (this.textElement.lastChild) {
+        this.textElement.removeChild(this.textElement.lastChild);
+      }
+
+      const lines = this.labelText.split(/\r\n|[\n\v\f\r\x85\u2028\u2029]/);
+      lines.forEach((line, lineno) => {
+        this.textElement.appendChild(
+          SvgHelper.createTSpan(
+            // workaround for swallowed empty lines
+            line.trim() === '' ? ' ' : line.trim(),
+            [
+              // ['x', '0'],
+              ['dy', lineno > 0 ? LINE_SIZE : '0'],
+            ]
+          )
+        );
+      });
+
+      setTimeout(this.positionText, 10);
+    }
+  }
+
+  public moveLabel(offsetX: number, offsetY: number) {
+    this.labelOffsetX += offsetX;
+    this.labelOffsetY += offsetY;
+    this.positionText();
+  }
+
+  protected setTextBoundingBox() {
+    this.textBoundingBox.x = Math.min(this.x1, this.x2);
+    this.textBoundingBox.y = Math.min(this.y1, this.y2);
+    this.textBoundingBox.width = Math.max(this.x1, this.x2) - this.textBoundingBox.x;
+    this.textBoundingBox.height = Math.max(this.y1, this.y2) - this.textBoundingBox.y;
+  }
+
+  public positionText() {
+    this.setTextBoundingBox();
+    const textBBox = this.textElement.getBBox();
+    const centerX =
+      this.textBoundingBox.x +
+      this.textBoundingBox.width / 2 +
+      this.labelOffsetX;
+    const centerY =
+      this.textBoundingBox.y +
+      this.textBoundingBox.height / 2 - textBBox.height / 2 +
+      this.labelOffsetY;
+
+    this.textElement.childNodes.forEach((ts) => {
+      const tspan = <SVGTSpanElement>ts;
+      SvgHelper.setAttributes(tspan, [['x', `${centerX}`]]);
+    });
+    SvgHelper.setAttributes(this.textElement, [['x', `${centerX}`]]);
+    SvgHelper.setAttributes(this.textElement, [['y', `${centerY}`]]);
+  }  
 
   public scale(scaleX: number, scaleY: number): void {
     this.x1 = this.x1 * scaleX;
@@ -158,6 +262,9 @@ export class ConnectorBase {
       endStencilId: this.endStencil?.IId,
       endPortLocation: this.endPort?.location,
 
+      labelOffsetX: this.labelOffsetX,
+      labelOffsetY: this.labelOffsetY,
+
       strokeColor: this.strokeColor,
       strokeWidth: this.strokeWidth,
       strokeDasharray: this.strokeDasharray
@@ -170,6 +277,9 @@ export class ConnectorBase {
     this.strokeColor = state.strokeColor;
     this.strokeWidth = state.strokeWidth;
     this.strokeDasharray = state.strokeDasharray;
+
+    this.labelOffsetX = state.labelOffsetX;
+    this.labelOffsetY = state.labelOffsetY;
 
     this.startStencil = endPoints.startStencil;
     this.startPort = endPoints.startPort;

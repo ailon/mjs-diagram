@@ -3,7 +3,10 @@ import { IPoint } from '../core/IPoint';
 import { ResizeGrip } from './ResizeGrip';
 import { SvgHelper } from '../core/SvgHelper';
 import { Port } from '../core/Port';
-import { ConnectorBaseState, ConnectorEndPoints } from '../core/ConnectorBaseState';
+import {
+  ConnectorBaseState,
+  ConnectorEndPoints,
+} from '../core/ConnectorBaseState';
 
 export type ConnectorState = 'new' | 'creating' | 'select' | 'move';
 
@@ -18,11 +21,15 @@ export class ConnectorBaseEditor {
 
   protected manipulationStartX = 0;
   protected manipulationStartY = 0;
+  protected prevX = 0;
+  protected prevY = 0;
 
   private manipulationStartX1 = 0;
   private manipulationStartY1 = 0;
   private manipulationStartX2 = 0;
   private manipulationStartY2 = 0;
+
+  private isDraggingLabel = false;
 
   /**
    * Container for control elements.
@@ -49,16 +56,16 @@ export class ConnectorBaseEditor {
 
   constructor(
     iid: number,
-    container: SVGGElement, 
-    overlayContainer: HTMLDivElement, 
-    connectorType: typeof ConnectorBase, 
+    container: SVGGElement,
+    overlayContainer: HTMLDivElement,
+    connectorType: typeof ConnectorBase,
     connector?: ConnectorBase
   ) {
     this.connector = connector ?? new connectorType(iid, container);
     this.connector.container = container;
     this.overlayContainer = overlayContainer;
 
-    this.setupControlBox();    
+    this.setupControlBox();
 
     this.select = this.select.bind(this);
     this.deselect = this.deselect.bind(this);
@@ -73,7 +80,8 @@ export class ConnectorBaseEditor {
     let found = false;
     if (el !== null) {
       if (
-        this.grip1.ownsTarget(el) || this.grip2.ownsTarget(el) ||
+        this.grip1.ownsTarget(el) ||
+        this.grip2.ownsTarget(el) ||
         this.connector.ownsTarget(el)
       ) {
         found = true;
@@ -109,11 +117,14 @@ export class ConnectorBaseEditor {
     this.controlBox.style.display = '';
   }
 
-  public pointerDown(point: IPoint, target?: EventTarget):void {
+  public pointerDown(point: IPoint, target?: EventTarget): void {
     this.manipulationStartX = point.x;
     this.manipulationStartY = point.y;
+    this.prevX = point.x;
+    this.prevY = point.y;
 
     if (this.state === 'new') {
+      this.connector.createVisual();
       this.connector.x1 = point.x;
       this.connector.y1 = point.y;
       this.connector.x2 = point.x;
@@ -133,14 +144,19 @@ export class ConnectorBaseEditor {
       } else if (target && this.grip2.ownsTarget(target)) {
         this.activeGrip = this.grip2;
         this.movingPort = this.connector.endPort;
+      } else if (target && this.connector.labelOwnsTarget(target)) {
+        this.isDraggingLabel = true;
       } else {
         this.activeGrip = undefined;
         this.movingPort = undefined;
+        this.isDraggingLabel = false;
       }
 
-      if (this.activeGrip) {
+      if (this.activeGrip || this.isDraggingLabel) {
         this._state = 'move';
-        SvgHelper.setAttributes(this.connector.container, [['pointer-events', 'none']]);
+        SvgHelper.setAttributes(this.connector.container, [
+          ['pointer-events', 'none'],
+        ]);
       } else {
         this._state = 'select';
       }
@@ -149,41 +165,53 @@ export class ConnectorBaseEditor {
       this.showControlBox();
 
       this._state = 'creating';
-      SvgHelper.setAttributes(this.connector.container, [['pointer-events', 'none']]);
+      SvgHelper.setAttributes(this.connector.container, [
+        ['pointer-events', 'none'],
+      ]);
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-  public dblClick(point: IPoint, target?: EventTarget):void {}
+  public dblClick(point: IPoint, target?: EventTarget): void {}
 
-  public manipulate(point: IPoint):void {
+  public manipulate(point: IPoint): void {
     if (this.state === 'creating') {
       this.resize(point);
     } else if (this.state === 'move') {
       if (this.activeGrip === this.grip1) {
-        this.connector.setStartPosition({ 
+        this.connector.setStartPosition({
           x: this.manipulationStartX1 + point.x - this.manipulationStartX,
-          y: this.manipulationStartY1 + point.y - this.manipulationStartY
+          y: this.manipulationStartY1 + point.y - this.manipulationStartY,
         });
       } else if (this.activeGrip === this.grip2) {
-        this.connector.setEndPosition({ 
+        this.connector.setEndPosition({
           x: this.manipulationStartX2 + point.x - this.manipulationStartX,
-          y: this.manipulationStartY2 + point.y - this.manipulationStartY
+          y: this.manipulationStartY2 + point.y - this.manipulationStartY,
         });
+      } else if (this.isDraggingLabel) {
+        if (point.x !== 0 || point.y !== 0) { // not resetting
+          this.connector.moveLabel(
+            point.x - this.prevX,
+            point.y - this.prevY
+          );
+  
+        }
       }
       this.adjustControlBox();
     }
+    this.prevX = point.x;
+    this.prevY = point.y;
   }
 
   protected resize(point: IPoint): void {
-    switch(this.activeGrip) {
+    switch (this.activeGrip) {
       case this.grip1:
-        this.connector.setStartPosition({ x: point.x, y: point.y});
-        break; 
+        this.connector.setStartPosition({ x: point.x, y: point.y });
+        break;
       case this.grip2:
       case undefined:
-        this.connector.setEndPosition({ x: point.x, y: point.y});
-        break; 
+        this.connector.setEndPosition({ x: point.x, y: point.y });
+        break;
     }
     this.adjustControlBox();
   }
@@ -219,8 +247,16 @@ export class ConnectorBaseEditor {
   protected positionGrips(): void {
     const gripSize = this.grip1.GRIP_SIZE;
 
-    this.positionGrip(this.grip1.visual, this.connector.x1 - gripSize / 2, this.connector.y1 - gripSize / 2);
-    this.positionGrip(this.grip2.visual, this.connector.x2 - gripSize / 2, this.connector.y2 - gripSize / 2);
+    this.positionGrip(
+      this.grip1.visual,
+      this.connector.x1 - gripSize / 2,
+      this.connector.y1 - gripSize / 2
+    );
+    this.positionGrip(
+      this.grip2.visual,
+      this.connector.x2 - gripSize / 2,
+      this.connector.y2 - gripSize / 2
+    );
   }
 
   protected positionGrip(grip: SVGGraphicsElement, x: number, y: number): void {
@@ -229,7 +265,7 @@ export class ConnectorBaseEditor {
     grip.transform.baseVal.replaceItem(translate, 0);
   }
 
-  public pointerUp(point: IPoint):void {
+  public pointerUp(point: IPoint): void {
     const inState = this.state;
     this.manipulate(point);
     this._state = 'select';
@@ -245,9 +281,12 @@ export class ConnectorBaseEditor {
       if (this.onConnectorUpdated) {
         this.onConnectorUpdated(this);
       }
+      this.isDraggingLabel = false;
     }
 
-    SvgHelper.setAttributes(this.connector.container, [['pointer-events', 'auto']]);
+    SvgHelper.setAttributes(this.connector.container, [
+      ['pointer-events', 'auto'],
+    ]);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -258,7 +297,10 @@ export class ConnectorBaseEditor {
     this.adjustControlBox();
   }
 
-  public restoreState(state: ConnectorBaseState, endPoints: ConnectorEndPoints): void {
+  public restoreState(
+    state: ConnectorBaseState,
+    endPoints: ConnectorEndPoints
+  ): void {
     this.connector.restoreState(state, endPoints);
     this.adjustControlBox();
     this._state = 'select';
