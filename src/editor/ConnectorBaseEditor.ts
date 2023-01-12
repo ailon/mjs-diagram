@@ -156,7 +156,7 @@ export class ConnectorBaseEditor {
         this.isDraggingLabel = false;
       }
 
-      if (this.activeGrip || this.isDraggingLabel) {
+      if (this.activeGrip) {
         this._state = 'move';
         SvgHelper.setAttributes(this.connector.container, [
           ['pointer-events', 'none'],
@@ -192,17 +192,17 @@ export class ConnectorBaseEditor {
           x: this.manipulationStartX2 + point.x - this.manipulationStartX,
           y: this.manipulationStartY2 + point.y - this.manipulationStartY,
         });
-      } else if (this.isDraggingLabel) {
-        if (point.x !== 0 || point.y !== 0) { // not resetting
-          this.connector.moveLabel(
-            point.x - this.prevX,
-            point.y - this.prevY
-          );
-  
-        }
+      } 
+    } else if (this.isDraggingLabel) {
+      if (point.x !== 0 || point.y !== 0) { // not resetting
+        this.connector.moveLabel(
+          point.x - this.prevX,
+          point.y - this.prevY
+        );
       }
-      this.adjustControlBox();
     }
+    this.adjustControlBox();
+
     this.prevX = point.x;
     this.prevY = point.y;
   }
@@ -285,8 +285,11 @@ export class ConnectorBaseEditor {
       if (this.onConnectorUpdated) {
         this.onConnectorUpdated(this);
       }
-      this.isDraggingLabel = false;
       this.activeGrip = undefined;
+    } else if (this.isDraggingLabel) {
+      this.connector.adjustPoints();
+      this.connector.adjustVisual();
+      this.isDraggingLabel = false;
     }
 
     SvgHelper.setAttributes(this.connector.container, [
