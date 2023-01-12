@@ -74,6 +74,10 @@ export class ConnectorBaseEditor {
     this.showControlBox = this.showControlBox.bind(this);
     this.hideControlBox = this.hideControlBox.bind(this);
     this.restoreState = this.restoreState.bind(this);
+
+    this.pointerDown = this.pointerDown.bind(this);
+    this.pointerUp = this.pointerUp.bind(this);
+    this.manipulate = this.manipulate.bind(this);
   }
 
   public ownsTarget(el: EventTarget | null): boolean {
@@ -275,7 +279,7 @@ export class ConnectorBaseEditor {
         this.onConnectorCreated(this);
       }
     } else if (inState === 'move') {
-       this.deselect();
+      this.deselect();
       this.connector.adjustPoints();
       this.connector.adjustVisual();
       if (this.onConnectorUpdated) {

@@ -899,6 +899,7 @@ export class DiagramEditor extends HTMLElement {
     if (hitConnector !== undefined) {
       if (this._currentConnectorEditor !== hitConnector) {
         this.deselectStencil();
+        this.deselectCurrentConnector();
         this._currentConnectorEditor = hitConnector;
         this.popFromConnectorLayer(this._currentConnectorEditor);
         hitConnector.select();
@@ -1129,8 +1130,8 @@ export class DiagramEditor extends HTMLElement {
         } 
       }
     } else if (
-      this._currentConnectorEditor !== undefined &&
-      this._currentConnectorEditor.state === 'move'
+      this._currentConnectorEditor !== undefined 
+      // && this._currentConnectorEditor.state === 'move'
     ) {
       // reset connector when released of stencil as if it didn't move
       this._currentConnectorEditor.pointerUp({ x: 0, y: 0 });
