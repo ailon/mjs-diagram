@@ -275,13 +275,14 @@ export class ConnectorBaseEditor {
         this.onConnectorCreated(this);
       }
     } else if (inState === 'move') {
-      this.deselect();
+       this.deselect();
       this.connector.adjustPoints();
       this.connector.adjustVisual();
       if (this.onConnectorUpdated) {
         this.onConnectorUpdated(this);
       }
       this.isDraggingLabel = false;
+      this.activeGrip = undefined;
     }
 
     SvgHelper.setAttributes(this.connector.container, [
