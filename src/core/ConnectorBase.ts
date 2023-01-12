@@ -36,9 +36,10 @@ export class ConnectorBase {
   public strokeWidth = 1;
   public strokeDasharray = '';
 
-  public labelText = "label";
+  public labelText = `label`;
   public textElement!: SVGTextElement;
   public textBoundingBox= new DOMRect();
+  public labelBackground!: SVGRectElement
   public labelOffsetX = 0;
   public labelOffsetY = 0;
   
@@ -113,6 +114,8 @@ export class ConnectorBase {
     this.visual.appendChild(this.selectorLine);
     this.visual.appendChild(this.visibleLine);
 
+    this.labelBackground = SvgHelper.createRect(10, 10, [['fill', 'white']]);
+    this.visual.appendChild(this.labelBackground);
     this.textElement = SvgHelper.createText();
     this.textElement.style.fontSize = '1rem';
     this.textElement.style.textAnchor = 'middle';
@@ -238,8 +241,15 @@ export class ConnectorBase {
       const tspan = <SVGTSpanElement>ts;
       SvgHelper.setAttributes(tspan, [['x', `${centerX}`]]);
     });
-    SvgHelper.setAttributes(this.textElement, [['x', `${centerX}`]]);
-    SvgHelper.setAttributes(this.textElement, [['y', `${centerY}`]]);
+    SvgHelper.setAttributes(this.textElement, [['x', `${centerX}`], ['y', `${centerY}`]]);
+
+    const bgPadding = 1.2;
+    SvgHelper.setAttributes(this.labelBackground, [
+      ['width', (textBBox.width * bgPadding).toString()],
+      ['height', (textBBox.height * bgPadding).toString()],
+      ['x', (centerX - (textBBox.width * bgPadding / 2)).toString()],
+      ['y', (centerY - (textBBox.height / 2) * (bgPadding - 1) * 2).toString()]
+    ]);
   }  
 
   public scale(scaleX: number, scaleY: number): void {
