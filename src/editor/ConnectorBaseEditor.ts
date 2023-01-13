@@ -65,8 +65,6 @@ export class ConnectorBaseEditor {
     this.connector.container = container;
     this.overlayContainer = overlayContainer;
 
-    this.setupControlBox();
-
     this.select = this.select.bind(this);
     this.deselect = this.deselect.bind(this);
     this.setupControlBox = this.setupControlBox.bind(this);
@@ -104,6 +102,9 @@ export class ConnectorBaseEditor {
   public select(): void {
     this.connector.container.style.cursor = 'move';
     this._isSelected = true;
+    if (this.controlBox === undefined) {
+      this.setupControlBox();
+    }
     this.adjustControlBox();
     this.showControlBox();
   }
@@ -116,9 +117,11 @@ export class ConnectorBaseEditor {
 
   protected hideControlBox(): void {
     this.controlBox.style.display = 'none';
+    this.connector.labelBackground.style.strokeOpacity = '0';
   }
   protected showControlBox(): void {
     this.controlBox.style.display = '';
+    this.connector.labelBackground.style.strokeOpacity = '1';
   }
 
   public pointerDown(point: IPoint, target?: EventTarget): void {
@@ -226,10 +229,18 @@ export class ConnectorBaseEditor {
 
     this.addControlGrips();
 
+    this.connector.labelBackground.style.stroke = '#aaa';
+    this.connector.labelBackground.style.strokeDasharray = '2 2';
+    this.connector.labelBackground.style.strokeWidth = '1';
+    this.connector.labelBackground.style.strokeOpacity = '0';
+
     this.controlBox.style.display = 'none';
   }
 
   private adjustControlBox() {
+    if (this.controlBox === undefined) {
+      this.setupControlBox();
+    }
     this.positionGrips();
   }
 
