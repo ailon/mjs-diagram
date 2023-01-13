@@ -36,7 +36,7 @@ export class ConnectorBase {
   public strokeWidth = 1;
   public strokeDasharray = '';
 
-  public labelText = `label`;
+  public labelText = '';
   public textElement!: SVGTextElement;
   public textBoundingBox= new DOMRect();
   public labelBackground!: SVGRectElement

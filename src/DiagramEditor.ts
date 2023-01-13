@@ -891,11 +891,11 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private selectHitConnector(
-    ev: PointerEvent,
+    target: EventTarget,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     localCoordinates: IPoint
   ): ConnectorBaseEditor | undefined {
-    const hitConnector = this.getHitConnector(ev.target);
+    const hitConnector = this.getHitConnector(target);
     if (hitConnector !== undefined) {
       if (this._currentConnectorEditor !== hitConnector) {
         this.deselectStencil();
@@ -937,7 +937,7 @@ export class DiagramEditor extends HTMLElement {
       } else if (this.mode === 'select' && ev.target) {
         const hitEditor = this.selectHitEditor(ev, localCoordinates);
         if (hitEditor === undefined) {
-          const hitConnector = this.selectHitConnector(ev, localCoordinates);
+          const hitConnector = this.selectHitConnector(ev.target, localCoordinates);
           hitConnector?.pointerDown(localCoordinates, ev.target);
         }
       } else if (this.mode === 'connect' && ev.target) {
@@ -994,6 +994,10 @@ export class DiagramEditor extends HTMLElement {
           this.clientToLocalCoordinates(ev.clientX, ev.clientY),
           ev.target
         );
+      } else if (hitEditor === undefined && ev.target) {
+        const localCoordinates = this.clientToLocalCoordinates(ev.clientX, ev.clientY);
+        const hitConnector = this.selectHitConnector(ev.target, localCoordinates);
+        hitConnector?.dblClick(localCoordinates, ev.target);
       } else {
         this.setCurrentStencil();
       }
