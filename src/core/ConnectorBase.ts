@@ -4,6 +4,8 @@ import { Port } from './Port';
 import { StencilBase } from './StencilBase';
 import { SvgHelper } from './SvgHelper';
 
+export type ArrowType = 'both' | 'start' | 'end' | 'none';
+
 export class ConnectorBase {
   public static typeName = 'ConnectorBase';
 
@@ -42,6 +44,14 @@ export class ConnectorBase {
   public labelBackground!: SVGRectElement
   public labelOffsetX = 0;
   public labelOffsetY = 0;
+
+  private arrow1!: SVGPolygonElement;
+  private arrow2!: SVGPolygonElement;
+
+  private arrowType: ArrowType = 'both';
+
+  private arrowBaseHeight = 10;
+  private arrowBaseWidth = 10;  
   
   constructor(iid: number, container: SVGGElement) {
     this._iid = iid;
@@ -61,6 +71,9 @@ export class ConnectorBase {
     this.setTextBoundingBox = this.setTextBoundingBox.bind(this);
     this.positionText = this.positionText.bind(this);
     this.moveLabel = this.moveLabel.bind(this);
+    this.getArrowPoints = this.getArrowPoints.bind(this);
+    this.createTips = this.createTips.bind(this);
+    this.adjustTips = this.adjustTips.bind(this);
 
     this.scale = this.scale.bind(this);
     this.getState = this.getState.bind(this);
@@ -114,6 +127,8 @@ export class ConnectorBase {
     this.visual.appendChild(this.selectorLine);
     this.visual.appendChild(this.visibleLine);
 
+    this.createTips();
+
     this.labelBackground = SvgHelper.createRect(10, 10, [['fill', 'white']]);
     this.visual.appendChild(this.labelBackground);
     this.textElement = SvgHelper.createText();
@@ -133,6 +148,25 @@ export class ConnectorBase {
     } else {
       this.container.appendChild(element);
     }
+  }
+
+  private getArrowPoints(offsetX: number, offsetY: number): string {
+    const width = this.arrowBaseWidth + this.strokeWidth * 2;
+    const height = this.arrowBaseHeight + this.strokeWidth * 2;
+    return `${offsetX - width / 2},${
+      offsetY + height - this.strokeWidth
+    } ${offsetX},${offsetY - this.strokeWidth} ${
+      offsetX + width / 2},${offsetY + height - this.strokeWidth}`;
+  }
+
+  private createTips() {
+    this.arrow1 = SvgHelper.createPolygon(this.getArrowPoints(this.x1, this.y1), [['fill', this.strokeColor]]);
+    this.arrow1.transform.baseVal.appendItem(SvgHelper.createTransform());
+    this.visual.appendChild(this.arrow1);
+
+    this.arrow2 = SvgHelper.createPolygon(this.getArrowPoints(this.x2, this.y2), [['fill', this.strokeColor]]);
+    this.arrow2.transform.baseVal.appendItem(SvgHelper.createTransform());
+    this.visual.appendChild(this.arrow2);
   }
 
   public adjust(): void {
@@ -170,7 +204,38 @@ export class ConnectorBase {
       SvgHelper.setAttributes(this.visibleLine, [['stroke-width', this.strokeWidth.toString()]]);
       SvgHelper.setAttributes(this.visibleLine, [['stroke-dasharray', this.strokeDasharray.toString()]]);
 
+      this.adjustTips();
+
       this.positionText();
+    }
+  }
+
+  public adjustTips() {
+    if (this.arrow1 && this.arrow2) {
+      this.arrow1.style.display = (this.arrowType === 'both' || this.arrowType === 'start') ? '' : 'none';
+      this.arrow2.style.display = (this.arrowType === 'both' || this.arrowType === 'end') ? '' : 'none';
+
+      SvgHelper.setAttributes(this.arrow1, [
+        ['points', this.getArrowPoints(this.x1, this.y1)],
+        ['fill', this.strokeColor]
+      ]);
+      SvgHelper.setAttributes(this.arrow2, [
+        ['points', this.getArrowPoints(this.x2, this.y2)],
+        ['fill', this.strokeColor]
+      ]);
+
+      if (Math.abs(this.x1 - this.x2) > 0.1) {
+        const lineAngle1 =
+          (Math.atan((this.y2 - this.y1) / (this.x2 - this.x1)) * 180) / Math.PI + 90 * Math.sign(this.x1 - this.x2);
+
+        const a1transform = this.arrow1.transform.baseVal.getItem(0);
+        a1transform.setRotate(lineAngle1, this.x1, this.y1);
+        this.arrow1.transform.baseVal.replaceItem(a1transform, 0);
+
+        const a2transform = this.arrow2.transform.baseVal.getItem(0);
+        a2transform.setRotate(lineAngle1 + 180, this.x2, this.y2);
+        this.arrow2.transform.baseVal.replaceItem(a2transform, 0);
+      }
     }
   }
 
