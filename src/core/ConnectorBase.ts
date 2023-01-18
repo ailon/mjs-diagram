@@ -75,6 +75,8 @@ export class ConnectorBase {
     this.createTips = this.createTips.bind(this);
     this.adjustTips = this.adjustTips.bind(this);
 
+    this.setStrokeColor = this.setStrokeColor.bind(this);
+
     this.scale = this.scale.bind(this);
     this.getState = this.getState.bind(this);
     this.restoreState = this.restoreState.bind(this);
@@ -316,6 +318,11 @@ export class ConnectorBase {
       ['y', (centerY - (textBBox.height / 2) * (bgPadding - 1) * 2).toString()]
     ]);
   }  
+
+  public setStrokeColor(color: string): void {
+    this.strokeColor = color;
+    this.adjustVisual();
+  }
 
   public scale(scaleX: number, scaleY: number): void {
     this.x1 = this.x1 * scaleX;

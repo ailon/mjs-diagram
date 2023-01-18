@@ -887,6 +887,7 @@ export class DiagramEditor extends HTMLElement {
       this._currentConnectorEditor.deselect();
       this.pushToConnectorLayer(this._currentConnectorEditor);
       this._currentConnectorEditor = undefined;
+      this.addToolboxPanels([]);
     }
   }
 
@@ -903,6 +904,7 @@ export class DiagramEditor extends HTMLElement {
         this._currentConnectorEditor = hitConnector;
         this.popFromConnectorLayer(this._currentConnectorEditor);
         hitConnector.select();
+        this.addToolboxPanels(this._currentConnectorEditor.propertyPanels);
       }
     } else {
       this.deselectCurrentConnector();

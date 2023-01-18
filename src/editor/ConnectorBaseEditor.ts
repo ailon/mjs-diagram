@@ -7,6 +7,8 @@ import {
   ConnectorBaseState,
   ConnectorEndPoints,
 } from '../core/ConnectorBaseState';
+import { PropertyPanelBase } from './panels/PropertyPanelBase';
+import { ColorPickerPanel } from './panels/ColorPickerPanel';
 
 export type ConnectorState = 'new' | 'creating' | 'select' | 'move' | 'edit';
 
@@ -57,6 +59,8 @@ export class ConnectorBaseEditor {
 
   protected overlayContainer: HTMLDivElement;
 
+  private strokePanel: ColorPickerPanel;
+
   constructor(
     iid: number,
     container: SVGGElement,
@@ -67,6 +71,24 @@ export class ConnectorBaseEditor {
     this.connector = connector ?? new connectorType(iid, container);
     this.connector.container = container;
     this.overlayContainer = overlayContainer;
+
+    this.strokePanel = new ColorPickerPanel(
+      'Line color',
+      [
+        'red',
+        'orange',
+        'yellow',
+        'green',
+        'lightblue',
+        'blue',
+        'magenta',
+        'black',
+        'white',
+        'brown',
+      ],
+      'blue'
+    );
+    this.strokePanel.onColorChanged = this.connector.setStrokeColor;
 
     this.select = this.select.bind(this);
     this.deselect = this.deselect.bind(this);
@@ -415,6 +437,9 @@ export class ConnectorBaseEditor {
     // }
   }
 
+  public get propertyPanels(): PropertyPanelBase[] {
+    return [this.strokePanel];
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public dispose(): void {}
