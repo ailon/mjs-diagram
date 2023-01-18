@@ -9,6 +9,7 @@ import {
 } from '../core/ConnectorBaseState';
 import { PropertyPanelBase } from './panels/PropertyPanelBase';
 import { ColorPickerPanel } from './panels/ColorPickerPanel';
+import { ArrowTypePanel } from './panels/ArrowTypePanel';
 
 export type ConnectorState = 'new' | 'creating' | 'select' | 'move' | 'edit';
 
@@ -60,6 +61,7 @@ export class ConnectorBaseEditor {
   protected overlayContainer: HTMLDivElement;
 
   private strokePanel: ColorPickerPanel;
+  private arrowTypePanel: ArrowTypePanel;
 
   constructor(
     iid: number,
@@ -89,6 +91,9 @@ export class ConnectorBaseEditor {
       'blue'
     );
     this.strokePanel.onColorChanged = this.connector.setStrokeColor;
+
+    this.arrowTypePanel = new ArrowTypePanel('Arrow type', this.connector.arrowType);
+    this.arrowTypePanel.onArrowTypeChanged = this.connector.setArrowType;
 
     this.select = this.select.bind(this);
     this.deselect = this.deselect.bind(this);
@@ -438,7 +443,7 @@ export class ConnectorBaseEditor {
   }
 
   public get propertyPanels(): PropertyPanelBase[] {
-    return [this.strokePanel];
+    return [this.strokePanel, this.arrowTypePanel];
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function

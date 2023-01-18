@@ -48,7 +48,7 @@ export class ConnectorBase {
   private arrow1!: SVGPolygonElement;
   private arrow2!: SVGPolygonElement;
 
-  private arrowType: ArrowType = 'both';
+  public arrowType: ArrowType = 'end';
 
   private arrowBaseHeight = 10;
   private arrowBaseWidth = 10;  
@@ -76,6 +76,7 @@ export class ConnectorBase {
     this.adjustTips = this.adjustTips.bind(this);
 
     this.setStrokeColor = this.setStrokeColor.bind(this);
+    this.setArrowType = this.setArrowType.bind(this);
 
     this.scale = this.scale.bind(this);
     this.getState = this.getState.bind(this);
@@ -321,6 +322,11 @@ export class ConnectorBase {
 
   public setStrokeColor(color: string): void {
     this.strokeColor = color;
+    this.adjustVisual();
+  }
+
+  public setArrowType(arrowType: ArrowType): void {
+    this.arrowType = arrowType;
     this.adjustVisual();
   }
 
