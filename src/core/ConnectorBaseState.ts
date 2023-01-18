@@ -1,3 +1,4 @@
+import { ArrowType } from './ConnectorBase';
 import { Port, PortLocation } from './Port';
 import { StencilBase } from './StencilBase';
 
@@ -17,6 +18,8 @@ export interface ConnectorBaseState {
   strokeColor: string;
   strokeWidth: number;
   strokeDasharray: string;
+
+  arrowType?: ArrowType;
 }
 
 export interface ConnectorEndPoints {

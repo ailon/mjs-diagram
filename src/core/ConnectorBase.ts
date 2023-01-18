@@ -349,7 +349,9 @@ export class ConnectorBase {
 
       strokeColor: this.strokeColor,
       strokeWidth: this.strokeWidth,
-      strokeDasharray: this.strokeDasharray
+      strokeDasharray: this.strokeDasharray,
+
+      arrowType: this.arrowType
     }
   }
 
@@ -367,6 +369,8 @@ export class ConnectorBase {
     this.startPort = endPoints.startPort;
     this.endStencil = endPoints.endStencil;
     this.endPort = endPoints.endPort;
+
+    this.arrowType = state.arrowType ?? 'none';
 
     this.createVisual();
     this.adjustPoints();
