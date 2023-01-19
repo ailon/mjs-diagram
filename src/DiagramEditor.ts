@@ -20,6 +20,7 @@ import { TextStencil } from './core/TextStencil';
 import { Port } from './core/Port';
 import { Renderer } from './editor/Renderer';
 import { UndoRedoManager } from './editor/UndoRedoManager';
+import { CurvedConnector } from './core/CurvedConnector';
 
 export type DiagramEditorMode = 'select' | 'connect';
 
@@ -53,7 +54,7 @@ export class DiagramEditor extends HTMLElement {
   private _selectedStencilEditors: StencilBaseEditor[] = [];
   private _stencilEditors: StencilBaseEditor[] = [];
 
-  private _currentConnectorType: typeof ConnectorBase = ConnectorBase;
+  private _currentConnectorType: typeof ConnectorBase = CurvedConnector;
   private _currentConnectorEditor?: ConnectorBaseEditor;
   private _connectorEditors: ConnectorBaseEditor[] = [];
 

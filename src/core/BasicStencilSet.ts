@@ -1,3 +1,4 @@
+import { CurvedConnector } from './CurvedConnector';
 import { StencilSet } from './StencilSet';
 import { TextStencil } from './TextStencil';
 
@@ -35,5 +36,9 @@ basicStencilSet.stencilTypes.push({
 //   displayName: 'Text box',
 // }
 );
+basicStencilSet.connectorTypes.push({
+  connectorType: CurvedConnector,
+  displayName: 'Curved connector'
+});
 
 export { basicStencilSet };

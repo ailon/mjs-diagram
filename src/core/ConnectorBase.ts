@@ -32,8 +32,8 @@ export class ConnectorBase {
 
   public visual: SVGGraphicsElement = SvgHelper.createGroup();
 
-  public visibleLine!: SVGLineElement;
-  public selectorLine!: SVGLineElement;
+  public visibleLine!: SVGLineElement | SVGPathElement;
+  public selectorLine!: SVGLineElement | SVGPathElement;
   public strokeColor = '#3333ff';
   public strokeWidth = 1;
   public strokeDasharray = '';
@@ -60,6 +60,7 @@ export class ConnectorBase {
     this.ownsTarget = this.ownsTarget.bind(this);
     this.labelOwnsTarget = this.labelOwnsTarget.bind(this);
     this.createVisual = this.createVisual.bind(this);
+    this.createCoreVisual = this.createCoreVisual.bind(this);
     this.adjustVisual = this.adjustVisual.bind(this);
     this.addVisualToContainer = this.addVisualToContainer.bind(this);
 
@@ -107,6 +108,24 @@ export class ConnectorBase {
   }
 
   public createVisual() {
+    this.createCoreVisual();
+
+    this.createTips();
+
+    this.labelBackground = SvgHelper.createRect(10, 10, [['fill', 'white']]);
+    this.visual.appendChild(this.labelBackground);
+    this.textElement = SvgHelper.createText();
+    this.textElement.style.fontSize = '1rem';
+    this.textElement.style.textAnchor = 'middle';
+    this.textElement.style.dominantBaseline = 'hanging';
+    this.visual.appendChild(this.textElement);
+
+    this.renderText();
+
+    this.addVisualToContainer(this.visual);
+  }
+
+  public createCoreVisual() {
     this.selectorLine = SvgHelper.createLine(
       this.x1,
       this.y1,
@@ -129,20 +148,6 @@ export class ConnectorBase {
     );
     this.visual.appendChild(this.selectorLine);
     this.visual.appendChild(this.visibleLine);
-
-    this.createTips();
-
-    this.labelBackground = SvgHelper.createRect(10, 10, [['fill', 'white']]);
-    this.visual.appendChild(this.labelBackground);
-    this.textElement = SvgHelper.createText();
-    this.textElement.style.fontSize = '1rem';
-    this.textElement.style.textAnchor = 'middle';
-    this.textElement.style.dominantBaseline = 'hanging';
-    this.visual.appendChild(this.textElement);
-
-    this.renderText();
-
-    this.addVisualToContainer(this.visual);
   }
 
   public addVisualToContainer(element: SVGElement): void {
