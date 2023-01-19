@@ -53,6 +53,7 @@ export class DiagramEditor extends HTMLElement {
   private _selectedStencilEditors: StencilBaseEditor[] = [];
   private _stencilEditors: StencilBaseEditor[] = [];
 
+  private _currentConnectorType: typeof ConnectorBase = ConnectorBase;
   private _currentConnectorEditor?: ConnectorBaseEditor;
   private _connectorEditors: ConnectorBaseEditor[] = [];
 
@@ -949,7 +950,7 @@ export class DiagramEditor extends HTMLElement {
           if (this.connectionStartPort !== undefined) {
             this.deselectStencil();
             this.deselectCurrentConnector();
-            this._currentConnectorEditor = this.addNewConnector(ConnectorBase);
+            this._currentConnectorEditor = this.addNewConnector(this._currentConnectorType);
             this._currentConnectorEditor.onConnectorCreated =
               this.connectorCreated;
             this._currentConnectorEditor.onConnectorUpdated =
