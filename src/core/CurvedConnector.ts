@@ -1,4 +1,5 @@
 import { ConnectorBase } from './ConnectorBase';
+import { Port } from './Port';
 import { SvgHelper } from './SvgHelper';
 
 export class CurvedConnector extends ConnectorBase {
@@ -113,6 +114,60 @@ export class CurvedConnector extends ConnectorBase {
     const result = `M ${this.x1} ${this.y1} C ${cx1} ${cy1}, ${cx4} ${cy4}, ${this.x2} ${this.y2}`;
 
     return result;
+  }
+
+  protected rotateArrows(): void {
+    function getAngle(port?: Port): number {
+      let angle = 0;
+      if (port !== undefined) {
+        switch (port.location) {
+          case 'bottomcenter': {
+            angle = 0;
+            break;
+          }
+          case 'bottomleft': {
+            angle = 45;
+            break;
+          }
+          case 'bottomright': {
+            angle = -45;
+            break;
+          }
+          case 'leftcenter': {
+            angle = 90;
+            break;
+          }
+          case 'rightcenter': {
+            angle = 270;
+            break;
+          }
+          case 'topcenter': {
+            angle = 180;
+            break;
+          }
+          case 'topleft': {
+            angle = 135;
+            break;
+          }
+          case 'topright': {
+            angle = 225;
+            break;
+          }
+        }
+      }
+
+      return angle;
+    }
+
+    super.rotateArrows();
+
+    const a1transform = this.arrow1.transform.baseVal.getItem(0);
+    a1transform.setRotate(getAngle(this.startPort), this.x1, this.y1);
+    this.arrow1.transform.baseVal.replaceItem(a1transform, 0);
+
+    const a2transform = this.arrow2.transform.baseVal.getItem(0);
+    a2transform.setRotate(getAngle(this.endPort), this.x2, this.y2);
+    this.arrow2.transform.baseVal.replaceItem(a2transform, 0);
   }
 
   public createCoreVisual(): void {
