@@ -50,8 +50,8 @@ export class ConnectorBase {
 
   public arrowType: ArrowType = 'end';
 
-  private arrowBaseHeight = 10;
-  private arrowBaseWidth = 10;  
+  protected arrowBaseHeight = 10;
+  protected arrowBaseWidth = 10;  
   
   constructor(iid: number, container: SVGGElement) {
     this._iid = iid;
@@ -76,6 +76,8 @@ export class ConnectorBase {
     this.createTips = this.createTips.bind(this);
     this.adjustTips = this.adjustTips.bind(this);
     this.rotateArrows = this.rotateArrows.bind(this);
+    this.getEnding = this.getEnding.bind(this);
+    this.getEndings = this.getEndings.bind(this);
 
     this.setStrokeColor = this.setStrokeColor.bind(this);
     this.setArrowType = this.setArrowType.bind(this);
@@ -197,17 +199,39 @@ export class ConnectorBase {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected getEnding(baseEnding: IPoint, port?: Port): IPoint {
+    const result: IPoint = { x: baseEnding.x, y: baseEnding.y };
+    return result;
+  }
+
+  protected getEndings(): [IPoint, IPoint] {
+    let ending1: IPoint = { x: this.x1, y: this.y1 };
+    let ending2: IPoint = { x: this.x2, y: this.y2 };
+
+    if (this.arrowType === 'both' || this.arrowType === 'start') {
+      ending1 = this.getEnding(ending1, this.startPort);
+    }
+    if (this.arrowType === 'both' || this.arrowType === 'end') {
+      ending2 = this.getEnding(ending2, this.endPort);
+    }
+
+    return [ending1, ending2];
+  }
+
   public adjustVisual(): void {
     if (this.selectorLine && this.visibleLine) {
-      this.selectorLine.setAttribute('x1', this.x1.toString());
-      this.selectorLine.setAttribute('y1', this.y1.toString());
-      this.selectorLine.setAttribute('x2', this.x2.toString());
-      this.selectorLine.setAttribute('y2', this.y2.toString());
+      const [ending1, ending2] = this.getEndings();
 
-      this.visibleLine.setAttribute('x1', this.x1.toString());
-      this.visibleLine.setAttribute('y1', this.y1.toString());
-      this.visibleLine.setAttribute('x2', this.x2.toString());
-      this.visibleLine.setAttribute('y2', this.y2.toString());
+      this.selectorLine.setAttribute('x1', ending1.x.toString());
+      this.selectorLine.setAttribute('y1', ending1.y.toString());
+      this.selectorLine.setAttribute('x2', ending2.x.toString());
+      this.selectorLine.setAttribute('y2', ending2.y.toString());
+
+      this.visibleLine.setAttribute('x1', ending1.x.toString());
+      this.visibleLine.setAttribute('y1', ending1.y.toString());
+      this.visibleLine.setAttribute('x2', ending2.x.toString());
+      this.visibleLine.setAttribute('y2', ending2.y.toString());
 
       SvgHelper.setAttributes(this.visibleLine, [['stroke', this.strokeColor]]);
       SvgHelper.setAttributes(this.visibleLine, [['stroke-width', this.strokeWidth.toString()]]);
