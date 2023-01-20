@@ -245,8 +245,8 @@ export class ConnectorBase {
 
   public adjustTips() {
     if (this.arrow1 && this.arrow2) {
-      this.arrow1.style.display = (this.arrowType === 'both' || this.arrowType === 'start') ? '' : 'none';
-      this.arrow2.style.display = (this.arrowType === 'both' || this.arrowType === 'end') ? '' : 'none';
+      this.arrow1.style.display = (this.arrowType === 'both' || this.arrowType === 'start') && this.startPort !== undefined ? '' : 'none';
+      this.arrow2.style.display = (this.arrowType === 'both' || this.arrowType === 'end') && this.endPort !== undefined ? '' : 'none';
 
       SvgHelper.setAttributes(this.arrow1, [
         ['points', this.getArrowPoints(this.x1, this.y1)],
