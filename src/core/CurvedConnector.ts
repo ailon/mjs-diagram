@@ -6,6 +6,36 @@ import { SvgHelper } from './SvgHelper';
 export class CurvedConnector extends ConnectorBase {
   public static typeName = 'CurvedConnector';
 
+  public static getThumbnail(width: number, height: number): SVGSVGElement {
+    const result = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'svg'
+    );
+    result.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    result.setAttribute('width', width.toString());
+    result.setAttribute('height', height.toString());
+    result.setAttribute(
+      'viewBox',
+      '0 0 ' + width.toString() + ' ' + height.toString()
+    );
+
+    const xPadding = Math.max(Math.floor(width * 0.05), 2);
+    const yPadding = Math.max(Math.floor(height * 0.05), 2);
+
+    const line = SvgHelper.createPath(
+      `M ${xPadding} ${yPadding} C ${(width - xPadding * 2) * 0.75} ${
+        yPadding
+      }, ${(width - xPadding * 2) * 0.25} ${height - yPadding}, ${
+        width - xPadding
+      } ${height - yPadding}`,
+      [['stroke-width', Math.max(Math.round(width / 20), 2).toString()]]
+    );
+
+    result.appendChild(line);
+
+    return result;
+  }
+
   constructor(iid: number, container: SVGGElement) {
     super(iid, container);
 

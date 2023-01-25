@@ -38,8 +38,10 @@ export class ConnectorTypePanel extends PropertyPanelBase {
     const buttonPadding = baseHeight / 4;
     const buttonHeight = baseHeight - buttonPadding;
 
+    const thumbnail = connectorType.getThumbnail(buttonHeight - 2, buttonHeight - 2);
+
     const typeBox = document.createElement('div');
-    typeBox.innerText = connectorType.typeName;
+    typeBox.appendChild(thumbnail);
     typeBox.style.display = 'flex';
     typeBox.style.width = `${buttonHeight - 2}px`;
     typeBox.style.height = `${buttonHeight - 2}px`;
@@ -47,6 +49,7 @@ export class ConnectorTypePanel extends PropertyPanelBase {
     typeBox.style.borderStyle = 'solid';
     typeBox.style.borderColor =
       connectorType === this.currentType ? 'var(--i-mjstb-accent-color)' : '#444';
+    typeBox.style.stroke = 'var(--i-mjstb-accent-color)';
     typeBox.addEventListener('click', () => {
       this.setCurrentType(connectorType, typeBox);
     });

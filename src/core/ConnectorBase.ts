@@ -52,6 +52,34 @@ export class ConnectorBase {
 
   protected arrowBaseHeight = 10;
   protected arrowBaseWidth = 10;  
+
+  public static getThumbnail(width: number, height: number): SVGSVGElement {
+    const result = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'svg'
+    );
+    result.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    result.setAttribute('width', width.toString());
+    result.setAttribute('height', height.toString());
+    result.setAttribute(
+      'viewBox',
+      '0 0 ' +
+        width.toString() +
+        ' ' +
+        height.toString()
+    );
+
+    const xPadding = Math.max(Math.floor(width * 0.05), 2);
+    const yPadding = Math.max(Math.floor(height * 0.05), 2);
+
+    const line = SvgHelper.createLine(xPadding, yPadding, width - xPadding, height - xPadding,
+      [['stroke-width', Math.max(Math.round(width / 20), 2).toString()]]
+    );
+
+    result.appendChild(line);
+
+    return result;
+  }
   
   constructor(iid: number, container: SVGGElement) {
     this._iid = iid;
