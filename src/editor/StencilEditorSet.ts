@@ -9,6 +9,9 @@ export interface IStencilEditorSet {
   stencilEditorTypes: Map<typeof StencilBase, typeof StencilBaseEditor>;
   connectorEditorTypes: Map<typeof ConnectorBase, typeof ConnectorBaseEditor>;
 
+  availableConnectorTypes: typeof ConnectorBase[];
+  defaultConnectorType: typeof ConnectorBase; 
+
   getStencilEditor(stencilType: typeof StencilBase): typeof StencilBaseEditor;
   getConnectorEditor(connectorType: typeof ConnectorBase): typeof ConnectorBaseEditor;
 }
@@ -17,6 +20,9 @@ export class StencilEditorSet implements StencilEditorSet {
   public stencilSet: IStencilSet;
   public stencilEditorTypes: Map<typeof StencilBase, typeof StencilBaseEditor>;
   public connectorEditorTypes: Map<typeof ConnectorBase, typeof ConnectorBaseEditor>;
+
+  public availableConnectorTypes: typeof ConnectorBase[] = [ConnectorBase];
+  public defaultConnectorType: typeof ConnectorBase = ConnectorBase; 
 
   constructor(stencilSet: IStencilSet) {
     this.stencilSet = stencilSet;
