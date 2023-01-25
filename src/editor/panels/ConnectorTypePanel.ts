@@ -17,9 +17,14 @@ export class ConnectorTypePanel extends PropertyPanelBase {
 
     this.setCurrentType = this.setCurrentType.bind(this);
     this.getTypeBox = this.getTypeBox.bind(this);
+    this.selectType = this.selectType.bind(this);
   }
 
   public getUi(): HTMLDivElement {
+    if (this.typeBoxes.length > 0) {
+      this.typeBoxes.splice(0, this.typeBoxes.length);
+    }
+    
     const panelDiv = document.createElement('div');
     panelDiv.style.display = 'flex';
     panelDiv.style.flexWrap = 'wrap';
@@ -67,5 +72,16 @@ export class ConnectorTypePanel extends PropertyPanelBase {
     if (this.onConnectorTypeChanged) {
       this.onConnectorTypeChanged(connectorType);
     }
+  }
+
+  public selectType(typeName: string) {
+    this.connectorTypes.forEach((t, index) => {
+      if (t.typeName === typeName) {
+        this.currentType = t;
+        this.typeBoxes[index].style.borderColor = 'var(--i-mjstb-accent-color)';
+      } else {
+        this.typeBoxes[index].style.borderColor = '#444';
+      }
+    })
   }
 }

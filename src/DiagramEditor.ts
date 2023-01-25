@@ -929,6 +929,7 @@ export class DiagramEditor extends HTMLElement {
         this._connectorTypePanel,
         ...this._currentConnectorEditor.propertyPanels,
       ]);
+      this._connectorTypePanel.selectType(conEditor.connector.typeName);
     }
   }
 
