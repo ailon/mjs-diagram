@@ -910,22 +910,26 @@ export class DiagramEditor extends HTMLElement {
   ): ConnectorBaseEditor | undefined {
     const hitConnector = this.getHitConnector(target);
     if (hitConnector !== undefined) {
-      if (this._currentConnectorEditor !== hitConnector) {
-        this.deselectStencil();
-        this.deselectCurrentConnector();
-        this._currentConnectorEditor = hitConnector;
-        this.popFromConnectorLayer(this._currentConnectorEditor);
-        hitConnector.select();
-        this.addToolboxPanels([
-          this._connectorTypePanel,
-          ...this._currentConnectorEditor.propertyPanels,
-        ]);
-      }
+      this.selectConnector(hitConnector);
     } else {
       this.deselectCurrentConnector();
     }
 
     return hitConnector;
+  }
+
+  private selectConnector(conEditor: ConnectorBaseEditor) {
+    if (this._currentConnectorEditor !== conEditor) {
+      this.deselectStencil();
+      this.deselectCurrentConnector();
+      this._currentConnectorEditor = conEditor;
+      this.popFromConnectorLayer(this._currentConnectorEditor);
+      conEditor.select();
+      this.addToolboxPanels([
+        this._connectorTypePanel,
+        ...this._currentConnectorEditor.propertyPanels,
+      ]);
+    }
   }
 
   private onCanvasPointerDown(ev: PointerEvent) {
@@ -1365,7 +1369,10 @@ export class DiagramEditor extends HTMLElement {
       const conState = this._currentConnectorEditor.connector.getState();
       conState.typeName = newType.typeName;
       this.deleteConnector(this._currentConnectorEditor);
-      this.restoreConnector(conState);
+      const conEditor = this.restoreConnector(conState);
+      if (conEditor) {
+        this.selectConnector(conEditor);
+      }
     }
   }
 
@@ -1411,7 +1418,7 @@ export class DiagramEditor extends HTMLElement {
     return result;
   }
 
-  private restoreConnector(conState: ConnectorBaseState) {
+  private restoreConnector(conState: ConnectorBaseState): ConnectorBaseEditor | undefined {
     const cp = this._stencilEditorSet.stencilSet.getConnectorProperties(
       conState.typeName
     );
@@ -1450,6 +1457,8 @@ export class DiagramEditor extends HTMLElement {
           this._iid = Math.max(this._iid, conEditor.connector.IId); // adjust current iid counter
           startPort.connectors.push(conEditor.connector);
           endPort.connectors.push(conEditor.connector);
+
+          return conEditor;
         }
       }
     }
