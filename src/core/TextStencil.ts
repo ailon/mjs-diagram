@@ -46,6 +46,8 @@ export class TextStencil extends StencilBase {
     text.style.fontSize = `${fontSize}px`;
     text.style.textAnchor = 'middle';
     text.style.dominantBaseline = 'hanging';
+    text.style.strokeWidth = '0px';
+    text.style.fill = 'currentColor';
     text.textContent = 'Text';
 
     result.appendChild(text);

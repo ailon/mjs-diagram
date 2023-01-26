@@ -22,6 +22,7 @@ import { Renderer } from './editor/Renderer';
 import { UndoRedoManager } from './editor/UndoRedoManager';
 import { ConnectorTypePanel } from './editor/panels/ConnectorTypePanel';
 import { ConnectorBaseState } from './core/ConnectorBaseState';
+import { NewStencilPanel } from './editor/panels/NewStencilPanel';
 
 export type DiagramEditorMode = 'select' | 'connect';
 
@@ -59,6 +60,7 @@ export class DiagramEditor extends HTMLElement {
   private _currentConnectorEditor?: ConnectorBaseEditor;
   private _connectorEditors: ConnectorBaseEditor[] = [];
   private _connectorTypePanel: ConnectorTypePanel;
+  private _newStencilPanel: NewStencilPanel;
 
   public zoomSteps = [0.5, 0.8, 1, 1.5, 2, 4];
   private _zoomLevel = 1;
@@ -117,10 +119,6 @@ export class DiagramEditor extends HTMLElement {
     this.toggleConnectMode = this.toggleConnectMode.bind(this);
     this.switchToConnectMode = this.switchToConnectMode.bind(this);
     this.switchConnectModeOff = this.switchConnectModeOff.bind(this);
-    this.showAddDialog = this.showAddDialog.bind(this);
-    this.addDialogStencilTypeClicked =
-      this.addDialogStencilTypeClicked.bind(this);
-    this.hideAddDialog = this.hideAddDialog.bind(this);
 
     this.selectHitEditor = this.selectHitEditor.bind(this);
     this.selectHitConnector = this.selectHitConnector.bind(this);
@@ -136,6 +134,10 @@ export class DiagramEditor extends HTMLElement {
     this.findConnectorEditor = this.findConnectorEditor.bind(this);
 
     this.changeConnectorType = this.changeConnectorType.bind(this);
+
+    this.showAddPanel = this.showAddPanel.bind(this);
+    this.createNewStencil = this.createNewStencil.bind(this);
+    this.addNewStencil = this.addNewStencil.bind(this);
 
     this.zoom = this.zoom.bind(this);
 
@@ -155,6 +157,12 @@ export class DiagramEditor extends HTMLElement {
       this._currentConnectorType
     );
     this._connectorTypePanel.onConnectorTypeChanged = this.changeConnectorType;
+
+    this._newStencilPanel = new NewStencilPanel(
+      'Create new',
+      this._stencilEditorSet.stencilSet.stencilTypes
+    );
+    this._newStencilPanel.onCreateNewStencil = this.createNewStencil;
   }
 
   private _iid = 0;
@@ -472,20 +480,33 @@ export class DiagramEditor extends HTMLElement {
     this._toolboxContainer?.appendChild(this._toolboxPanel);
   }
 
-  private addToolboxPanels(panels: PropertyPanelBase[]) {
-    this._toolboxPanel.clear();
-    panels.forEach((p) => {
-      const cb = new ContentBlock();
-      cb.title = p.title;
-      cb.appendChild(p.getUi());
-      this._toolboxPanel.appendChild(cb);
-    });
+  private _currentToolboxPanels: PropertyPanelBase[] = [];
+  private addToolboxPanel(panel: PropertyPanelBase) {
+    const cb = new ContentBlock();
+    cb.title = panel.title;
+    cb.appendChild(panel.getUi());
+    this._toolboxPanel.appendChild(cb);
   }
+  private addToolboxPanels(panels?: PropertyPanelBase[]) {
+    if (panels !== undefined) {
+      this._toolboxPanel.clear();
+      this._currentToolboxPanels = panels;
+      panels.forEach(p => this.addToolboxPanel(p));
+    } else if (this._currentToolboxPanels.length === 1 && this._currentToolboxPanels[0] === this._newStencilPanel) {
+      // already showing new stencil panel
+    } else {
+      this._toolboxPanel.clear();
+      this._currentToolboxPanels = [this._newStencilPanel];
+      this._newStencilPanel.deselectType();
+      this.addToolboxPanel(this._newStencilPanel);
+    }
+}
 
+  private _isToolboxVisible = true;
   private toggleToolbox() {
     if (this._toolboxContainer !== undefined) {
-      this._toolboxContainer.style.display =
-        this._toolboxContainer.style.display !== 'none' ? 'none' : 'flex';
+      this._isToolboxVisible = !this._isToolboxVisible;
+      this._toolboxContainer.style.display = this._isToolboxVisible ? 'flex' : 'none';
     }
   }
 
@@ -496,7 +517,8 @@ export class DiagramEditor extends HTMLElement {
 
     switch (ev.detail.button.command) {
       case 'add': {
-        this.showAddDialog();
+        // this.showAddDialog();
+        this.showAddPanel();
         break;
       }
       case 'add-base': {
@@ -551,56 +573,12 @@ export class DiagramEditor extends HTMLElement {
     console.log(`'${ev.detail.button.command}' button clicked.`);
   }
 
-  private _addItemDialog?: HTMLDivElement;
-
-  private showAddDialog() {
-    if (this._addItemDialog === undefined) {
-      this._addItemDialog = document.createElement('div');
-      this._addItemDialog.className = 'add-item-dialog';
-      this._addItemDialog.style.pointerEvents = 'auto';
-
-      const stencilTypeList = document.createElement('ul');
-      this._addItemDialog.appendChild(stencilTypeList);
-
-      this._stencilEditorSet.stencilSet.stencilTypes.forEach((st) => {
-        const listItem = document.createElement('li');
-        listItem.className = 'list-item';
-        const thumbnail = st.stencilType.getThumbnail(150, 100);
-        listItem.appendChild(thumbnail);
-        const title = document.createElement('p');
-        title.className = 'stencil-title';
-        title.innerText = st.displayName ?? st.stencilType.title;
-        listItem.appendChild(title);
-        listItem.setAttribute('data-stencil-type', st.stencilType.typeName);
-        listItem.addEventListener('click', this.addDialogStencilTypeClicked);
-        stencilTypeList.appendChild(listItem);
-      });
-
-      const closeButton = document.createElement('button');
-      closeButton.textContent = 'close';
-      closeButton.addEventListener('click', this.hideAddDialog);
-      this._addItemDialog.appendChild(closeButton);
-
-      this._internalUiContainer.appendChild(this._addItemDialog);
+  private showAddPanel() {
+    if (!this._isToolboxVisible) {
+      this.toggleToolbox();
     }
-  }
-
-  private addDialogStencilTypeClicked(ev: MouseEvent) {
-    const listItem = <HTMLLIElement>ev.currentTarget;
-
-    const stencilType = listItem.getAttribute('data-stencil-type');
-    if (stencilType) {
-      this.createNewStencil(stencilType);
-    }
-
-    this.hideAddDialog();
-  }
-
-  private hideAddDialog() {
-    if (this._addItemDialog) {
-      this._internalUiContainer.removeChild(this._addItemDialog);
-      this._addItemDialog = undefined;
-    }
+    this.deselectStencil();
+    this.addToolboxPanels([this._newStencilPanel]);
   }
 
   private toggleConnectMode() {
@@ -776,6 +754,7 @@ export class DiagramEditor extends HTMLElement {
     this.initOverlay();
     this.initUiLayer();
     this.attachEvents();
+    this.addToolboxPanels();
   }
 
   private disconnectedCallback() {
@@ -1204,25 +1183,29 @@ export class DiagramEditor extends HTMLElement {
     }
   }
 
-  public createNewStencil(steniclType: typeof StencilBase | string): void {
-    const sType =
-      this._stencilEditorSet.stencilSet.getStencilProperties(steniclType);
+  public createNewStencil(
+    stencilType: typeof StencilBase | string | undefined
+  ): void {
+    this.deselectStencil();
+    this.setCurrentStencil();    
+    if (stencilType !== undefined) {
+      const sType =
+        this._stencilEditorSet.stencilSet.getStencilProperties(stencilType);
 
-    if (sType) {
-      this.deselectStencil();
-      this.setCurrentStencil();
-      this.addUndoStep();
-      this._currentStencilEditor = this.addNewStencil(sType.stencilType);
-      this._currentStencilEditor.onStencilCreated = this.stencilCreated;
-      if (this._mainCanvas) {
-        this._mainCanvas.style.cursor = 'crosshair';
+      if (sType) {
+        this.addUndoStep();
+        this._currentStencilEditor = this.addNewStencil(sType.stencilType);
+        this._currentStencilEditor.onStencilCreated = this.stencilCreated;
+        if (this._mainCanvas) {
+          this._mainCanvas.style.cursor = 'crosshair';
+        }
+        // @todo
+        // this.toolbar.setActiveMarkerButton(mType.typeName);
+        // this.toolbox.setPanelButtons(this.currentMarker.toolboxPanels);
+        // this.eventListeners['markercreating'].forEach((listener) =>
+        //   listener(new MarkerEvent(this, this.currentMarker))
+        // );
       }
-      // @todo
-      // this.toolbar.setActiveMarkerButton(mType.typeName);
-      // this.toolbox.setPanelButtons(this.currentMarker.toolboxPanels);
-      // this.eventListeners['markercreating'].forEach((listener) =>
-      //   listener(new MarkerEvent(this, this.currentMarker))
-      // );
     }
   }
 
@@ -1284,7 +1267,8 @@ export class DiagramEditor extends HTMLElement {
         this._currentStencilEditor.blur();
         // @todo
         // this.toolbar.setCurrentMarker();
-        this.addToolboxPanels([]);
+        // this._newStencilPanel.deselectType();
+        this.addToolboxPanels();
       }
     }
     this._currentStencilEditor = stencilEditor;
@@ -1419,7 +1403,9 @@ export class DiagramEditor extends HTMLElement {
     return result;
   }
 
-  private restoreConnector(conState: ConnectorBaseState): ConnectorBaseEditor | undefined {
+  private restoreConnector(
+    conState: ConnectorBaseState
+  ): ConnectorBaseEditor | undefined {
     const cp = this._stencilEditorSet.stencilSet.getConnectorProperties(
       conState.typeName
     );
