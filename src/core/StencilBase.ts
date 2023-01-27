@@ -40,7 +40,7 @@ export class StencilBase {
     return this.top + this.height / 2;
   }  
 
-  private _frame!: SVGRectElement;
+  protected _frame!: SVGElement;
 
   // @todo: proper initializer needed or accept undefined?
   private _visual: SVGGraphicsElement = SvgHelper.createGroup();

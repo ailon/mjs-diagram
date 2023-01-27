@@ -287,7 +287,11 @@ export class StencilBaseEditor {
   private positionPorts() {
     if (this._stencil) {
       this._stencil.positionPorts();
-      this.portConnectors.forEach((pc) => pc.adjustVisual());
+      this.portConnectors.forEach(pc => {
+         if (pc.port.enabled) {
+           pc.adjustVisual();
+         }
+      });
     }
   }
 
