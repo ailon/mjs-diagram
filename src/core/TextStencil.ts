@@ -25,6 +25,7 @@ export class TextStencil extends StencilBase {
 
     this.setColor = this.setColor.bind(this);
     this.setFont = this.setFont.bind(this);
+    this.createTextElement = this.createTextElement.bind(this);
     this.renderText = this.renderText.bind(this);
     this.setSize = this.setSize.bind(this);
     this.positionText = this.positionText.bind(this);
@@ -69,9 +70,7 @@ export class TextStencil extends StencilBase {
     }
   }
 
-  public createVisual(): void {
-    super.createVisual();
-
+  protected createTextElement() {
     this.textElement = SvgHelper.createText();
     this.textElement.style.fontSize = '1rem';
     this.textElement.style.textAnchor = 'middle';
@@ -82,6 +81,11 @@ export class TextStencil extends StencilBase {
     this.visual.appendChild(this.textElement);
 
     this.renderText();
+  }
+
+  public createVisual(): void {
+    super.createVisual();
+    this.createTextElement();
   }
 
   protected setTextBoundingBox() {

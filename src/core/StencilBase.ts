@@ -82,7 +82,7 @@ export class StencilBase {
     this.createVisual = this.createVisual.bind(this);
   }
 
-  public static getThumbnail(width: number, height: number): SVGSVGElement {
+  protected static getThumbnailSVG(width: number, height: number): SVGSVGElement {
     const result = document.createElementNS(
       'http://www.w3.org/2000/svg',
       'svg'
@@ -98,6 +98,12 @@ export class StencilBase {
         height.toString()
     );
 
+    return result;
+  }
+
+  public static getThumbnail(width: number, height: number): SVGSVGElement {
+    const result = StencilBase.getThumbnailSVG(width, height);
+    
     const rectWidth = width * 0.9;
     const rectHeight = Math.min(height * 0.9, rectWidth * 0.75);
 

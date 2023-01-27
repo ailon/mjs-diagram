@@ -22,20 +22,7 @@ export class EllipseStencil extends TextStencil {
   }
 
   public static getThumbnail(width: number, height: number): SVGSVGElement {
-    const result = document.createElementNS(
-      'http://www.w3.org/2000/svg',
-      'svg'
-    );
-    result.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    result.setAttribute('width', width.toString());
-    result.setAttribute('height', height.toString());
-    result.setAttribute(
-      'viewBox',
-      '0 0 ' +
-        width.toString() +
-        ' ' +
-        height.toString()
-    );
+    const result = super.getThumbnailSVG(width, height);
 
     const rectWidth = width * 0.9;
     const rectHeight = Math.min(height * 0.9, rectWidth * 0.75);
@@ -66,25 +53,7 @@ export class EllipseStencil extends TextStencil {
 
     return result;
   }
-
-  public ownsTarget(el: EventTarget): boolean {
-    if (
-      super.ownsTarget(el) ||
-      el === this.visual ||
-      el === this.textElement
-    ) {
-      return true;
-    } else {
-      let found = false;
-      this.textElement.childNodes.forEach((span) => {
-        if (span === el) {
-          found = true;
-        }
-      });
-      return found;
-    }
-  }
-
+  
   public createVisual(): void {
     this._frame = SvgHelper.createEllipse(1, 1, [
       ['fill', this.fillColor],
@@ -95,16 +64,7 @@ export class EllipseStencil extends TextStencil {
     this.visual.appendChild(this._frame);
     this.addVisualToContainer(this.visual);
 
-    this.textElement = SvgHelper.createText();
-    this.textElement.style.fontSize = '1rem';
-    this.textElement.style.textAnchor = 'middle';
-    this.textElement.style.dominantBaseline = 'hanging';
-    this.textElement.transform.baseVal.appendItem(SvgHelper.createTransform()); // translate transorm
-    this.textElement.transform.baseVal.appendItem(SvgHelper.createTransform()); // scale transorm
-
-    this.visual.appendChild(this.textElement);
-
-    this.renderText();
+    this.createTextElement();
   }
 
   protected setTextBoundingBox() {
