@@ -491,8 +491,11 @@ export class DiagramEditor extends HTMLElement {
     if (panels !== undefined) {
       this._toolboxPanel.clear();
       this._currentToolboxPanels = panels;
-      panels.forEach(p => this.addToolboxPanel(p));
-    } else if (this._currentToolboxPanels.length === 1 && this._currentToolboxPanels[0] === this._newStencilPanel) {
+      panels.forEach((p) => this.addToolboxPanel(p));
+    } else if (
+      this._currentToolboxPanels.length === 1 &&
+      this._currentToolboxPanels[0] === this._newStencilPanel
+    ) {
       // already showing new stencil panel
     } else {
       this._toolboxPanel.clear();
@@ -500,13 +503,15 @@ export class DiagramEditor extends HTMLElement {
       this._newStencilPanel.deselectType();
       this.addToolboxPanel(this._newStencilPanel);
     }
-}
+  }
 
   private _isToolboxVisible = true;
   private toggleToolbox() {
     if (this._toolboxContainer !== undefined) {
       this._isToolboxVisible = !this._isToolboxVisible;
-      this._toolboxContainer.style.display = this._isToolboxVisible ? 'flex' : 'none';
+      this._toolboxContainer.style.display = this._isToolboxVisible
+        ? 'flex'
+        : 'none';
     }
   }
 
@@ -755,6 +760,12 @@ export class DiagramEditor extends HTMLElement {
     this.initUiLayer();
     this.attachEvents();
     this.addToolboxPanels();
+    if (
+      this._stencilEditorSet !== undefined &&
+      this._stencilEditorSet.newDocumentTemplate !== undefined
+    ) {
+      this.restoreState(this._stencilEditorSet.newDocumentTemplate);
+    }
   }
 
   private disconnectedCallback() {
@@ -1187,7 +1198,7 @@ export class DiagramEditor extends HTMLElement {
     stencilType: typeof StencilBase | string | undefined
   ): void {
     this.deselectStencil();
-    this.setCurrentStencil();    
+    this.setCurrentStencil();
     if (stencilType !== undefined) {
       const sType =
         this._stencilEditorSet.stencilSet.getStencilProperties(stencilType);

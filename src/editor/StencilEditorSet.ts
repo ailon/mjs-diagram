@@ -3,6 +3,7 @@ import { ConnectorBaseEditor } from './ConnectorBaseEditor';
 import { StencilBase } from '../core/StencilBase';
 import { StencilBaseEditor } from './StencilBaseEditor';
 import { IStencilSet, StencilSet } from '../core/StencilSet';
+import { DiagramState } from '../core/DiagramState';
 
 export interface IStencilEditorSet {
   stencilSet: StencilSet;
@@ -23,6 +24,8 @@ export class StencilEditorSet implements StencilEditorSet {
 
   public availableConnectorTypes: typeof ConnectorBase[] = [ConnectorBase];
   public defaultConnectorType: typeof ConnectorBase = ConnectorBase; 
+
+  public newDocumentTemplate?: DiagramState;
 
   constructor(stencilSet: IStencilSet) {
     this.stencilSet = stencilSet;
