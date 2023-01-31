@@ -264,6 +264,9 @@ export class ConnectorBaseEditor {
 
   protected setupControlBox(): void {
     this.controlBox = SvgHelper.createGroup();
+    
+    this.controlBox.classList.add('control-box');    
+    
     this.connector.container.appendChild(this.controlBox);
 
     this.addControlGrips();

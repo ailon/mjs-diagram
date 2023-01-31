@@ -181,6 +181,8 @@ export class StencilBaseEditor {
   
   private setupControlBox() {
     if (this._stencil !== undefined) {
+      this._controlBox.classList.add('control-box');
+
       const translate = SvgHelper.createTransform();
       translate.setTranslate(-this.CB_DISTANCE / 2, -this.CB_DISTANCE / 2);
       this._controlBox.transform.baseVal.appendItem(translate);
@@ -213,6 +215,8 @@ export class StencilBaseEditor {
       this._stencil.ports.forEach((port, location) => {
         this.portConnectors.set(location, new PortConnector(port));
       });
+
+      this._portBox.classList.add('port-box');
 
       const translate = SvgHelper.createTransform();
       translate.setTranslate(0, 0);

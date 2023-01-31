@@ -1,3 +1,5 @@
+import { SvgHelper } from "../core/SvgHelper";
+
 /**
  * Renders to a flat raster image.
  */
@@ -37,35 +39,47 @@ export class Renderer {
         return new Promise<string>((resolve) => {
             const canvas = targetCanvas !== undefined ? targetCanvas : document.createElement("canvas");
 
-            const markerImageCopy = document.createElementNS(
+            const diagramImageCopy = document.createElementNS(
             'http://www.w3.org/2000/svg',
             'svg'
             );
-            markerImageCopy.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-            markerImageCopy.setAttribute('width', diagramImage.width.baseVal.valueAsString);
-            markerImageCopy.setAttribute(
+            diagramImageCopy.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+            diagramImageCopy.setAttribute('width', diagramImage.width.baseVal.valueAsString);
+            diagramImageCopy.setAttribute(
               'height',
               diagramImage.height.baseVal.valueAsString
             );
-            markerImageCopy.setAttribute(
+            diagramImageCopy.setAttribute(
               'viewBox',
               '0 0 ' +
                 diagramImage.viewBox.baseVal.width.toString() +
                 ' ' +
                 diagramImage.viewBox.baseVal.height.toString()
             );            
-            markerImageCopy.innerHTML = diagramImage.innerHTML;
+            diagramImageCopy.innerHTML = diagramImage.innerHTML;
+
+            // hide editing controls
+            const defs = SvgHelper.createDefs();
+            diagramImageCopy.insertBefore(defs, diagramImageCopy.firstChild);
+            const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+            style.setAttribute('type', 'text/css');
+            style.innerHTML = `
+                .control-box, .port-box {
+                    visibility: hidden;
+                }         
+            `;
+            defs.appendChild(style);
 
             if (this.width !== undefined && this.height !== undefined) {
                 // scale to specific dimensions
-                markerImageCopy.width.baseVal.value = this.width;
-                markerImageCopy.height.baseVal.value = this.height;
+                diagramImageCopy.width.baseVal.value = this.width;
+                diagramImageCopy.height.baseVal.value = this.height;
             }
     
-            canvas.width = markerImageCopy.width.baseVal.value;
-            canvas.height = markerImageCopy.height.baseVal.value;
+            canvas.width = diagramImageCopy.width.baseVal.value;
+            canvas.height = diagramImageCopy.height.baseVal.value;
     
-            const data = markerImageCopy.outerHTML;
+            const data = diagramImageCopy.outerHTML;
 
             const ctx = canvas.getContext("2d");
             const DOMURL = window.URL; // || window.webkitURL || window;
