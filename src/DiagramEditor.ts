@@ -23,6 +23,7 @@ import { UndoRedoManager } from './editor/UndoRedoManager';
 import { ConnectorTypePanel } from './editor/panels/ConnectorTypePanel';
 import { ConnectorBaseState } from './core/ConnectorBaseState';
 import { NewStencilPanel } from './editor/panels/NewStencilPanel';
+import { StencilEditorSet } from './editor_index';
 
 export type DiagramEditorMode = 'select' | 'connect';
 
@@ -59,8 +60,8 @@ export class DiagramEditor extends HTMLElement {
   private _currentConnectorType: typeof ConnectorBase = ConnectorBase;
   private _currentConnectorEditor?: ConnectorBaseEditor;
   private _connectorEditors: ConnectorBaseEditor[] = [];
-  private _connectorTypePanel: ConnectorTypePanel;
-  private _newStencilPanel: NewStencilPanel;
+  private _connectorTypePanel!: ConnectorTypePanel;
+  private _newStencilPanel!: NewStencilPanel;
 
   public zoomSteps = [0.5, 0.8, 1, 1.5, 2, 4];
   private _zoomLevel = 1;
@@ -86,6 +87,13 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private _stencilEditorSet = basicStencilEditorSet;
+  public get stencilEditorSet(): StencilEditorSet {
+    return this._stencilEditorSet;
+  }
+  public set stencilEditorSet(value: StencilEditorSet) {
+    this._stencilEditorSet = value;
+    this.applyStencilSet();
+  }
 
   private _toolboxPanel!: Panel;
 
@@ -147,10 +155,20 @@ export class DiagramEditor extends HTMLElement {
     this.redo = this.redo.bind(this);
     this.redoStep = this.redoStep.bind(this);
 
+    this.applyStencilSet = this.applyStencilSet.bind(this);
+    this.setupPanels = this.setupPanels.bind(this);
+
     this.attachShadow({ mode: 'open' });
 
     this.addStyles();
+  }
 
+  private _iid = 0;
+  public getNewIId(): number {
+    return ++this._iid;
+  }
+
+  private setupPanels() {
     this._connectorTypePanel = new ConnectorTypePanel(
       'Connector type',
       this._stencilEditorSet.availableConnectorTypes,
@@ -163,11 +181,6 @@ export class DiagramEditor extends HTMLElement {
       this._stencilEditorSet.stencilSet.stencilTypes
     );
     this._newStencilPanel.onCreateNewStencil = this.createNewStencil;
-  }
-
-  private _iid = 0;
-  public getNewIId(): number {
-    return ++this._iid;
   }
 
   private addStyles() {
@@ -759,6 +772,15 @@ export class DiagramEditor extends HTMLElement {
     this.initOverlay();
     this.initUiLayer();
     this.attachEvents();
+    this.applyStencilSet();
+  }
+
+  private disconnectedCallback() {
+    this.detachEvents();
+  }
+
+  private applyStencilSet() {
+    this.setupPanels();
     this.addToolboxPanels();
     if (
       this._stencilEditorSet !== undefined &&
@@ -766,10 +788,6 @@ export class DiagramEditor extends HTMLElement {
     ) {
       this.restoreState(this._stencilEditorSet.newDocumentTemplate);
     }
-  }
-
-  private disconnectedCallback() {
-    this.detachEvents();
   }
 
   private attachEvents() {

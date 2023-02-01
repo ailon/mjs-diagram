@@ -1,3 +1,21 @@
-export { DiagramEditor } from './editor_index';
-export { DiagramViewer } from './viewer_index';
-export { DiagramState } from './viewer_index';
+export {
+  DiagramViewer,
+  DiagramState,
+  StencilBase,
+  StencilBaseState,
+  TextStencil,
+  TextStencilState,
+  EllipseStencil,
+  DiamondStencil,
+  ConnectorBase,
+  ConnectorBaseState,
+  CurvedConnector,
+  StencilSet,
+} from './viewer_index';
+export {
+  DiagramEditor,
+  StencilBaseEditor,
+  ConnectorBaseEditor,
+  TextStencilEditor,
+  StencilEditorSet,
+} from './editor_index';

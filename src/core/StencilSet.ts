@@ -23,18 +23,8 @@ export class StencilSet implements IStencilSet {
   public connectorTypes: IConnectorProperties[];
 
   constructor() {
-    this.stencilTypes = [
-      {
-        stencilType: StencilBase,
-        displayName: 'Basic rectangle'
-      }
-    ];
-    this.connectorTypes = [
-      {
-        connectorType: ConnectorBase,
-        displayName: 'Basic connector'
-      }
-    ]
+    this.stencilTypes = [];
+    this.connectorTypes = []
 
     this.getStencilProperties = this.getStencilProperties.bind(this);
     this.getConnectorProperties = this.getConnectorProperties.bind(this);

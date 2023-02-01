@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TextStencilState } from '../../src/core/TextStencilState';
 import { DiagramEditor } from '../../src/editor_index';
+import { mindMapStencilEditorSet } from '../../src/stencilsets/mindmap/MindMapStencilEditorSet';
 import { DiagramState, DiagramViewer } from '../../src/viewer_index';
 
 export * from './../../src/index';
@@ -118,6 +119,8 @@ export class Experiments {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public setup(): void {
     this.editor = <DiagramEditor>document.getElementById('mjsDia');
+    
+    this.editor.stencilEditorSet = mindMapStencilEditorSet;
 
     this.editor.addEventListener('renderclick', (ev) => {
       console.log(JSON.stringify(ev.detail.state));
