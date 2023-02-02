@@ -1,9 +1,13 @@
 import { mindMapStencilSet } from './MindMapStencilSet';
-import { StencilEditorSet, TextStencil, TextStencilEditor, CurvedConnector, ConnectorBaseEditor, EllipseStencil, TextStencilState } from '../../index';
+import { StencilEditorSet, TextStencilEditor, CurvedConnector, ConnectorBaseEditor, TextStencilState } from '../../index';
+import { CentralTopicStencil } from './stencils/CentralTopicStencil';
+import { SubTopicStencil } from './stencils/SubTopicStencil';
+import { ItemStencil } from './stencils/ItemStencil';
 
 const mindMapStencilEditorSet = new StencilEditorSet(mindMapStencilSet);
-mindMapStencilEditorSet.stencilEditorTypes.set(TextStencil, TextStencilEditor);
-mindMapStencilEditorSet.stencilEditorTypes.set(EllipseStencil, TextStencilEditor);
+mindMapStencilEditorSet.stencilEditorTypes.set(CentralTopicStencil, TextStencilEditor);
+mindMapStencilEditorSet.stencilEditorTypes.set(SubTopicStencil, TextStencilEditor);
+mindMapStencilEditorSet.stencilEditorTypes.set(ItemStencil, TextStencilEditor);
 
 mindMapStencilEditorSet.connectorEditorTypes.set(
   CurvedConnector,
@@ -24,7 +28,7 @@ mindMapStencilEditorSet.newDocumentTemplate = {
       fontFamily: 'Helvetica, Arial, sans-serif',
       padding: 5,
       text: 'Central topic',
-      typeName: 'EllipseStencil',
+      typeName: 'CentralTopicStencil',
       iid: 1,
       left: 234.53121948242188,
       top: 137.66664123535156,

@@ -16,4 +16,6 @@ export { CurvedConnector } from './core/CurvedConnector';
 
 export { StencilSet } from './core/StencilSet';
 
+export { SvgHelper } from  './core/SvgHelper';
+
 customElements.define('mjs-diagram-viewer', DiagramViewer);
