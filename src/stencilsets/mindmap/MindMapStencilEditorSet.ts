@@ -1,8 +1,9 @@
 import { mindMapStencilSet } from './MindMapStencilSet';
-import { StencilEditorSet, TextStencilEditor, CurvedConnector, ConnectorBaseEditor, TextStencilState } from '../../index';
+import { StencilEditorSet, TextStencilEditor, ConnectorBaseEditor, TextStencilState } from '../../index';
 import { CentralTopicStencil } from './stencils/CentralTopicStencil';
 import { SubTopicStencil } from './stencils/SubTopicStencil';
 import { ItemStencil } from './stencils/ItemStencil';
+import { MindMapConnector } from './connectors/MindMapConnector';
 
 const mindMapStencilEditorSet = new StencilEditorSet(mindMapStencilSet);
 mindMapStencilEditorSet.stencilEditorTypes.set(CentralTopicStencil, TextStencilEditor);
@@ -10,14 +11,14 @@ mindMapStencilEditorSet.stencilEditorTypes.set(SubTopicStencil, TextStencilEdito
 mindMapStencilEditorSet.stencilEditorTypes.set(ItemStencil, TextStencilEditor);
 
 mindMapStencilEditorSet.connectorEditorTypes.set(
-  CurvedConnector,
+  MindMapConnector,
   ConnectorBaseEditor
 );
 
 mindMapStencilEditorSet.availableConnectorTypes = [
-  CurvedConnector,
+  MindMapConnector,
 ];
-mindMapStencilEditorSet.defaultConnectorType = CurvedConnector;
+mindMapStencilEditorSet.defaultConnectorType = MindMapConnector;
 
 mindMapStencilEditorSet.newDocumentTemplate = {
   width: 872,

@@ -1,4 +1,5 @@
-import { CurvedConnector, StencilSet } from '../../index';
+import { StencilSet } from '../../index';
+import { MindMapConnector } from './connectors/MindMapConnector';
 import { CentralTopicStencil } from './stencils/CentralTopicStencil';
 import { ItemStencil } from './stencils/ItemStencil';
 import { SubTopicStencil } from './stencils/SubTopicStencil';
@@ -19,8 +20,8 @@ mindMapStencilSet.stencilTypes.push(
   },
 );
 mindMapStencilSet.connectorTypes.push({
-  connectorType: CurvedConnector,
-  displayName: 'Curved connector',
+  connectorType: MindMapConnector,
+  displayName: 'Mind map connector',
 });
 
 export { mindMapStencilSet };

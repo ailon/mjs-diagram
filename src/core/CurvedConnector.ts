@@ -36,6 +36,8 @@ export class CurvedConnector extends ConnectorBase {
     return result;
   }
 
+  protected andgledCorners = true;
+
   constructor(iid: number, container: SVGGElement) {
     super(iid, container);
 
@@ -67,12 +69,16 @@ export class CurvedConnector extends ConnectorBase {
         }
         case 'bottomleft': {
           cx1 = ending1.x - cxOffset;
-          cy1 = ending1.y + cyOffset;
+          if (this.andgledCorners) {
+            cy1 = ending1.y + cyOffset;
+          }
           break;
         }
         case 'bottomright': {
           cx1 = ending1.x + cxOffset;
-          cy1 = ending1.y + cyOffset;
+          if (this.andgledCorners) {
+            cy1 = ending1.y + cyOffset;
+          }
           break;
         }
         case 'leftcenter': {
@@ -89,12 +95,16 @@ export class CurvedConnector extends ConnectorBase {
         }
         case 'topleft': {
           cx1 = ending1.x - cxOffset;
-          cy1 = ending1.y - cyOffset;
+          if (this.andgledCorners) {
+            cy1 = ending1.y - cyOffset;
+          }
           break;
         }
         case 'topright': {
           cx1 = ending1.x + cxOffset;
-          cy1 = ending1.y - cyOffset;
+          if (this.andgledCorners) {
+            cy1 = ending1.y - cyOffset;
+          }
           break;
         }
       }
@@ -108,12 +118,16 @@ export class CurvedConnector extends ConnectorBase {
         }
         case 'bottomleft': {
           cx4 = ending2.x - cxOffset;
-          cy4 = ending2.y + cyOffset;
+          if (this.andgledCorners) {
+            cy4 = ending2.y + cyOffset;
+          }
           break;
         }
         case 'bottomright': {
           cx4 = ending2.x + cxOffset;
-          cy4 = ending2.y + cyOffset;
+          if (this.andgledCorners) {
+            cy4 = ending2.y + cyOffset;
+          }
           break;
         }
         case 'leftcenter': {
@@ -130,12 +144,16 @@ export class CurvedConnector extends ConnectorBase {
         }
         case 'topleft': {
           cx4 = ending2.x - cxOffset;
-          cy4 = ending2.y - cyOffset;
+          if (this.andgledCorners) {
+            cy4 = ending2.y - cyOffset;
+          }
           break;
         }
         case 'topright': {
           cx4 = ending2.x + cxOffset;
-          cy4 = ending2.y - cyOffset;
+          if (this.andgledCorners) {
+            cy4 = ending2.y - cyOffset;
+          }
           break;
         }
       }
@@ -150,7 +168,7 @@ export class CurvedConnector extends ConnectorBase {
   }
 
   protected rotateArrows(): void {
-    function getAngle(port?: Port): number {
+    function getAngle(port?: Port, andgledCorners = true): number {
       let angle = 0;
       if (port !== undefined) {
         switch (port.location) {
@@ -159,11 +177,11 @@ export class CurvedConnector extends ConnectorBase {
             break;
           }
           case 'bottomleft': {
-            angle = 45;
+            angle = andgledCorners ? 45 : 90;
             break;
           }
           case 'bottomright': {
-            angle = -45;
+            angle = andgledCorners ? -45 : 270;
             break;
           }
           case 'leftcenter': {
@@ -179,11 +197,11 @@ export class CurvedConnector extends ConnectorBase {
             break;
           }
           case 'topleft': {
-            angle = 135;
+            angle = andgledCorners ? 135 : 90;
             break;
           }
           case 'topright': {
-            angle = 225;
+            angle = andgledCorners ? 225 : 270;
             break;
           }
         }
@@ -195,11 +213,11 @@ export class CurvedConnector extends ConnectorBase {
     super.rotateArrows();
 
     const a1transform = this.arrow1.transform.baseVal.getItem(0);
-    a1transform.setRotate(getAngle(this.startPort), this.x1, this.y1);
+    a1transform.setRotate(getAngle(this.startPort, this.andgledCorners), this.x1, this.y1);
     this.arrow1.transform.baseVal.replaceItem(a1transform, 0);
 
     const a2transform = this.arrow2.transform.baseVal.getItem(0);
-    a2transform.setRotate(getAngle(this.endPort), this.x2, this.y2);
+    a2transform.setRotate(getAngle(this.endPort, this.andgledCorners), this.x2, this.y2);
     this.arrow2.transform.baseVal.replaceItem(a2transform, 0);
   }
 
