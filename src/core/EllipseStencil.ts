@@ -1,6 +1,5 @@
 import { SvgHelper } from './SvgHelper';
 import { TextStencil } from './TextStencil';
-import { TextStencilState } from './TextStencilState';
 
 export class EllipseStencil extends TextStencil {
   public static typeName = 'EllipseStencil';

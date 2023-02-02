@@ -1,6 +1,5 @@
 import { SvgHelper } from './SvgHelper';
 import { TextStencil } from './TextStencil';
-import { TextStencilState } from './TextStencilState';
 
 export class DiamondStencil extends TextStencil {
   public static typeName = 'DiamondStencil';
