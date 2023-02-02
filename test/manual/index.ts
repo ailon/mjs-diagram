@@ -2,6 +2,7 @@
 import { TextStencilState } from '../../src/core/TextStencilState';
 import { DiagramEditor } from '../../src/editor_index';
 import { mindMapStencilEditorSet } from '../../src/stencilsets/mindmap/MindMapStencilEditorSet';
+import { mindMapStencilSet } from '../../src/stencilsets/mindmap/MindMapStencilSet';
 import { DiagramState, DiagramViewer } from '../../src/viewer_index';
 
 export * from './../../src/index';
@@ -143,6 +144,7 @@ export class Experiments {
       });
 
     this.viewer = <DiagramViewer>document.getElementById('mjsDiaView');
+    this.viewer.stencilSet = mindMapStencilSet;
     this.viewer.show(this.oldState);
   }
 }

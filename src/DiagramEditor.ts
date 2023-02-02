@@ -92,6 +92,7 @@ export class DiagramEditor extends HTMLElement {
   }
   public set stencilEditorSet(value: StencilEditorSet) {
     this._stencilEditorSet = value;
+    this._currentConnectorType = value.defaultConnectorType ?? ConnectorBase;
     this.applyStencilSet();
   }
 

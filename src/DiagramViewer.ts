@@ -41,6 +41,12 @@ export class DiagramViewer extends HTMLElement {
   }
 
   private _stencilSet = basicStencilSet;
+  public get stencilSet() {
+    return this._stencilSet;
+  }
+  public set stencilSet(value) {
+    this._stencilSet = value;
+  }
 
   constructor() {
     super();
