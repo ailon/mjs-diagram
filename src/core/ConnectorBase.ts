@@ -48,7 +48,7 @@ export class ConnectorBase {
   protected arrow1!: SVGPolygonElement;
   protected arrow2!: SVGPolygonElement;
 
-  public arrowType: ArrowType = 'end';
+  public arrowType: ArrowType = 'none';
 
   protected arrowBaseHeight = 10;
   protected arrowBaseWidth = 10;  
