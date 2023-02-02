@@ -169,7 +169,6 @@ export class TextStencil extends StencilBase {
       },
       super.getState()
     );
-    result.typeName = TextStencil.typeName;
 
     return result;
   }

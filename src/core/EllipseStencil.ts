@@ -88,11 +88,4 @@ export class EllipseStencil extends TextStencil {
     this.setTextBoundingBox();
     this.positionText();
   }
-
-  public getState(): TextStencilState {
-    const result: TextStencilState = super.getState();
-    result.typeName = EllipseStencil.typeName;
-
-    return result;
-  }
 }
