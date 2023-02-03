@@ -10,6 +10,8 @@ export {
   ConnectorBase,
   ConnectorBaseState,
   CurvedConnector,
+  ArrowConnector,
+  CurvedArrowConnector,
   StencilSet,
 } from './viewer_index';
 export {

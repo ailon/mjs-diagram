@@ -1,7 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TextStencilState } from '../../src/core/TextStencilState';
 import { DiagramEditor } from '../../src/editor_index';
+import { flowchartStencilEditorSet } from '../../src/stencilsets/flowchart/FlowchartStencilEditorSet';
+import { flowchartStencilSet } from '../../src/stencilsets/flowchart/FlowchartStencilSet';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { mindMapStencilEditorSet } from '../../src/stencilsets/mindmap/MindMapStencilEditorSet';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { mindMapStencilSet } from '../../src/stencilsets/mindmap/MindMapStencilSet';
 import { DiagramState, DiagramViewer } from '../../src/viewer_index';
 
@@ -121,7 +125,7 @@ export class Experiments {
   public setup(): void {
     this.editor = <DiagramEditor>document.getElementById('mjsDia');
     
-    this.editor.stencilEditorSet = mindMapStencilEditorSet;
+    this.editor.stencilEditorSet = flowchartStencilEditorSet;
 
     this.editor.addEventListener('renderclick', (ev) => {
       console.log(JSON.stringify(ev.detail.state));
@@ -144,7 +148,7 @@ export class Experiments {
       });
 
     this.viewer = <DiagramViewer>document.getElementById('mjsDiaView');
-    this.viewer.stencilSet = mindMapStencilSet;
+    this.viewer.stencilSet = flowchartStencilSet;
     this.viewer.show(this.oldState);
   }
 }

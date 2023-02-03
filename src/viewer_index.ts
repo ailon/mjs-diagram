@@ -13,6 +13,8 @@ export { DiamondStencil } from './core/DiamondStencil';
 export { ConnectorBase } from './core/ConnectorBase';
 export { ConnectorBaseState } from './core/ConnectorBaseState';
 export { CurvedConnector } from './core/CurvedConnector';
+export { ArrowConnector } from './core/ArrowConnector';
+export { CurvedArrowConnector } from './core/CurvedArrowConnector';
 
 export { StencilSet } from './core/StencilSet';
 
