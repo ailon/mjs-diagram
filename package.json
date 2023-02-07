@@ -1,5 +1,5 @@
 {
-  "name": "mjs-diagram",
+  "name": "@markerjs/mjs-diagram",
   "version": "0.1.0",
   "description": "MJS Diagram",
   "main": "mjs-diagram.js",
