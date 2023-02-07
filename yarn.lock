@@ -150,6 +150,11 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
+"@markerjs/mjs-toolbar@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@markerjs/mjs-toolbar/-/mjs-toolbar-0.2.2.tgz#21f38c34e3bfebe821f6f50b79f0e2c2bd930f02"
+  integrity sha512-KmeFbEkRLdw05MOvySqhZCOyxOa+nX59IfsQ8PxADHoRpcYLG1bzmFv5OPsh6iH8HmteUe3ww9N022Nm6v+aQQ==
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
@@ -1517,10 +1522,6 @@ minimatch@^5.1.0:
   integrity sha512-9TPBGGak4nHfGZsPBohm9AWg6NoT7QTCehS3BIJABslyZbzxfV78QM2Y6+i741OPZIafFAaiiEMh5OyIrJPgtg==
   dependencies:
     brace-expansion "^2.0.1"
-
-"mjs-toolbar@link:./../mjs-toolbar/dist/":
-  version "0.0.0"
-  uid ""
 
 ms@2.0.0:
   version "2.0.0"

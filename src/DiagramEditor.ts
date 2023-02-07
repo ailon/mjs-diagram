@@ -5,7 +5,7 @@ import {
   ToolbarBlock,
   ButtonEventData,
   ContentBlock,
-} from 'mjs-toolbar';
+} from '@markerjs/mjs-toolbar';
 import { basicStencilEditorSet } from './editor/BasicStencilEditorSet';
 import { ConnectorBase } from './core/ConnectorBase';
 import { ConnectorBaseEditor } from './editor/ConnectorBaseEditor';

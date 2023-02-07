@@ -47,6 +47,6 @@
     "typescript": "^4.0.2"
   },
   "dependencies": {
-    "mjs-toolbar": "link:./../mjs-toolbar/dist/"
+    "@markerjs/mjs-toolbar": "^0.2.2"
   }
 }
