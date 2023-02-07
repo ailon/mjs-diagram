@@ -5,6 +5,8 @@ import { IPoint } from './core/IPoint';
 import { StencilBase } from './core/StencilBase';
 import { SvgHelper } from './core/SvgHelper';
 
+import Logo from './assets/markerjs-logo-m.svg';
+
 export class DiagramViewer extends HTMLElement {
   private _container?: HTMLDivElement;
 
@@ -58,6 +60,9 @@ export class DiagramViewer extends HTMLElement {
     this.onPointerOut = this.onPointerOut.bind(this);
     this.clientToLocalCoordinates = this.clientToLocalCoordinates.bind(this);
 
+    this.addLogo = this.addLogo.bind(this);
+    this.positionLogo = this.positionLogo.bind(this);
+
     this.attachShadow({ mode: 'open' });
   }
 
@@ -72,6 +77,7 @@ export class DiagramViewer extends HTMLElement {
     this.style.height = '100%';
 
     this._container = document.createElement('div');
+    this._container.style.position = 'relative';
     this._container.style.display = 'flex';
     this._container.style.flexDirection = 'column';
     this._container.style.width = '100%';
@@ -118,6 +124,12 @@ export class DiagramViewer extends HTMLElement {
     this.createLayout();
     this.addMainCanvas();
     this.attachEvents();
+
+    // NOTE:
+    // before removing this call please consider supporting marker.js
+    // by visiting https://markerjs.com/ for details
+    // thank you!
+    this.addLogo();    
   }
 
   private disconnectedCallback() {
@@ -265,6 +277,55 @@ export class DiagramViewer extends HTMLElement {
         }
       }
     });    
-
   }
+
+  /**
+   * NOTE:
+   *
+   * before removing or modifying this method please consider supporting marker.js
+   * by visiting https://markerjs.com/buy for details
+   *
+   * thank you!
+   */
+  private _logoUI?: HTMLElement;
+  private addLogo() {
+    this._logoUI = document.createElement('div');
+    this._logoUI.style.display = 'inline-block';
+    this._logoUI.style.margin = '0px';
+    this._logoUI.style.padding = '0px';
+    this._logoUI.style.fill = '#333333';
+
+    const link = document.createElement('a');
+    link.href = 'https://markerjs.com/';
+    link.target = '_blank';
+    link.innerHTML = Logo;
+    link.title = 'Powered by marker.js';
+
+    link.style.display = 'grid';
+    link.style.alignItems = 'center';
+    link.style.justifyItems = 'center';
+    link.style.padding = '3px';
+    link.style.width = '20px';
+    link.style.height = '20px';
+
+    this._logoUI.appendChild(link);
+
+    this._container?.appendChild(this._logoUI);
+
+    this._logoUI.style.position = 'absolute';
+    this._logoUI.style.pointerEvents = 'all';
+    this.positionLogo();
+  }
+
+  private positionLogo() {
+    if (this._logoUI && this._container) {
+      this._logoUI.style.left = `20px`;
+      this._logoUI.style.top = `${
+        this._container.offsetHeight -
+        this._logoUI.clientHeight -
+        20
+      }px`;
+    }
+  }
+
 }
