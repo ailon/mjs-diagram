@@ -26,6 +26,7 @@ import { NewStencilPanel } from './editor/panels/NewStencilPanel';
 import { StencilEditorSet } from './editor_index';
 
 import Logo from './assets/markerjs-logo-m.svg';
+import { Activator } from './core/Activator';
 
 export type DiagramEditorMode = 'select' | 'connect';
 
@@ -164,6 +165,7 @@ export class DiagramEditor extends HTMLElement {
     this.setupPanels = this.setupPanels.bind(this);
 
     this.addLogo = this.addLogo.bind(this);
+    this.removeLogo = this.removeLogo.bind(this);
     this.positionLogo = this.positionLogo.bind(this);
 
     this.attachShadow({ mode: 'open' });
@@ -781,12 +783,6 @@ export class DiagramEditor extends HTMLElement {
     this.initUiLayer();
     this.attachEvents();
     this.applyStencilSet();
-
-    // NOTE:
-    // before removing this call please consider supporting marker.js
-    // by visiting https://markerjs.com/ for details
-    // thank you!
-    this.addLogo();
   }
 
   private disconnectedCallback() {
@@ -801,6 +797,15 @@ export class DiagramEditor extends HTMLElement {
       this._stencilEditorSet.newDocumentTemplate !== undefined
     ) {
       this.restoreState(this._stencilEditorSet.newDocumentTemplate);
+    }
+    if (!Activator.isLicensed('MJSDE')) {
+      // NOTE:
+      // before removing this call please consider supporting marker.js
+      // by visiting https://markerjs.com/ for details
+      // thank you!
+      this.addLogo();
+    } else {
+      this.removeLogo();
     }
   }
 
@@ -1640,6 +1645,9 @@ export class DiagramEditor extends HTMLElement {
    * thank you!
    */
   private addLogo() {
+    if (this._logoUI !== undefined) {
+      this._contentContainer?.removeChild(this._logoUI);
+    }
     this._logoUI = document.createElement('div');
     this._logoUI.style.display = 'inline-block';
     this._logoUI.style.margin = '0px';
@@ -1668,13 +1676,17 @@ export class DiagramEditor extends HTMLElement {
     this.positionLogo();
   }
 
+  private removeLogo() {
+    if (this._logoUI !== undefined) {
+      this._contentContainer?.removeChild(this._logoUI);
+    }
+  }
+
   private positionLogo() {
     if (this._logoUI && this._contentContainer) {
       this._logoUI.style.left = `20px`;
       this._logoUI.style.top = `${
-        this._contentContainer.offsetHeight -
-        this._logoUI.clientHeight -
-        20
+        this._contentContainer.offsetHeight - this._logoUI.clientHeight - 20
       }px`;
     }
   }

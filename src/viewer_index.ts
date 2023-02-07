@@ -20,4 +20,6 @@ export { StencilSet } from './core/StencilSet';
 
 export { SvgHelper } from  './core/SvgHelper';
 
+export { Activator } from './core/Activator';
+
 customElements.define('mjs-diagram-viewer', DiagramViewer);

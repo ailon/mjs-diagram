@@ -6,6 +6,7 @@ import { StencilBase } from './core/StencilBase';
 import { SvgHelper } from './core/SvgHelper';
 
 import Logo from './assets/markerjs-logo-m.svg';
+import { Activator } from './core/Activator';
 
 export class DiagramViewer extends HTMLElement {
   private _container?: HTMLDivElement;
@@ -48,6 +49,15 @@ export class DiagramViewer extends HTMLElement {
   }
   public set stencilSet(value) {
     this._stencilSet = value;
+    if (!Activator.isLicensed('MJSDV')) {
+      // NOTE:
+      // before removing this call please consider supporting marker.js
+      // by visiting https://markerjs.com/ for details
+      // thank you!
+      this.addLogo();
+    } else {
+      this.removeLogo();
+    }
   }
 
   constructor() {
@@ -61,6 +71,7 @@ export class DiagramViewer extends HTMLElement {
     this.clientToLocalCoordinates = this.clientToLocalCoordinates.bind(this);
 
     this.addLogo = this.addLogo.bind(this);
+    this.removeLogo = this.removeLogo.bind(this);
     this.positionLogo = this.positionLogo.bind(this);
 
     this.attachShadow({ mode: 'open' });
@@ -124,12 +135,6 @@ export class DiagramViewer extends HTMLElement {
     this.createLayout();
     this.addMainCanvas();
     this.attachEvents();
-
-    // NOTE:
-    // before removing this call please consider supporting marker.js
-    // by visiting https://markerjs.com/ for details
-    // thank you!
-    this.addLogo();    
   }
 
   private disconnectedCallback() {
@@ -157,7 +162,10 @@ export class DiagramViewer extends HTMLElement {
 
   private detachEvents() {
     this._mainCanvas?.removeEventListener('pointerdown', this.onPointerDown);
-    this._mainCanvas?.removeEventListener('pointerdown', this.onStencilPointerUp);
+    this._mainCanvas?.removeEventListener(
+      'pointerdown',
+      this.onStencilPointerUp
+    );
     // @todo
     // this._mainCanvas?.removeEventListener('dblclick', this.onDblClick);
     this.detachWindowEvents();
@@ -217,20 +225,14 @@ export class DiagramViewer extends HTMLElement {
     const g = SvgHelper.createGroup();
     this._objectLayer?.appendChild(g);
 
-    return new stencilType(
-      this.getNewIId(),
-      g,
-    );
+    return new stencilType(this.getNewIId(), g);
   }
 
   private addNewConnector(connectorType: typeof ConnectorBase): ConnectorBase {
     const g = SvgHelper.createGroup();
     this._connectorLayer?.appendChild(g);
 
-    return new connectorType(
-      this.getNewIId(),
-      g
-    );
+    return new connectorType(this.getNewIId(), g);
   }
 
   public show(state: DiagramState): void {
@@ -250,15 +252,24 @@ export class DiagramViewer extends HTMLElement {
         stencil.restoreState(stencilState);
         this._stencils.push(stencil);
       }
-    });    
+    });
 
     state.connectors.forEach((conState) => {
       const cp = this._stencilSet.getConnectorProperties(conState.typeName);
       if (cp !== undefined) {
-        const startStencil = this._stencils.find(s => s.IId === conState.startStencilId);
-        const endStencil = this._stencils.find(s => s.IId === conState.endStencilId);
+        const startStencil = this._stencils.find(
+          (s) => s.IId === conState.startStencilId
+        );
+        const endStencil = this._stencils.find(
+          (s) => s.IId === conState.endStencilId
+        );
 
-        if (startStencil && endStencil && conState.startPortLocation && conState.endPortLocation) {
+        if (
+          startStencil &&
+          endStencil &&
+          conState.startPortLocation &&
+          conState.endPortLocation
+        ) {
           const startPort = startStencil.ports.get(conState.startPortLocation);
           const endPort = endStencil.ports.get(conState.endPortLocation);
 
@@ -268,7 +279,7 @@ export class DiagramViewer extends HTMLElement {
               startStencil: startStencil,
               startPort: startPort,
               endStencil: endStencil,
-              endPort: endPort
+              endPort: endPort,
             });
             this._connectors.push(connector);
             startPort.connectors.push(connector);
@@ -276,7 +287,7 @@ export class DiagramViewer extends HTMLElement {
           }
         }
       }
-    });    
+    });
   }
 
   /**
@@ -289,6 +300,9 @@ export class DiagramViewer extends HTMLElement {
    */
   private _logoUI?: HTMLElement;
   private addLogo() {
+    if (this._logoUI !== undefined) {
+      this._container?.removeChild(this._logoUI);
+    }
     this._logoUI = document.createElement('div');
     this._logoUI.style.display = 'inline-block';
     this._logoUI.style.margin = '0px';
@@ -317,15 +331,18 @@ export class DiagramViewer extends HTMLElement {
     this.positionLogo();
   }
 
+  private removeLogo() {
+    if (this._logoUI !== undefined) {
+      this._container?.removeChild(this._logoUI);
+    }
+  }
+
   private positionLogo() {
     if (this._logoUI && this._container) {
       this._logoUI.style.left = `20px`;
       this._logoUI.style.top = `${
-        this._container.offsetHeight -
-        this._logoUI.clientHeight -
-        20
+        this._container.offsetHeight - this._logoUI.clientHeight - 20
       }px`;
     }
   }
-
 }
