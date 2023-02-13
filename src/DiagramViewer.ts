@@ -119,6 +119,8 @@ export class DiagramViewer extends HTMLElement {
       '0 0 ' + this.width.toString() + ' ' + this.height.toString()
     );
     this._mainCanvas.style.pointerEvents = 'auto';
+    
+    this._mainCanvas.style.fontFamily = 'Helvetica, Arial, Sans-Serif';
 
     this._groupLayer = SvgHelper.createGroup();
     this._connectorLayer = SvgHelper.createGroup();

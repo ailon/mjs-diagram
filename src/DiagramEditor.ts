@@ -196,6 +196,9 @@ export class DiagramEditor extends HTMLElement {
   private addStyles() {
     const styleSheet = document.createElement('style');
     styleSheet.innerHTML = `
+      * {
+        font-family: Helvetica, Arial, Sans-Serif;
+      }
       mjstb-panel {
         --i-mjstb-accent-color: var(--mjstb-accent-color, #cceeff);
         --i-mjstb-background-color: var(--mjstb-background-color, #333);
