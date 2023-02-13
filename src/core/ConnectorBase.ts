@@ -418,7 +418,9 @@ export class ConnectorBase {
       strokeWidth: this.strokeWidth,
       strokeDasharray: this.strokeDasharray,
 
-      arrowType: this.arrowType
+      arrowType: this.arrowType,
+
+      labelText: this.labelText
     }
   }
 
@@ -438,6 +440,8 @@ export class ConnectorBase {
     this.endPort = endPoints.endPort;
 
     this.arrowType = state.arrowType ?? 'none';
+
+    this.labelText = state.labelText ?? '';
 
     this.createVisual();
     this.adjustPoints();

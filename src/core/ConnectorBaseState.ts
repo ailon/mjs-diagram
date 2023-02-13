@@ -20,6 +20,8 @@ export interface ConnectorBaseState {
   strokeDasharray: string;
 
   arrowType?: ArrowType;
+
+  labelText?: string;
 }
 
 export interface ConnectorEndPoints {
