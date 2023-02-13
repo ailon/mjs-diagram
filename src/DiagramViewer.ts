@@ -93,7 +93,7 @@ export class DiagramViewer extends HTMLElement {
     this._container.style.flexDirection = 'column';
     this._container.style.width = '100%';
     this._container.style.height = '100%';
-    this._container.style.backgroundColor = 'green';
+    this._container.style.backgroundColor = '#fff';
 
     this._container.setAttribute('part', 'container');
 
