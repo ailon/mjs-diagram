@@ -34,7 +34,7 @@ export class ConnectorBase {
 
   public visibleLine!: SVGLineElement | SVGPathElement;
   public selectorLine!: SVGLineElement | SVGPathElement;
-  public strokeColor = '#3333ff';
+  public strokeColor = '#000';
   public strokeWidth = 1;
   public strokeDasharray = '';
 
