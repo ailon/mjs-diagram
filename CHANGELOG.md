@@ -4,8 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.0.0-alpha.2 - 2023-02-14
+### Fixed
+- stencil set not exported
+
 ## 1.0.0-alpha.1 - 2023-02-14
 ### Added
 - Initial public release.
 
+[1.0.0-alpha.2]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.2
 [1.0.0-alpha.1]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.1
