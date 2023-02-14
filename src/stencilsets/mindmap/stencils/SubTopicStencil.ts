@@ -1,4 +1,4 @@
-import { TextStencil } from '../../../viewer_index';
+import { TextStencil } from "../../../core/TextStencil";
 
 export class SubTopicStencil extends TextStencil {
   public static typeName = 'SubTopicStencil';

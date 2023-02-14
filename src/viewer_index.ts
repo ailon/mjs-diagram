@@ -17,6 +17,9 @@ export { ArrowConnector } from './core/ArrowConnector';
 export { CurvedArrowConnector } from './core/CurvedArrowConnector';
 
 export { StencilSet } from './core/StencilSet';
+export { basicStencilSet } from './core/BasicStencilSet';
+export { flowchartStencilSet } from './stencilsets/flowchart/FlowchartStencilSet';
+export { mindMapStencilSet } from './stencilsets/mindmap/MindMapStencilSet';
 
 export { SvgHelper } from  './core/SvgHelper';
 

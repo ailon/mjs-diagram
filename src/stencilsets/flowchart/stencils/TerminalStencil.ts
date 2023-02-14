@@ -1,4 +1,5 @@
-import { SvgHelper, TextStencil } from "../../../viewer_index";
+import { SvgHelper } from "../../../core/SvgHelper";
+import { TextStencil } from "../../../core/TextStencil";
 
 export class TerminalStencil extends TextStencil {
   public static typeName = 'TerminalStencil';

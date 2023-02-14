@@ -1,9 +1,14 @@
 import { flowchartStencilSet } from './FlowchartStencilSet';
-import { StencilEditorSet, TextStencilEditor, ConnectorBaseEditor, TextStencilState, ArrowConnector, CurvedArrowConnector } from '../../index';
 import { ProcessStencil } from './stencils/ProcessStencil';
 import { DecisionStencil } from './stencils/DecisionStencil';
 import { IOStencil } from './stencils/IOStencil';
 import { TerminalStencil } from './stencils/TerminalStencil';
+import { StencilEditorSet } from '../../editor/StencilEditorSet';
+import { TextStencilEditor } from '../../editor/TextStencilEditor';
+import { ArrowConnector } from '../../core/ArrowConnector';
+import { ConnectorBaseEditor } from '../../editor/ConnectorBaseEditor';
+import { CurvedArrowConnector } from '../../core/CurvedArrowConnector';
+import { TextStencilState } from '../../core/TextStencilState';
 
 const flowchartStencilEditorSet = new StencilEditorSet(flowchartStencilSet);
 flowchartStencilEditorSet.stencilEditorTypes.set(ProcessStencil, TextStencilEditor);

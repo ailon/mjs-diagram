@@ -1,4 +1,4 @@
-import { StencilSet } from '../../index';
+import { StencilSet } from '../../core/StencilSet';
 import { MindMapConnector } from './connectors/MindMapConnector';
 import { CentralTopicStencil } from './stencils/CentralTopicStencil';
 import { ItemStencil } from './stencils/ItemStencil';

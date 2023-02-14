@@ -1,5 +1,6 @@
 import { ArrowConnector } from '../../core/ArrowConnector';
-import { CurvedArrowConnector, StencilSet } from '../../index';
+import { CurvedArrowConnector } from '../../core/CurvedArrowConnector';
+import { StencilSet } from '../../core/StencilSet';
 import { DecisionStencil } from './stencils/DecisionStencil';
 import { IOStencil } from './stencils/IOStencil';
 import { ProcessStencil } from './stencils/ProcessStencil';

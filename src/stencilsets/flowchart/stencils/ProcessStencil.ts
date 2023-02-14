@@ -1,4 +1,4 @@
-import { TextStencil } from '../../../viewer_index';
+import { TextStencil } from "../../../core/TextStencil";
 
 export class ProcessStencil extends TextStencil {
   public static typeName = 'ProcessStencil';

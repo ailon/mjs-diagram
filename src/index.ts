@@ -13,6 +13,9 @@ export {
   ArrowConnector,
   CurvedArrowConnector,
   StencilSet,
+  basicStencilSet,
+  flowchartStencilSet,
+  mindMapStencilSet,
 } from './viewer_index';
 export {
   DiagramEditor,
@@ -20,4 +23,7 @@ export {
   ConnectorBaseEditor,
   TextStencilEditor,
   StencilEditorSet,
+  basicStencilEditorSet,
+  flowchartStencilEditorSet,
+  mindMapStencilEditorSet
 } from './editor_index';

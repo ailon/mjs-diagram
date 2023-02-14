@@ -1,9 +1,12 @@
 import { mindMapStencilSet } from './MindMapStencilSet';
-import { StencilEditorSet, TextStencilEditor, ConnectorBaseEditor, TextStencilState } from '../../index';
 import { CentralTopicStencil } from './stencils/CentralTopicStencil';
 import { SubTopicStencil } from './stencils/SubTopicStencil';
 import { ItemStencil } from './stencils/ItemStencil';
 import { MindMapConnector } from './connectors/MindMapConnector';
+import { StencilEditorSet } from '../../editor/StencilEditorSet';
+import { TextStencilEditor } from '../../editor/TextStencilEditor';
+import { ConnectorBaseEditor } from '../../editor/ConnectorBaseEditor';
+import { TextStencilState } from '../../core/TextStencilState';
 
 const mindMapStencilEditorSet = new StencilEditorSet(mindMapStencilSet);
 mindMapStencilEditorSet.stencilEditorTypes.set(CentralTopicStencil, TextStencilEditor);

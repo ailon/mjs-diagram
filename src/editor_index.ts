@@ -9,5 +9,7 @@ export { TextStencilEditor } from './editor/TextStencilEditor';
 
 export { StencilEditorSet } from './editor/StencilEditorSet';
 export { basicStencilEditorSet } from './editor/BasicStencilEditorSet';
+export { flowchartStencilEditorSet } from './stencilsets/flowchart/FlowchartStencilEditorSet';
+export { mindMapStencilEditorSet } from './stencilsets/mindmap/MindMapStencilEditorSet';
 
 customElements.define('mjs-diagram-editor', DiagramEditor);

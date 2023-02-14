@@ -1,4 +1,4 @@
-import { CurvedConnector } from "../../../viewer_index"
+import { CurvedConnector } from "../../../core/CurvedConnector";
 
 export class MindMapConnector extends CurvedConnector {
   public static typeName = 'MindMapConnector';
