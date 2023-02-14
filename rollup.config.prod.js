@@ -6,6 +6,7 @@ import generatePackageJson from 'rollup-plugin-generate-package-json';
 import { terser } from 'rollup-plugin-terser';
 import dts from 'rollup-plugin-dts';
 import svgo from 'rollup-plugin-svgo';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 const outputDir = './dist/';
 
@@ -25,6 +26,7 @@ export default [
     },
     plugins: [
       del({ targets: ['dts/*', 'dist/*'] }),
+      nodeResolve(),
       typescript({
         declaration: true,
         outDir: './dts/',
@@ -85,7 +87,7 @@ export default [
         banner: banner,
       },
     ],
-    plugins: [typescript(), svgo(), terser()],
+    plugins: [nodeResolve(), typescript(), svgo(), terser()],
   },
   {
     input: ['src/index.ts'],
@@ -105,6 +107,7 @@ export default [
       },
     ],
     plugins: [
+      nodeResolve(),
       generatePackageJson({
         baseContents: (pkg) => {
           pkg.scripts = {};
