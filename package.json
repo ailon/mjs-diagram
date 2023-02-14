@@ -6,7 +6,7 @@
   "module": "mjs-diagram.esm.js",
   "types": "mjs-diagram.d.ts",
   "author": "Alan Mendelevich",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "lint": "eslint src",
     "build": "yarn lint && rollup --config rollup.config.prod.js",
