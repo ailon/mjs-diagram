@@ -21,8 +21,14 @@ export { basicStencilSet } from './core/BasicStencilSet';
 export { flowchartStencilSet } from './stencilsets/flowchart/FlowchartStencilSet';
 export { mindMapStencilSet } from './stencilsets/mindmap/MindMapStencilSet';
 
-export { SvgHelper } from  './core/SvgHelper';
+export { SvgHelper } from './core/SvgHelper';
 
 export { Activator } from './core/Activator';
 
-customElements.define('mjs-diagram-viewer', DiagramViewer);
+if (
+  window &&
+  window.customElements &&
+  window.customElements.get('mjs-diagram-viewer') === undefined
+) {
+  window.customElements.define('mjs-diagram-viewer', DiagramViewer);
+}

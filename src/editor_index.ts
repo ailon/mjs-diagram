@@ -12,4 +12,10 @@ export { basicStencilEditorSet } from './editor/BasicStencilEditorSet';
 export { flowchartStencilEditorSet } from './stencilsets/flowchart/FlowchartStencilEditorSet';
 export { mindMapStencilEditorSet } from './stencilsets/mindmap/MindMapStencilEditorSet';
 
-customElements.define('mjs-diagram-editor', DiagramEditor);
+if (
+  window &&
+  window.customElements &&
+  window.customElements.get('mjs-diagram-editor') === undefined
+) {
+  window.customElements.define('mjs-diagram-editor', DiagramEditor);
+}
