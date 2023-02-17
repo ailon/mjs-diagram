@@ -25,7 +25,7 @@ To add a **diagram editor** to your web app follow these steps:
 
 1. Add a diagram editor web component to your page.
 2. Assign a stencil set (diagram type).
-3. Setup an event hander for the `renderclick` event to process the results.
+3. Setup an event hander for the `saveclick` event to process the results.
 
 ### Here's a simple example:
 
@@ -41,7 +41,7 @@ let editor = document.getElementById('mjsDia');
 // assign imported Flowchart stencil set
 editor.stencilEditorSet = flowchartStencilEditorSet;
 
-editor.addEventListener('renderclick', (ev) => {
+editor.addEventListener('saveclick', (ev) => {
   // process state (represents the created diagram)
   console.log(ev.detail.state);
 });
