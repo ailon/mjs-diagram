@@ -48,7 +48,7 @@ export default [
   },
   {
     input: './dts/index.d.ts',
-    output: [{ file: './dist/mjsdiagram.d.ts', format: 'es' }],
+    output: [{ file: outputDir + pkg.types, format: 'es' }],
     plugins: [dts()],
   },
   {
