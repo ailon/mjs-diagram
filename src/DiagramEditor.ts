@@ -1376,8 +1376,8 @@ export class DiagramEditor extends HTMLElement {
 
   public getState(): DiagramState {
     const result: DiagramState = {
-      width: this.width,
-      height: this.height,
+      width: this.documentWidth,
+      height: this.documentHeight,
 
       stencils: [],
       connectors: [],
