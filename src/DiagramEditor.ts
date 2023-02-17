@@ -31,7 +31,7 @@ import { Activator } from './core/Activator';
 export type DiagramEditorMode = 'select' | 'connect';
 
 export interface DiagramEditorEventMap {
-  renderclick: CustomEvent<RenderEventData>;
+  saveclick: CustomEvent<RenderEventData>;
 }
 
 export interface RenderEventData {
@@ -509,7 +509,7 @@ export class DiagramEditor extends HTMLElement {
       }
       case 'save': {
         this.dispatchEvent(
-          new CustomEvent<RenderEventData>('renderclick', {
+          new CustomEvent<RenderEventData>('saveclick', {
             detail: { state: this.getState() },
           })
         );

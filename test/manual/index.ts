@@ -128,7 +128,7 @@ export class Experiments {
     this.editor.stencilEditorSet = flowchartStencilEditorSet;
 
 
-    this.editor.addEventListener('renderclick', (ev) => {
+    this.editor.addEventListener('saveclick', (ev) => {
       console.log(JSON.stringify(ev.detail.state));
       this.oldState = ev.detail.state;
       this.viewer?.show(this.oldState);
