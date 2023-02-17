@@ -10,7 +10,7 @@ export class TextStencil extends StencilBase {
   public color = 'transparent';
   public fontFamily = 'Helvetica, Arial, sans-serif';
 
-  private readonly DEFAULT_TEXT = 'your text here';
+  private readonly DEFAULT_TEXT = 'Text';
   public text: string = this.DEFAULT_TEXT;
 
   protected padding = 5;
