@@ -73,11 +73,11 @@ viewer.show(savedState);
 
 ## Demos
 
-*Coming soon...*
+Check out MJS Diagram demos [here](https://markerjs.com/demos/diagram/getting-started).
 
 ## More docs and tutorials
 
-*Coming soon...*
+For docs and tutorials head over to [the official website](https://markerjs.com/docs/diagram/getting-started).
 
 ## License
 Linkware (see [LICENSE](https://github.com/ailon/mjs-diagram/blob/master/LICENSE) for details) - the UI displays a small link back to the marker.js website which should be retained.
