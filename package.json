@@ -48,6 +48,6 @@
     "typescript": "^4.0.2"
   },
   "dependencies": {
-    "@markerjs/mjs-toolbar": "^0.2.2"
+    "@markerjs/mjs-toolbar": "^0.2.3"
   }
 }
