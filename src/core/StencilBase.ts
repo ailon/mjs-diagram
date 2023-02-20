@@ -80,6 +80,7 @@ export class StencilBase {
     this._container = container;
 
     this.getPathD = this.getPathD.bind(this);
+    this.getSelectorPathD = this.getSelectorPathD.bind(this);
 
     this.setStrokeColor = this.setStrokeColor.bind(this);
     this.setFillColor = this.setFillColor.bind(this);
@@ -161,8 +162,12 @@ export class StencilBase {
     return Object.getPrototypeOf(this).constructor.getPathD(width, height);
   }
 
+  protected getSelectorPathD(width: number, height: number): string {
+    return this.getPathD(width, height);
+  }
+
   protected createSelector(): void {
-    const pathString = this.getPathD(this.defaultSize.x, this.defaultSize.y);
+    const pathString = this.getSelectorPathD(this.defaultSize.x, this.defaultSize.y);
     if (pathString && pathString.length > 0) {
       this._selectorFrame = SvgHelper.createPath(pathString, [
         ['fill', 'transparent'],
@@ -203,7 +208,7 @@ export class StencilBase {
   protected adjustSelector() {
     if (this._selectorFrame !== undefined) {
       SvgHelper.setAttributes(this._selectorFrame, [
-        ['d', this.getPathD(this.width, this.height)],
+        ['d', this.getSelectorPathD(this.width, this.height)],
       ]);
     }
   }
