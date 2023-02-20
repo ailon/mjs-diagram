@@ -1,11 +1,11 @@
 import { IPoint } from '../core/IPoint';
 import { StencilBaseEditor } from './StencilBaseEditor';
-import { TextStencil } from '../core/TextStencil';
+import { RectangleTextStencil } from '../core/RectangleTextStencil';
 import { StencilBaseState } from '../core/StencilBaseState';
 
 export class TextStencilEditor extends StencilBaseEditor {
-  public get stencil(): TextStencil {
-    return this._stencil as TextStencil;
+  public get stencil(): RectangleTextStencil {
+    return this._stencil as RectangleTextStencil;
   }
 
   protected textEditDiv!: HTMLDivElement;
@@ -19,8 +19,8 @@ export class TextStencilEditor extends StencilBaseEditor {
     iid: number,
     container: SVGGElement,
     overlayContainer: HTMLDivElement,
-    stencilType: typeof TextStencil,
-    stencil?: TextStencil
+    stencilType: typeof RectangleTextStencil,
+    stencil?: RectangleTextStencil
   ) {
     super(iid, container, overlayContainer, stencilType, stencil);
 

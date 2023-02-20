@@ -1,6 +1,6 @@
-import { TextStencil } from "../../../core/TextStencil";
+import { RectangleTextStencil } from "../../../core/RectangleTextStencil";
 
-export class TerminalStencil extends TextStencil {
+export class TerminalStencil extends RectangleTextStencil {
   public static typeName = 'TerminalStencil';
 
   public static title = 'Terminal';

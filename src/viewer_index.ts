@@ -6,6 +6,7 @@ export { DiagramState } from './core/DiagramState';
 export { StencilBase } from './core/StencilBase';
 export { StencilBaseState } from './core/StencilBaseState';
 export { TextStencil } from './core/TextStencil';
+export { RectangleTextStencil } from './core/RectangleTextStencil';
 export { TextStencilState } from './core/TextStencilState';
 export { EllipseStencil } from './core/EllipseStencil';
 export { DiamondStencil } from './core/DiamondStencil';

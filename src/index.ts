@@ -4,6 +4,7 @@ export {
   StencilBase,
   StencilBaseState,
   TextStencil,
+  RectangleTextStencil,
   TextStencilState,
   EllipseStencil,
   DiamondStencil,

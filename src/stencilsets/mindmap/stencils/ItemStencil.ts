@@ -1,6 +1,6 @@
-import { TextStencil } from "../../../core/TextStencil";
+import { RectangleTextStencil } from "../../../core/RectangleTextStencil";
 
-export class ItemStencil extends TextStencil {
+export class ItemStencil extends RectangleTextStencil {
   public static typeName = 'ItemStencil';
 
   protected static getPathD(width: number, height: number): string {

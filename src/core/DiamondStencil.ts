@@ -1,6 +1,6 @@
-import { TextStencil } from './TextStencil';
+import { RectangleTextStencil } from './RectangleTextStencil';
 
-export class DiamondStencil extends TextStencil {
+export class DiamondStencil extends RectangleTextStencil {
   public static typeName = 'DiamondStencil';
 
   public static title = 'Diamond stencil';

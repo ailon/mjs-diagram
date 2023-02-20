@@ -1,6 +1,6 @@
-import { TextStencil } from "../../../core/TextStencil";
+import { RectangleTextStencil } from "../../../core/RectangleTextStencil";
 
-export class ProcessStencil extends TextStencil {
+export class ProcessStencil extends RectangleTextStencil {
   public static typeName = 'ProcessStencil';
 
   constructor(iid: number, container: SVGGElement) {

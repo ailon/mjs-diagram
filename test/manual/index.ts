@@ -130,8 +130,8 @@ export class Experiments {
     this.editor = <DiagramEditor>document.getElementById('mjsDia');
     
     // this.editor.stencilEditorSet = basicStencilEditorSet;
-    // this.editor.stencilEditorSet = flowchartStencilEditorSet;
-    this.editor.stencilEditorSet = mindMapStencilEditorSet;
+    this.editor.stencilEditorSet = flowchartStencilEditorSet;
+    // this.editor.stencilEditorSet = mindMapStencilEditorSet;
 
 
     this.editor.addEventListener('saveclick', (ev) => {

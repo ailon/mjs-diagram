@@ -1,6 +1,6 @@
 import { basicStencilSet } from '../core/BasicStencilSet';
 import { StencilEditorSet } from './StencilEditorSet';
-import { TextStencil } from '../core/TextStencil';
+import { RectangleTextStencil } from '../core/RectangleTextStencil';
 import { TextStencilEditor } from './TextStencilEditor';
 import { CurvedConnector } from '../core/CurvedConnector';
 import { ConnectorBaseEditor } from './ConnectorBaseEditor';
@@ -10,7 +10,7 @@ import { DiamondStencil } from '../core/DiamondStencil';
 import { TextStencilState } from '../core/TextStencilState';
 
 const basicStencilEditorSet = new StencilEditorSet(basicStencilSet);
-basicStencilEditorSet.stencilEditorTypes.set(TextStencil, TextStencilEditor);
+basicStencilEditorSet.stencilEditorTypes.set(RectangleTextStencil, TextStencilEditor);
 basicStencilEditorSet.stencilEditorTypes.set(EllipseStencil, TextStencilEditor);
 basicStencilEditorSet.stencilEditorTypes.set(DiamondStencil, TextStencilEditor);
 

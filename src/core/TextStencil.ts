@@ -33,16 +33,6 @@ export class TextStencil extends StencilBase {
     this.textBoundingBox = new DOMRect();
   }
 
-  protected static getPathD(width: number, height: number): string {
-    const result = `M 0 0 
-      H ${width} 
-      V ${height} 
-      H 0 
-      V 0`;
-
-    return result;
-  }
-
   public static getThumbnail(width: number, height: number): SVGSVGElement {
     const rectWidth = width * 0.9;
     const rectHeight = Math.min(height * 0.9, rectWidth * 0.4);

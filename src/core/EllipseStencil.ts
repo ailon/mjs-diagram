@@ -1,6 +1,6 @@
-import { TextStencil } from './TextStencil';
+import { RectangleTextStencil } from './RectangleTextStencil';
 
-export class EllipseStencil extends TextStencil {
+export class EllipseStencil extends RectangleTextStencil {
   public static typeName = 'EllipseStencil';
 
   public static title = 'Ellipse stencil';

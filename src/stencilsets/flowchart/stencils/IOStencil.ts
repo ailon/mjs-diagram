@@ -1,6 +1,6 @@
-import { TextStencil } from "../../../core/TextStencil";
+import { RectangleTextStencil } from "../../../core/RectangleTextStencil";
 
-export class IOStencil extends TextStencil {
+export class IOStencil extends RectangleTextStencil {
   public static typeName = 'IOStencil';
 
   public static title = 'Input/Output';

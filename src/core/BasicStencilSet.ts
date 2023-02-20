@@ -4,7 +4,7 @@ import { DiamondStencil } from './DiamondStencil';
 import { EllipseStencil } from './EllipseStencil';
 // import { StencilBase } from './StencilBase';
 import { StencilSet } from './StencilSet';
-import { TextStencil } from './TextStencil';
+import { RectangleTextStencil } from './RectangleTextStencil';
 
 const basicStencilSet = new StencilSet();
 basicStencilSet.stencilTypes.push(
@@ -13,7 +13,7 @@ basicStencilSet.stencilTypes.push(
   //   displayName: 'Basic rectangle',
   // },
   {
-    stencilType: TextStencil,
+    stencilType: RectangleTextStencil,
     displayName: 'Text box',
   },
   {

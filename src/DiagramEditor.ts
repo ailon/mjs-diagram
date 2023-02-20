@@ -16,7 +16,7 @@ import { PropertyPanelBase } from './editor/panels/PropertyPanelBase';
 import { StencilBase } from './core/StencilBase';
 import { StencilBaseEditor } from './editor/StencilBaseEditor';
 import { SvgHelper } from './core/SvgHelper';
-import { TextStencil } from './core/TextStencil';
+import { RectangleTextStencil } from './core/RectangleTextStencil';
 import { Port } from './core/Port';
 import { Renderer } from './editor/Renderer';
 import { UndoRedoManager } from './editor/UndoRedoManager';
@@ -496,7 +496,7 @@ export class DiagramEditor extends HTMLElement {
         break;
       }
       case 'add-text': {
-        this.createNewStencil(TextStencil);
+        this.createNewStencil(RectangleTextStencil);
         break;
       }
       case 'connect': {
