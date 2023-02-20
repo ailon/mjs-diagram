@@ -33,15 +33,28 @@ export class TextStencil extends StencilBase {
     this.textBoundingBox = new DOMRect();
   }
 
-  public static getThumbnail(width: number, height: number): SVGSVGElement {
-    const result = super.getThumbnail(width, height);
+  protected static getPathD(width: number, height: number): string {
+    const result = `M 0 0 
+      H ${width} 
+      V ${height} 
+      H 0 
+      V 0`;
 
-    const fontSize = Math.max(height * 0.1, 10);
+    return result;
+  }
+
+  public static getThumbnail(width: number, height: number): SVGSVGElement {
+    const rectWidth = width * 0.9;
+    const rectHeight = Math.min(height * 0.9, rectWidth * 0.4);
+
+    const result = super.getThumbnail(rectWidth, rectHeight);
+
+    const fontSize = Math.max(rectHeight * 0.1, 10);
 
     const text = SvgHelper.createText([
-      ['x', (width/2).toString()],
-      ['y', (height/2 - fontSize/2).toString()],
-      ['width', width.toString()]
+      ['x', (rectWidth/2).toString()],
+      ['y', (rectHeight/2 - fontSize/2).toString()],
+      ['width', rectWidth.toString()]
     ]);
     text.style.fontFamily = 'Arial, Helvetica, sans-serif';
     text.style.fontSize = `${fontSize}px`;

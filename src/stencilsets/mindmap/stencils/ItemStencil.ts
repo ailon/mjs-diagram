@@ -78,12 +78,14 @@ export class ItemStencil extends TextStencil {
       ['width', this.width.toString()],
       ['height', this.height.toString()],
     ]);
-    SvgHelper.setAttributes(this._frame, [
-      ['x1', '0'],
-      ['y1', `${this.height}`],
-      ['x2', `${this.width}`],
-      ['y2', `${this.height}`],
-    ]);
+    if (this._frame !== undefined) {
+      SvgHelper.setAttributes(this._frame, [
+        ['x1', '0'],
+        ['y1', `${this.height}`],
+        ['x2', `${this.width}`],
+        ['y2', `${this.height}`],
+      ]);
+    }
     this.setTextBoundingBox();
     this.positionText();
   }

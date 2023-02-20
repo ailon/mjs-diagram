@@ -12,6 +12,11 @@ export class StencilBase {
 
   public static title: string;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected static getPathD(width: number, height: number): string {
+    return '';
+  }
+
   private _iid: number;
   public get IId(): number {
     return this._iid;
@@ -40,7 +45,7 @@ export class StencilBase {
     return this.top + this.height / 2;
   }  
 
-  protected _frame!: SVGElement;
+  protected _frame?: SVGElement;
 
   // @todo: proper initializer needed or accept undefined?
   private _visual: SVGGraphicsElement = SvgHelper.createGroup();
@@ -75,6 +80,8 @@ export class StencilBase {
     this._iid = iid;
     this._container = container;
 
+    this.getPathD = this.getPathD.bind(this);
+
     this.setStrokeColor = this.setStrokeColor.bind(this);
     this.setFillColor = this.setFillColor.bind(this);
     this.setStrokeWidth = this.setStrokeWidth.bind(this);
@@ -103,17 +110,13 @@ export class StencilBase {
 
   public static getThumbnail(width: number, height: number): SVGSVGElement {
     const result = StencilBase.getThumbnailSVG(width, height);
+
+    const pathD = this.getPathD(width, height);
+    if (pathD && pathD.length > 0) {
+      const frame = SvgHelper.createPath(pathD);
+      result.appendChild(frame);
+    }
     
-    const rectWidth = width * 0.9;
-    const rectHeight = Math.min(height * 0.9, rectWidth * 0.75);
-
-    const rect = SvgHelper.createRect(rectWidth, rectHeight, [
-      ['x', ((width - rectWidth)/2).toString()],
-      ['y', ((height - rectHeight)/2).toString()]
-    ]);
-
-    result.appendChild(rect);
-
     return result;
   }
 
@@ -148,15 +151,22 @@ export class StencilBase {
     }
   }
 
+  protected getPathD(width: number, height: number): string {
+    return Object.getPrototypeOf(this).constructor.getPathD(width, height);
+  }
+
   public createVisual(): void {
-    this._frame = SvgHelper.createRect(1, 1, [
-      ['fill', this.fillColor],
-      ['stroke', this.strokeColor],
-      ['stroke-width', this.strokeWidth.toString()],
-      ['stroke-dasharray', this.strokeDasharray]
-    ]);
-    this.visual.appendChild(this._frame);
-    this.addVisualToContainer(this.visual);
+    const pathString = this.getPathD(this.defaultSize.x, this.defaultSize.y);
+    if (pathString && pathString.length > 0) {
+      this._frame = SvgHelper.createPath(pathString, [
+        ['fill', this.fillColor],
+        ['stroke', this.strokeColor],
+        ['stroke-width', this.strokeWidth.toString()],
+        ['stroke-dasharray', this.strokeDasharray],
+      ]);
+      this.visual.appendChild(this._frame);
+      this.addVisualToContainer(this.visual);
+    }
   }
 
   protected addVisualToContainer(element: SVGElement): void {
@@ -173,27 +183,36 @@ export class StencilBase {
 
   public setSize(): void {
     this.moveVisual({x: this.left, y: this.top});
-    SvgHelper.setAttributes(this._frame, [
-      ['width', this.width.toString()],
-      ['height', this.height.toString()],
-    ]);
+    if (this._frame !== undefined) {
+      SvgHelper.setAttributes(this._frame, [
+        ['d', this.getPathD(this.width, this.height)]
+      ]);
+    }
   } 
 
   public setStrokeColor(color: string): void {
     this.strokeColor = color;
-    SvgHelper.setAttributes(this._frame, [['stroke', this.strokeColor]]);
+    if (this._frame !== undefined) {
+      SvgHelper.setAttributes(this._frame, [['stroke', this.strokeColor]]);
+    }
   }
   public setFillColor(color: string): void {
     this.fillColor = color;
-    SvgHelper.setAttributes(this._frame, [['fill', this.fillColor]]);
+    if (this._frame !== undefined) {
+      SvgHelper.setAttributes(this._frame, [['fill', this.fillColor]]);
+    }
   }
   protected setStrokeWidth(width: number): void {
     this.strokeWidth = width;
-    SvgHelper.setAttributes(this._frame, [['stroke-width', this.strokeWidth.toString()]]);
+    if (this._frame !== undefined) {
+      SvgHelper.setAttributes(this._frame, [['stroke-width', this.strokeWidth.toString()]]);
+    }
   }
   protected setStrokeDasharray(dashes: string): void {
     this.strokeDasharray = dashes;
-    SvgHelper.setAttributes(this._frame, [['stroke-dasharray', this.strokeDasharray]]);
+    if (this._frame !== undefined) {
+      SvgHelper.setAttributes(this._frame, [['stroke-dasharray', this.strokeDasharray]]);
+    }
   }
 
   public getPortPosition(location: PortLocation): IPoint {

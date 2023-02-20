@@ -1,12 +1,16 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TextStencilState } from '../../src/core/TextStencilState';
-import { DiagramEditor } from '../../src/editor_index';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { basicStencilEditorSet, DiagramEditor } from '../../src/editor_index';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { flowchartStencilEditorSet } from '../../src/stencilsets/flowchart/FlowchartStencilEditorSet';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { flowchartStencilSet } from '../../src/stencilsets/flowchart/FlowchartStencilSet';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { mindMapStencilSet } from '../../src/stencilsets/mindmap/MindMapStencilSet';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { mindMapStencilEditorSet } from '../../src/stencilsets/mindmap/MindMapStencilEditorSet';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { mindMapStencilSet } from '../../src/stencilsets/mindmap/MindMapStencilSet';
 import { DiagramState, DiagramViewer } from '../../src/viewer_index';
 
 export * from './../../src/index';
@@ -125,7 +129,9 @@ export class Experiments {
   public setup(): void {
     this.editor = <DiagramEditor>document.getElementById('mjsDia');
     
-    this.editor.stencilEditorSet = flowchartStencilEditorSet;
+    // this.editor.stencilEditorSet = basicStencilEditorSet;
+    // this.editor.stencilEditorSet = flowchartStencilEditorSet;
+    this.editor.stencilEditorSet = mindMapStencilEditorSet;
 
 
     this.editor.addEventListener('saveclick', (ev) => {
