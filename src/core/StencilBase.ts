@@ -36,15 +36,16 @@ export class StencilBase {
   public width = 0;
   public height = 0;
 
-  public defaultSize: IPoint = {x: 50, y: 20};  
+  public defaultSize: IPoint = { x: 50, y: 20 };
 
   protected get centerX(): number {
     return this.left + this.width / 2;
   }
   protected get centerY(): number {
     return this.top + this.height / 2;
-  }  
+  }
 
+  protected _selectorFrame?: SVGElement;
   protected _frame?: SVGElement;
 
   // @todo: proper initializer needed or accept undefined?
@@ -63,18 +64,16 @@ export class StencilBase {
   protected strokeWidth = 1;
   protected strokeDasharray = '';
 
-  public ports = new Map<PortLocation, Port>(
-    [
-      ['topleft', new Port('topleft')],
-      ['topcenter', new Port('topcenter')],
-      ['topright', new Port('topright')],
-      ['leftcenter', new Port('leftcenter')],
-      ['rightcenter', new Port('rightcenter')],
-      ['bottomleft', new Port('bottomleft')],
-      ['bottomcenter', new Port('bottomcenter')],
-      ['bottomright', new Port('bottomright')],
-    ]
-  )
+  public ports = new Map<PortLocation, Port>([
+    ['topleft', new Port('topleft')],
+    ['topcenter', new Port('topcenter')],
+    ['topright', new Port('topright')],
+    ['leftcenter', new Port('leftcenter')],
+    ['rightcenter', new Port('rightcenter')],
+    ['bottomleft', new Port('bottomleft')],
+    ['bottomcenter', new Port('bottomcenter')],
+    ['bottomright', new Port('bottomright')],
+  ]);
 
   constructor(iid: number, container: SVGGElement) {
     this._iid = iid;
@@ -87,9 +86,15 @@ export class StencilBase {
     this.setStrokeWidth = this.setStrokeWidth.bind(this);
     this.setStrokeDasharray = this.setStrokeDasharray.bind(this);
     this.createVisual = this.createVisual.bind(this);
+    this.createSelector = this.createSelector.bind(this);
+    this.adjustSelector = this.adjustSelector.bind(this);
+    this.adjustVisual = this.adjustVisual.bind(this);
   }
 
-  protected static getThumbnailSVG(width: number, height: number): SVGSVGElement {
+  protected static getThumbnailSVG(
+    width: number,
+    height: number
+  ): SVGSVGElement {
     const result = document.createElementNS(
       'http://www.w3.org/2000/svg',
       'svg'
@@ -99,10 +104,7 @@ export class StencilBase {
     result.setAttribute('height', height.toString());
     result.setAttribute(
       'viewBox',
-      '0 0 ' +
-        width.toString() +
-        ' ' +
-        height.toString()
+      '0 0 ' + width.toString() + ' ' + height.toString()
     );
 
     return result;
@@ -116,12 +118,16 @@ export class StencilBase {
       const frame = SvgHelper.createPath(pathD);
       result.appendChild(frame);
     }
-    
+
     return result;
   }
 
   public ownsTarget(el: EventTarget): boolean {
-    if (el === this.visual || el === this._frame) {
+    if (
+      el === this.visual ||
+      el === this._frame ||
+      el === this._selectorFrame
+    ) {
       return true;
     } else {
       return false;
@@ -137,17 +143,17 @@ export class StencilBase {
     this.width = this.width * scaleX;
     this.height = this.height * scaleY;
 
-    this.setSize();    
+    this.setSize();
   }
 
   public disablePorts(...portLocations: PortLocation[]): void {
     if (portLocations && portLocations.length > 0) {
-      portLocations.forEach(pl => { 
+      portLocations.forEach((pl) => {
         const port = this.ports.get(pl);
         if (port !== undefined) {
           port.enabled = false;
         }
-      })
+      });
     }
   }
 
@@ -155,7 +161,20 @@ export class StencilBase {
     return Object.getPrototypeOf(this).constructor.getPathD(width, height);
   }
 
+  protected createSelector(): void {
+    const pathString = this.getPathD(this.defaultSize.x, this.defaultSize.y);
+    if (pathString && pathString.length > 0) {
+      this._selectorFrame = SvgHelper.createPath(pathString, [
+        ['fill', 'transparent'],
+        ['stroke', 'transparent'],
+        ['stroke-width', '15px'],
+      ]);
+      this.visual.appendChild(this._selectorFrame);
+    }
+  }
+
   public createVisual(): void {
+    this.createSelector();
     const pathString = this.getPathD(this.defaultSize.x, this.defaultSize.y);
     if (pathString && pathString.length > 0) {
       this._frame = SvgHelper.createPath(pathString, [
@@ -181,14 +200,27 @@ export class StencilBase {
     this.visual.style.transform = `translate(${point.x}px, ${point.y}px)`;
   }
 
-  public setSize(): void {
-    this.moveVisual({x: this.left, y: this.top});
-    if (this._frame !== undefined) {
-      SvgHelper.setAttributes(this._frame, [
-        ['d', this.getPathD(this.width, this.height)]
+  protected adjustSelector() {
+    if (this._selectorFrame !== undefined) {
+      SvgHelper.setAttributes(this._selectorFrame, [
+        ['d', this.getPathD(this.width, this.height)],
       ]);
     }
-  } 
+  }
+
+  protected adjustVisual() {
+    if (this._frame !== undefined) {
+      SvgHelper.setAttributes(this._frame, [
+        ['d', this.getPathD(this.width, this.height)],
+      ]);
+    }
+  }
+
+  public setSize(): void {
+    this.moveVisual({ x: this.left, y: this.top });
+    this.adjustSelector();
+    this.adjustVisual();
+  }
 
   public setStrokeColor(color: string): void {
     this.strokeColor = color;
@@ -205,13 +237,17 @@ export class StencilBase {
   protected setStrokeWidth(width: number): void {
     this.strokeWidth = width;
     if (this._frame !== undefined) {
-      SvgHelper.setAttributes(this._frame, [['stroke-width', this.strokeWidth.toString()]]);
+      SvgHelper.setAttributes(this._frame, [
+        ['stroke-width', this.strokeWidth.toString()],
+      ]);
     }
   }
   protected setStrokeDasharray(dashes: string): void {
     this.strokeDasharray = dashes;
     if (this._frame !== undefined) {
-      SvgHelper.setAttributes(this._frame, [['stroke-dasharray', this.strokeDasharray]]);
+      SvgHelper.setAttributes(this._frame, [
+        ['stroke-dasharray', this.strokeDasharray],
+      ]);
     }
   }
 
@@ -219,7 +255,7 @@ export class StencilBase {
     const port = this.ports.get(location);
     const result: IPoint = {
       x: this.left + (port?.x || 0),
-      y: this.top + (port?.y || 0)
+      y: this.top + (port?.y || 0),
     };
 
     return result;
@@ -238,36 +274,17 @@ export class StencilBase {
     this.positionPort(this.ports.get('topright'), right, top);
     this.positionPort(this.ports.get('leftcenter'), left, cy);
     this.positionPort(this.ports.get('rightcenter'), right, cy);
-    this.positionPort(
-      this.ports.get('bottomleft'),
-      left,
-      bottom
-    );
-    this.positionPort(
-      this.ports.get('bottomcenter'),
-      cx,
-      bottom
-    );
-    this.positionPort(
-      this.ports.get('bottomright'),
-      right,
-      bottom
-    );
-
+    this.positionPort(this.ports.get('bottomleft'), left, bottom);
+    this.positionPort(this.ports.get('bottomcenter'), cx, bottom);
+    this.positionPort(this.ports.get('bottomright'), right, bottom);
   }
 
-  private positionPort(
-    port: Port | undefined,
-    x: number,
-    y: number
-  ) {
+  private positionPort(port: Port | undefined, x: number, y: number) {
     if (port !== undefined) {
       port.x = x;
       port.y = y;
     }
   }
-
-
 
   public getState(): StencilBaseState {
     return {
@@ -283,7 +300,7 @@ export class StencilBase {
       fillColor: this.fillColor,
       strokeColor: this.strokeColor,
       strokeWidth: this.strokeWidth,
-      strokeDasharray: this.strokeDasharray
+      strokeDasharray: this.strokeDasharray,
     };
   }
 
