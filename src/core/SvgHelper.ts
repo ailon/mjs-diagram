@@ -1,3 +1,5 @@
+import { IPoint } from "./IPoint";
+
 /**
  * Utility class to simplify SVG operations.
  */
@@ -318,5 +320,17 @@ export class SvgHelper {
 
     return obj;
   }
+
+  public static clientToLocalCoordinates(localRoot: SVGElement | undefined, x: number, y: number, zoomLevel = 1): IPoint {
+    if (localRoot) {
+      const clientRect = localRoot.getBoundingClientRect();
+      return {
+        x: (x - clientRect.left) / zoomLevel,
+        y: (y - clientRect.top) / zoomLevel,
+      };
+    } else {
+      return { x: x, y: y };
+    }
+  }  
 
 }

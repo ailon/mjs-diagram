@@ -18,7 +18,7 @@ export class ItemStencil extends RectangleTextStencil {
     this.disablePorts('topleft', 'topcenter', 'topright', 'leftcenter', 'rightcenter', 'bottomcenter');
   }
 
-  protected getSelectorPathD(width: number, height: number): string {
+  public getSelectorPathD(width: number, height: number): string {
     const result = `M 0 0 
       H ${width} 
       V ${height} 

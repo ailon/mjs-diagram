@@ -64,6 +64,7 @@ export class StencilBaseEditor {
   private _controlRect?: SVGRectElement;
 
   protected _portBox = SvgHelper.createGroup();
+  protected _connectorOutline?: SVGPathElement;
 
   private strokePanel: ColorPickerPanel;
   private fillPanel: ColorPickerPanel;
@@ -157,14 +158,37 @@ export class StencilBaseEditor {
     return found;
   }
 
-  public getTargetPort(el: EventTarget | null): PortConnector | undefined {
+  public getTargetPort(
+    ev: PointerEvent | null,
+    exact = true,
+    zoomLevel = 1
+  ): PortConnector | undefined {
     let result: PortConnector | undefined;
-    if (el !== null) {
+    if (ev !== null && ev.target !== null) {
       this.portConnectors.forEach((port) => {
-        if (port.ownsTarget(el)) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        if (port.port.enabled && port.ownsTarget(ev.target!)) {
           result = port;
         }
       });
+
+      if (result === undefined && !exact) {
+        const point = SvgHelper.clientToLocalCoordinates(this.container, ev.clientX, ev.clientY, zoomLevel);
+        // no exact port hit, find the closest one
+        let minDistance = Number.MAX_VALUE;
+        this.portConnectors.forEach((port) => {
+          if (port.port.enabled) {
+            const distance = Math.sqrt(
+              Math.pow(point.x - port.port.x, 2) +
+                Math.pow(point.y - port.port.y, 2)
+            );
+            if (distance < minDistance) {
+              result = port;
+              minDistance = distance;
+            }
+          }
+        });
+      }
     }
     return result;
   }
@@ -178,7 +202,7 @@ export class StencilBaseEditor {
     this.setupPortBox();
     this.setupControlBox();
   }
-  
+
   private setupControlBox() {
     if (this._stencil !== undefined) {
       this._controlBox.classList.add('control-box');
@@ -221,6 +245,22 @@ export class StencilBaseEditor {
       const translate = SvgHelper.createTransform();
       translate.setTranslate(0, 0);
       this._portBox.transform.baseVal.appendItem(translate);
+
+      this._connectorOutline = SvgHelper.createPath(
+        this._stencil.getSelectorPathD(
+          this._stencil.width,
+          this._stencil.height
+        ),
+        [
+          ['stroke', '#33ff33'],
+          ['stroke-width', '6'],
+          ['stroke-opacity', '0.5'],
+          ['fill', 'transparent'],
+          ['pointer-events', 'none'],
+        ]
+      );
+
+      this._portBox.appendChild(this._connectorOutline);
 
       this.container.appendChild(this._portBox);
 
@@ -291,10 +331,10 @@ export class StencilBaseEditor {
   private positionPorts() {
     if (this._stencil) {
       this._stencil.positionPorts();
-      this.portConnectors.forEach(pc => {
-         if (pc.port.enabled) {
-           pc.adjustVisual();
-         }
+      this.portConnectors.forEach((pc) => {
+        if (pc.port.enabled) {
+          pc.adjustVisual();
+        }
       });
     }
   }
@@ -350,6 +390,17 @@ export class StencilBaseEditor {
       const translate = this._portBox.transform.baseVal.getItem(0);
       translate.setTranslate(this._stencil.left, this._stencil.top);
       this._portBox.transform.baseVal.replaceItem(translate, 0);
+      if (this._connectorOutline !== undefined) {
+        SvgHelper.setAttributes(this._connectorOutline, [
+          [
+            'd',
+            this._stencil.getSelectorPathD(
+              this._stencil.width,
+              this._stencil.height
+            ),
+          ],
+        ]);
+      }
       this.positionPorts();
     }
   }

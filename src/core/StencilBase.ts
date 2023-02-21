@@ -162,7 +162,7 @@ export class StencilBase {
     return Object.getPrototypeOf(this).constructor.getPathD(width, height);
   }
 
-  protected getSelectorPathD(width: number, height: number): string {
+  public getSelectorPathD(width: number, height: number): string {
     return this.getPathD(width, height);
   }
 

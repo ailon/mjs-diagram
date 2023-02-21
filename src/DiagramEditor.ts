@@ -127,7 +127,6 @@ export class DiagramEditor extends HTMLElement {
     this.onCanvasPointerUp = this.onCanvasPointerUp.bind(this);
     this.onPointerUp = this.onPointerUp.bind(this);
     this.onPointerOut = this.onPointerOut.bind(this);
-    this.clientToLocalCoordinates = this.clientToLocalCoordinates.bind(this);
     this.toolbarButtonClicked = this.toolbarButtonClicked.bind(this);
 
     this.toggleConnectMode = this.toggleConnectMode.bind(this);
@@ -794,18 +793,6 @@ export class DiagramEditor extends HTMLElement {
     // window.removeEventListener('keyup', this.onKeyUp);
   }
 
-  private clientToLocalCoordinates(x: number, y: number): IPoint {
-    if (this._mainCanvas) {
-      const clientRect = this._mainCanvas.getBoundingClientRect();
-      return {
-        x: (x - clientRect.left) / this.zoomLevel,
-        y: (y - clientRect.top) / this.zoomLevel,
-      };
-    } else {
-      return { x: x, y: y };
-    }
-  }
-
   private touchPoints = 0;
   private isDragging = false;
 
@@ -911,9 +898,11 @@ export class DiagramEditor extends HTMLElement {
     this._manipulationStartX = ev.clientX;
     this._manipulationStartY = ev.clientY;
 
-    const localCoordinates = this.clientToLocalCoordinates(
+    const localCoordinates = SvgHelper.clientToLocalCoordinates(
+      this._mainCanvas,
       ev.clientX,
-      ev.clientY
+      ev.clientY,
+      this.zoomLevel
     );
 
     this.touchPoints++;
@@ -937,7 +926,7 @@ export class DiagramEditor extends HTMLElement {
       } else if (this.mode === 'connect' && ev.target) {
         const hitEditor = this.getHitEditor(ev.target);
         if (hitEditor !== undefined) {
-          this.connectionStartPort = hitEditor.getTargetPort(ev.target);
+          this.connectionStartPort = hitEditor.getTargetPort(ev);
           if (this.connectionStartPort !== undefined) {
             this.deselectStencil();
             this.deselectCurrentConnector();
@@ -987,13 +976,20 @@ export class DiagramEditor extends HTMLElement {
       }
       if (this._currentStencilEditor !== undefined && ev.target) {
         this._currentStencilEditor.dblClick(
-          this.clientToLocalCoordinates(ev.clientX, ev.clientY),
+          SvgHelper.clientToLocalCoordinates(
+            this._mainCanvas,
+            ev.clientX,
+            ev.clientY,
+            this.zoomLevel
+          ),
           ev.target
         );
       } else if (hitEditor === undefined && ev.target) {
-        const localCoordinates = this.clientToLocalCoordinates(
+        const localCoordinates = SvgHelper.clientToLocalCoordinates(
+          this._mainCanvas,
           ev.clientX,
-          ev.clientY
+          ev.clientY,
+          this.zoomLevel
         );
         const hitConnector = this.selectHitConnector(
           ev.target,
@@ -1017,9 +1013,11 @@ export class DiagramEditor extends HTMLElement {
           ev.preventDefault();
         }
 
-        const localCoordinates = this.clientToLocalCoordinates(
+        const localCoordinates = SvgHelper.clientToLocalCoordinates(
+          this._mainCanvas,
           ev.clientX,
-          ev.clientY
+          ev.clientY,
+          this.zoomLevel
         );
         if (this._currentStencilEditor !== undefined) {
           this._currentStencilEditor.manipulate(localCoordinates);
@@ -1036,7 +1034,12 @@ export class DiagramEditor extends HTMLElement {
       }
       if (this._currentConnectorEditor !== undefined) {
         this._currentConnectorEditor.manipulate(
-          this.clientToLocalCoordinates(ev.clientX, ev.clientY)
+          SvgHelper.clientToLocalCoordinates(
+            this._mainCanvas,
+            ev.clientX,
+            ev.clientY,
+            this.zoomLevel
+          )
         );
       }
     }
@@ -1074,7 +1077,7 @@ export class DiagramEditor extends HTMLElement {
     if (this.mode === 'connect' && ev.target) {
       const hitEditor = this.getHitEditor(ev.target);
       if (hitEditor !== undefined) {
-        const targetPort = hitEditor.getTargetPort(ev.target);
+        const targetPort = hitEditor.getTargetPort(ev, false, this.zoomLevel);
         if (
           this._currentConnectorEditor !== undefined &&
           targetPort !== undefined
@@ -1159,7 +1162,12 @@ export class DiagramEditor extends HTMLElement {
     if (this.touchPoints === 0) {
       if (this.isDragging && this._currentStencilEditor !== undefined) {
         this._currentStencilEditor.pointerUp(
-          this.clientToLocalCoordinates(ev.clientX, ev.clientY)
+          SvgHelper.clientToLocalCoordinates(
+            this._mainCanvas,
+            ev.clientX,
+            ev.clientY,
+            this.zoomLevel
+          )
         );
       }
     }
