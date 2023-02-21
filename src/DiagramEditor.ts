@@ -1140,11 +1140,17 @@ export class DiagramEditor extends HTMLElement {
       }
     } else if (
       this._currentConnectorEditor !== undefined
-      // && this._currentConnectorEditor.state === 'move'
+      && this._currentConnectorEditor.state === 'move'
     ) {
       // reset connector when released of stencil as if it didn't move
       this._currentConnectorEditor.pointerUp({ x: 0, y: 0 });
-    }
+    } else if (
+      this._currentConnectorEditor !== undefined &&
+      this._currentConnectorEditor.state === 'creating'
+    ) {
+      // delete new connector that isn't connecting to anything
+      this.deleteConnector(this._currentConnectorEditor);
+    } 
   }
 
   private _currentHitEditor?: StencilBaseEditor;
