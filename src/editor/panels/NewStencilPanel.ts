@@ -40,26 +40,14 @@ export class NewStencilPanel extends PropertyPanelBase {
 
   private getTypeBox(st: IStencilProperties): HTMLDivElement {
     const listItem = document.createElement('div');
-    listItem.style.display = 'flex';
-    listItem.style.flexDirection = 'column';
-    listItem.style.width = `100%`;
-    listItem.style.marginBottom = '5px';
-    listItem.style.alignItems = `center`;
-    listItem.style.borderWidth = '2px';
-    listItem.style.borderStyle = 'solid';
+    listItem.setAttribute('part', 'new-stencil-block');
     listItem.style.borderColor =
-      st.stencilType === this.currentType ? 'var(--i-mjstb-accent-color)' : 'transparent';
-    listItem.style.stroke = 'var(--i-mjstb-accent-color)';
-    const thumbnail = st.stencilType.getThumbnail(200, 140);
-    thumbnail.style.fill = '#aaa';
-    thumbnail.style.strokeWidth = '2px';
-    thumbnail.style.stroke = '#0a0a0a';
-    thumbnail.style.color = '#000';
+      st.stencilType === this.currentType ? 'var(--i-mjstb-accent-color)' : '#444';
+    const thumbnail = st.stencilType.getThumbnail(80, 60);
+    thumbnail.setAttribute('part', 'new-stencil-block-thumbnail');
     listItem.appendChild(thumbnail);
     const title = document.createElement('p');
-    title.style.fontSize = '0.9rem';
-    title.style.textAlign = 'center';
-    title.style.margin = '0px';
+    title.setAttribute('part', 'new-stencil-block-title');
     title.innerText = st.displayName ?? st.stencilType.title;
     listItem.appendChild(title);
     listItem.addEventListener('click', () => {

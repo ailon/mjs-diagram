@@ -200,6 +200,7 @@ export class DiagramEditor extends HTMLElement {
       }
       mjstb-panel {
         --i-mjstb-accent-color: var(--mjstb-accent-color, #cceeff);
+        --i-mjstb-accent-color2: var(--mjstb-accent-color2, #335577);
         --i-mjstb-background-color: var(--mjstb-background-color, #333);
       }
 
@@ -234,7 +235,7 @@ export class DiagramEditor extends HTMLElement {
       mjstb-panel.toolbox-panel::part(content-block) {
         background-color: #333;
         padding: 5px;
-        border: 2px solid #444;
+        border-bottom: 2px solid #444;
         border-radius: 3px;
         overflow: hidden;
       }
@@ -248,8 +249,41 @@ export class DiagramEditor extends HTMLElement {
         font-size: 0.8rem;
       }
       mjstb-panel::part(content-block):hover {
-        border-color: #555;
-      }    
+        /* border-color: #555; */
+      }   
+      mjstb-panel.toolbox-panel::part(new-stencil-block) {
+        padding: 0;
+        background-color: #444;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        width: 100px;
+        margin-bottom: 5px;
+        margin-right: 5px;
+        align-items: center;
+        border-width: 2px;
+        border-style: solid;
+        border-radius: 4px;
+      }
+      mjstb-panel.toolbox-panel::part(new-stencil-block):hover {
+        background-color: #888;
+      }
+      mjstb-panel.toolbox-panel::part(new-stencil-block-thumbnail) {
+        stroke-width: 0.5px;
+        fill: #abc;
+        stroke: #0a0a0a;
+        color: #000;
+        margin: 10px;
+      }
+      mjstb-panel.toolbox-panel::part(new-stencil-block-title) {
+        align-self: stretch;
+        font-size: 0.7rem;
+        text-align: center;
+        margin: 5px 0 0 0;
+        padding: 3px;
+        background-color: var(--i-mjstb-accent-color2);
+      }
+      
       
       mjstb-toolbar {
         background-color: red;
