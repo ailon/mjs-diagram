@@ -40,14 +40,14 @@ export class NewStencilPanel extends PropertyPanelBase {
 
   private getTypeBox(st: IStencilProperties): HTMLDivElement {
     const listItem = document.createElement('div');
-    listItem.setAttribute('part', 'new-stencil-block');
+    listItem.className = 'new-stencil-block';
     listItem.style.borderColor =
       st.stencilType === this.currentType ? 'var(--i-mjstb-accent-color)' : '#444';
     const thumbnail = st.stencilType.getThumbnail(80, 60);
-    thumbnail.setAttribute('part', 'new-stencil-block-thumbnail');
+    thumbnail.setAttribute('class', 'new-stencil-block-thumbnail');
     listItem.appendChild(thumbnail);
     const title = document.createElement('p');
-    title.setAttribute('part', 'new-stencil-block-title');
+    title.className = 'new-stencil-block-title';
     title.innerText = st.displayName ?? st.stencilType.title;
     listItem.appendChild(title);
     listItem.addEventListener('click', () => {

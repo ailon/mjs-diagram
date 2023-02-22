@@ -4,7 +4,6 @@ import {
   Toolbar,
   ToolbarBlock,
   ButtonEventData,
-  ContentBlock,
 } from '@markerjs/mjs-toolbar';
 import { basicStencilEditorSet } from './editor/BasicStencilEditorSet';
 import { ConnectorBase } from './core/ConnectorBase';
@@ -101,7 +100,7 @@ export class DiagramEditor extends HTMLElement {
     this.applyStencilSet();
   }
 
-  private _toolboxPanel!: Panel;
+  private _toolboxPanel!: HTMLDivElement;
 
   protected _manipulationStartX = 0;
   protected _manipulationStartY = 0;
@@ -197,8 +196,6 @@ export class DiagramEditor extends HTMLElement {
     styleSheet.innerHTML = `
       * {
         font-family: Helvetica, Arial, Sans-Serif;
-      }
-      mjstb-panel {
         --i-mjstb-accent-color: var(--mjstb-accent-color, #cceeff);
         --i-mjstb-accent-color2: var(--mjstb-accent-color2, #335577);
         --i-mjstb-background-color: var(--mjstb-background-color, #333);
@@ -225,21 +222,34 @@ export class DiagramEditor extends HTMLElement {
         border-color: #222;
       }
 
-      mjstb-panel.toolbox-panel {
+      .toolbox-panel {
         width: 100%;
-      }
-      mjstb-panel.toolbox-panel::part(panel) {
         background-color: #333;
         border-left: 2px solid #383838;
+        padding: 2px;
+        scrollbar-width: thin;
+        overflow-y: auto;
       }
-      mjstb-panel.toolbox-panel::part(content-block) {
+      .toolbox-panel::-webkit-scrollbar {
+        width: 12px;
+      }
+      .toolbox-panel::-webkit-scrollbar-track {
+        background: #333;
+      }
+      
+      .toolbox-panel::-webkit-scrollbar-thumb {
+        background-color: #444;
+        border-radius: 20px;
+        border: 1px solid #222;
+      }      
+      .toolbox-panel .content-block {
         background-color: #333;
         padding: 5px;
         border-bottom: 2px solid #444;
         border-radius: 3px;
         overflow: hidden;
       }
-      mjstb-panel.toolbox-panel::part(content-block-title) {
+      .toolbox-panel .content-block-title {
         margin: -5px;
         margin-bottom: 5px;
         padding: 5px;
@@ -248,10 +258,7 @@ export class DiagramEditor extends HTMLElement {
         font-family: Helvetica, Arial, Sans-Serif;
         font-size: 0.8rem;
       }
-      mjstb-panel::part(content-block):hover {
-        /* border-color: #555; */
-      }   
-      mjstb-panel.toolbox-panel::part(new-stencil-block) {
+      .toolbox-panel .new-stencil-block {
         padding: 0;
         background-color: #444;
         display: flex;
@@ -264,18 +271,19 @@ export class DiagramEditor extends HTMLElement {
         border-width: 2px;
         border-style: solid;
         border-radius: 4px;
+        cursor: pointer;
       }
-      mjstb-panel.toolbox-panel::part(new-stencil-block):hover {
+      .toolbox-panel .new-stencil-block:hover {
         background-color: #888;
       }
-      mjstb-panel.toolbox-panel::part(new-stencil-block-thumbnail) {
+      .toolbox-panel .new-stencil-block .new-stencil-block-thumbnail {
         stroke-width: 0.5px;
         fill: #abc;
         stroke: #0a0a0a;
         color: #000;
         margin: 10px;
       }
-      mjstb-panel.toolbox-panel::part(new-stencil-block-title) {
+      .toolbox-panel .new-stencil-block .new-stencil-block-title {
         align-self: stretch;
         font-size: 0.7rem;
         text-align: center;
@@ -472,7 +480,7 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private addToolbox() {
-    this._toolboxPanel = <Panel>document.createElement('mjstb-panel');
+    this._toolboxPanel = document.createElement('div');
     this._toolboxPanel.className = 'toolbox-panel';
 
     this._toolboxContainer?.appendChild(this._toolboxPanel);
@@ -480,14 +488,20 @@ export class DiagramEditor extends HTMLElement {
 
   private _currentToolboxPanels: PropertyPanelBase[] = [];
   private addToolboxPanel(panel: PropertyPanelBase) {
-    const cb = new ContentBlock();
-    cb.title = panel.title;
+    const cb = document.createElement('div');
+    cb.className = 'content-block';
+
+    const cbTitle = document.createElement('h2');
+    cbTitle.innerText = panel.title;
+    cbTitle.className = 'content-block-title';
+    cb.appendChild(cbTitle);
+    
     cb.appendChild(panel.getUi());
     this._toolboxPanel.appendChild(cb);
   }
   private addToolboxPanels(panels?: PropertyPanelBase[]) {
     if (panels !== undefined) {
-      this._toolboxPanel.clear();
+      this._toolboxPanel.innerHTML = '';
       this._currentToolboxPanels = panels;
       panels.forEach((p) => this.addToolboxPanel(p));
     } else if (
@@ -496,7 +510,7 @@ export class DiagramEditor extends HTMLElement {
     ) {
       // already showing new stencil panel
     } else {
-      this._toolboxPanel.clear();
+      this._toolboxPanel.innerHTML = '';
       this._currentToolboxPanels = [this._newStencilPanel];
       this._newStencilPanel.deselectType();
       this.addToolboxPanel(this._newStencilPanel);
