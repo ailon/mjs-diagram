@@ -67,7 +67,7 @@ export class DiagramEditor extends HTMLElement {
   private _connectorTypePanel!: ConnectorTypePanel;
   private _newStencilPanel!: NewStencilPanel;
 
-  private _newStencilOutline: SVGRectElement = SvgHelper.createRect(10, 10, [
+  private _newStencilOutline: SVGPathElement = SvgHelper.createPath('', [
     ['stroke', '#333'],
     ['stroke-width', '0.5'],
     ['stroke-dasharray', '2 5'],
@@ -1113,10 +1113,15 @@ export class DiagramEditor extends HTMLElement {
         this._objectLayer.appendChild(this._newStencilOutline);
         const size = this._currentStencilEditor.stencil.defaultSize;
         SvgHelper.setAttributes(this._newStencilOutline, [
-          ['width', size.width.toString()],
-          ['height', size.height.toString()],
+          [
+            'd',
+            this._currentStencilEditor.stencil.getSelectorPathD(
+              size.width,
+              size.height
+            ),
+          ],
         ]);
-        }
+      }
       const localPoint = SvgHelper.clientToLocalCoordinates(
         this._mainCanvas,
         ev.clientX,
@@ -1124,10 +1129,9 @@ export class DiagramEditor extends HTMLElement {
         this.zoomLevel
       );
       const size = this._currentStencilEditor.stencil.defaultSize;
-      SvgHelper.setAttributes(this._newStencilOutline, [
-        ['x', (localPoint.x - size.width / 2).toString()],
-        ['y', (localPoint.y - size.height / 2).toString()],
-      ]);
+      this._newStencilOutline.style.transform = `translate(${
+        localPoint.x - size.width / 2
+      }px, ${localPoint.y - size.height / 2}px)`;
     } else {
       const hitEditor = this.getHitEditor(ev.target);
       if (this._currentHitEditor !== hitEditor) {
