@@ -67,6 +67,13 @@ export class DiagramEditor extends HTMLElement {
   private _connectorTypePanel!: ConnectorTypePanel;
   private _newStencilPanel!: NewStencilPanel;
 
+  private _newStencilOutline: SVGRectElement = SvgHelper.createRect(10, 10, [
+    ['stroke', '#333'],
+    ['stroke-width', '0.5'],
+    ['stroke-dasharray', '2 5'],
+    ['fill', 'rgba(200,200,200,0.1)'],
+  ]);
+
   public zoomSteps = [0.5, 0.8, 1, 1.5, 2, 4];
   private _zoomLevel = 1;
   public get zoomLevel(): number {
@@ -495,7 +502,7 @@ export class DiagramEditor extends HTMLElement {
     cbTitle.innerText = panel.title;
     cbTitle.className = 'content-block-title';
     cb.appendChild(cbTitle);
-    
+
     cb.appendChild(panel.getUi());
     this._toolboxPanel.appendChild(cb);
   }
@@ -1094,21 +1101,52 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private onCanvasPointerMove(ev: PointerEvent) {
-    const hitEditor = this.getHitEditor(ev.target);
-    if (this._currentHitEditor !== hitEditor) {
-      // hovered editor changed
-      if (hitEditor !== undefined) {
-        if (!hitEditor.isSelected) {
-          this.mode = 'connect';
-          hitEditor.switchToConnectMode();
+    if (
+      this._currentStencilEditor !== undefined &&
+      this._currentStencilEditor.state === 'new'
+    ) {
+      // show new stencil outline
+      if (
+        this._objectLayer !== undefined &&
+        !this._objectLayer.contains(this._newStencilOutline)
+      ) {
+        this._objectLayer.appendChild(this._newStencilOutline);
+        const size = this._currentStencilEditor.stencil.defaultSize;
+        SvgHelper.setAttributes(this._newStencilOutline, [
+          ['width', size.width.toString()],
+          ['height', size.height.toString()],
+        ]);
         }
-      } else if (this._currentHitEditor !== undefined /*&& !this.isDragging*/) {
-        this.mode = 'select';
-        if (this._currentHitEditor.state === 'connect') {
-          this._currentHitEditor.switchConnectModeOff();
+      const localPoint = SvgHelper.clientToLocalCoordinates(
+        this._mainCanvas,
+        ev.clientX,
+        ev.clientY,
+        this.zoomLevel
+      );
+      const size = this._currentStencilEditor.stencil.defaultSize;
+      SvgHelper.setAttributes(this._newStencilOutline, [
+        ['x', (localPoint.x - size.width / 2).toString()],
+        ['y', (localPoint.y - size.height / 2).toString()],
+      ]);
+    } else {
+      const hitEditor = this.getHitEditor(ev.target);
+      if (this._currentHitEditor !== hitEditor) {
+        // hovered editor changed
+        if (hitEditor !== undefined) {
+          if (!hitEditor.isSelected) {
+            this.mode = 'connect';
+            hitEditor.switchToConnectMode();
+          }
+        } else if (
+          this._currentHitEditor !== undefined /*&& !this.isDragging*/
+        ) {
+          this.mode = 'select';
+          if (this._currentHitEditor.state === 'connect') {
+            this._currentHitEditor.switchConnectModeOff();
+          }
         }
+        this._currentHitEditor = hitEditor;
       }
-      this._currentHitEditor = hitEditor;
     }
   }
 
@@ -1187,8 +1225,8 @@ export class DiagramEditor extends HTMLElement {
         }
       }
     } else if (
-      this._currentConnectorEditor !== undefined
-      && this._currentConnectorEditor.state === 'move'
+      this._currentConnectorEditor !== undefined &&
+      this._currentConnectorEditor.state === 'move'
     ) {
       // reset connector when released of stencil as if it didn't move
       this._currentConnectorEditor.pointerUp({ x: 0, y: 0 });
@@ -1198,7 +1236,7 @@ export class DiagramEditor extends HTMLElement {
     ) {
       // delete new connector that isn't connecting to anything
       this.deleteConnector(this._currentConnectorEditor);
-    } 
+    }
   }
 
   private _currentHitEditor?: StencilBaseEditor;
@@ -1223,6 +1261,7 @@ export class DiagramEditor extends HTMLElement {
 
       if (this._currentStencilEditor !== undefined) {
         if (this._currentStencilEditor.state === 'new') {
+          this._objectLayer?.removeChild(this._newStencilOutline);
           this._currentStencilEditor.create(localPoint);
         }
         if (this.isDragging) {
