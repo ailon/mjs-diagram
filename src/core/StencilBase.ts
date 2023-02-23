@@ -1,4 +1,5 @@
 import { IPoint } from './IPoint';
+import { ISize } from './ISize';
 import { Port, PortLocation } from './Port';
 import { StencilBaseState } from './StencilBaseState';
 import { SvgHelper } from './SvgHelper';
@@ -36,7 +37,7 @@ export class StencilBase {
   public width = 0;
   public height = 0;
 
-  public defaultSize: IPoint = { x: 120, y: 70 };
+  public defaultSize: ISize = { width: 120, height: 70 };
 
   protected get centerX(): number {
     return this.left + this.width / 2;
@@ -167,7 +168,7 @@ export class StencilBase {
   }
 
   protected createSelector(): void {
-    const pathString = this.getSelectorPathD(this.defaultSize.x, this.defaultSize.y);
+    const pathString = this.getSelectorPathD(this.defaultSize.width, this.defaultSize.height);
     if (pathString && pathString.length > 0) {
       this._selectorFrame = SvgHelper.createPath(pathString, [
         ['fill', 'transparent'],
@@ -180,7 +181,7 @@ export class StencilBase {
 
   public createVisual(): void {
     this.createSelector();
-    const pathString = this.getPathD(this.defaultSize.x, this.defaultSize.y);
+    const pathString = this.getPathD(this.defaultSize.width, this.defaultSize.height);
     if (pathString && pathString.length > 0) {
       this._frame = SvgHelper.createPath(pathString, [
         ['fill', this.fillColor],

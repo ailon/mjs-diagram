@@ -635,8 +635,8 @@ export class StencilBaseEditor {
         this._stencil.width < 10 &&
         this._stencil.height < 10
       ) {
-        this._stencil.width = this._stencil.defaultSize.x;
-        this._stencil.height = this._stencil.defaultSize.y;
+        this._stencil.width = this._stencil.defaultSize.width;
+        this._stencil.height = this._stencil.defaultSize.height;
       } else {
         this.manipulate(point);
       }
@@ -655,14 +655,14 @@ export class StencilBaseEditor {
     if (this._stencil !== undefined && this.state === 'new') {
       this.setupVisuals();
       const position: IPoint = {
-        x: point.x - this._stencil.defaultSize.x / 2,
-        y: point.y - this._stencil.defaultSize.y / 2,
+        x: point.x - this._stencil.defaultSize.width / 2,
+        y: point.y - this._stencil.defaultSize.height / 2,
       };
       this._stencil.left = position.x;
       this._stencil.top = position.y;
       this._stencil.moveVisual(position);
-      this._stencil.width = this._stencil.defaultSize.x;
-      this._stencil.height = this._stencil.defaultSize.y;
+      this._stencil.width = this._stencil.defaultSize.width;
+      this._stencil.height = this._stencil.defaultSize.height;
 
       this._state = 'select';
 
