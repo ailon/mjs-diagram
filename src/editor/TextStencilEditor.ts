@@ -168,6 +168,14 @@ export class TextStencilEditor extends StencilBaseEditor {
     }
   }
 
+  public create(point: IPoint): void {
+    this._suppressStencilCreateEvent = true;
+    super.create(point);
+    this.setSize();
+    this.showTextEditor();
+    this.setColor('#000000');
+  }
+
   public select(): void {
     super.select();
     if (this.state === 'edit') {

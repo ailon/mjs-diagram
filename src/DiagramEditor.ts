@@ -960,8 +960,8 @@ export class DiagramEditor extends HTMLElement {
         (this._currentStencilEditor.state === 'new' ||
           this._currentStencilEditor.state === 'creating')
       ) {
-        this.isDragging = true;
-        this._currentStencilEditor.pointerDown(localCoordinates);
+        // this.isDragging = true;
+        // this._currentStencilEditor.pointerDown(localCoordinates);
       } else if (this.mode === 'select' && ev.target) {
         const hitEditor = this.selectHitEditor(ev, localCoordinates);
         if (hitEditor === undefined) {
@@ -1214,15 +1214,20 @@ export class DiagramEditor extends HTMLElement {
       this.touchPoints--;
     }
     if (this.touchPoints === 0) {
-      if (this.isDragging && this._currentStencilEditor !== undefined) {
-        this._currentStencilEditor.pointerUp(
-          SvgHelper.clientToLocalCoordinates(
-            this._mainCanvas,
-            ev.clientX,
-            ev.clientY,
-            this.zoomLevel
-          )
-        );
+      const localPoint = SvgHelper.clientToLocalCoordinates(
+        this._mainCanvas,
+        ev.clientX,
+        ev.clientY,
+        this.zoomLevel
+      );
+
+      if (this._currentStencilEditor !== undefined) {
+        if (this._currentStencilEditor.state === 'new') {
+          this._currentStencilEditor.create(localPoint);
+        }
+        if (this.isDragging) {
+          this._currentStencilEditor.pointerUp(localPoint);
+        }
       }
     }
     this.isDragging = false;
@@ -1249,7 +1254,7 @@ export class DiagramEditor extends HTMLElement {
         this._currentStencilEditor = this.addNewStencil(sType.stencilType);
         this._currentStencilEditor.onStencilCreated = this.stencilCreated;
         if (this._mainCanvas) {
-          this._mainCanvas.style.cursor = 'crosshair';
+          this._mainCanvas.style.cursor = 'move';
         }
         // @todo
         // this.toolbar.setActiveMarkerButton(mType.typeName);

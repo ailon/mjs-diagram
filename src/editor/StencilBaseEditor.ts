@@ -133,6 +133,7 @@ export class StencilBaseEditor {
     this.blur = this.blur.bind(this);
 
     this.initManipulation = this.initManipulation.bind(this);
+    this.create = this.create.bind(this);
   }
 
   public ownsTarget(el: EventTarget | null): boolean {
@@ -173,7 +174,12 @@ export class StencilBaseEditor {
       });
 
       if (result === undefined && !exact) {
-        const point = SvgHelper.clientToLocalCoordinates(this.container, ev.clientX, ev.clientY, zoomLevel);
+        const point = SvgHelper.clientToLocalCoordinates(
+          this.container,
+          ev.clientX,
+          ev.clientY,
+          zoomLevel
+        );
         // no exact port hit, find the closest one
         let minDistance = Number.MAX_VALUE;
         this.portConnectors.forEach((port) => {
@@ -640,6 +646,27 @@ export class StencilBaseEditor {
         this.onStencilCreated &&
         this._suppressStencilCreateEvent === false
       ) {
+        this.onStencilCreated(this);
+      }
+    }
+  }
+
+  public create(point: IPoint): void {
+    if (this._stencil !== undefined && this.state === 'new') {
+      this.setupVisuals();
+      const position: IPoint = {
+        x: point.x - this._stencil.defaultSize.x / 2,
+        y: point.y - this._stencil.defaultSize.y / 2,
+      };
+      this._stencil.left = position.x;
+      this._stencil.top = position.y;
+      this._stencil.moveVisual(position);
+      this._stencil.width = this._stencil.defaultSize.x;
+      this._stencil.height = this._stencil.defaultSize.y;
+
+      this._state = 'select';
+
+      if (this.onStencilCreated && this._suppressStencilCreateEvent === false) {
         this.onStencilCreated(this);
       }
     }

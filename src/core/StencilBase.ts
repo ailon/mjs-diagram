@@ -36,7 +36,7 @@ export class StencilBase {
   public width = 0;
   public height = 0;
 
-  public defaultSize: IPoint = { x: 50, y: 20 };
+  public defaultSize: IPoint = { x: 120, y: 70 };
 
   protected get centerX(): number {
     return this.left + this.width / 2;
