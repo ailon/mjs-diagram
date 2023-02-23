@@ -23,6 +23,8 @@ export class TerminalStencil extends RectangleTextStencil {
 
     this.textBoundingBox = new DOMRect();
 
+    this.defaultSize = { width: 150, height: 50 };
+
     this.disablePorts('bottomleft', 'topleft', 'bottomright', 'topright');
   }
 

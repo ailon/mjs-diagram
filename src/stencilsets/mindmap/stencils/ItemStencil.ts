@@ -15,6 +15,9 @@ export class ItemStencil extends RectangleTextStencil {
 
   constructor(iid: number, container: SVGGElement) {
     super(iid, container);
+    
+    this.defaultSize.height = 30;
+
     this.disablePorts('topleft', 'topcenter', 'topright', 'leftcenter', 'rightcenter', 'bottomcenter');
   }
 

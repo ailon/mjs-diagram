@@ -27,6 +27,9 @@ export class SubTopicStencil extends RectangleTextStencil {
 
   constructor(iid: number, container: SVGGElement) {
     super(iid, container);
+
+    this.defaultSize.height = 40;
+
     this.disablePorts(
       'topleft',
       'topcenter',
