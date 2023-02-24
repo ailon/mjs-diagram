@@ -967,8 +967,7 @@ export class DiagramEditor extends HTMLElement {
         (this._currentStencilEditor.state === 'new' ||
           this._currentStencilEditor.state === 'creating')
       ) {
-        // this.isDragging = true;
-        // this._currentStencilEditor.pointerDown(localCoordinates);
+        // do nothing as the way new stencils are created has changed
       } else if (this.mode === 'select' && ev.target) {
         const hitEditor = this.selectHitEditor(ev, localCoordinates);
         if (hitEditor === undefined) {

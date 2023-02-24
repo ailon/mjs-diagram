@@ -485,12 +485,6 @@ export class StencilBaseEditor {
 
   public pointerDown(point: IPoint, target?: EventTarget): void {
     if (this._stencil !== undefined) {
-      if (this.state === 'new') {
-        this.setupVisuals();
-        this._stencil.left = point.x;
-        this._stencil.top = point.y;
-      }
-
       this.initManipulation(point);
 
       if (this.state !== 'new') {
@@ -500,10 +494,6 @@ export class StencilBaseEditor {
         } else {
           this._state = 'move';
         }
-      } else {
-        this._stencil.moveVisual(point);
-
-        this._state = 'creating';
       }
     }
   }
@@ -527,10 +517,7 @@ export class StencilBaseEditor {
 
   public manipulate(point: IPoint): void {
     if (this._stencil) {
-      //console.log(this._stencil);
-      if (this.state === 'creating') {
-        this.resize(point);
-      } else if (this.state === 'move') {
+      if (this.state === 'move') {
         this._stencil.left =
           this.manipulationStartLeft +
           (point.x - this.manipulationStartLeft) -
@@ -628,26 +615,8 @@ export class StencilBaseEditor {
   protected _suppressStencilCreateEvent = false;
   public pointerUp(point: IPoint): void {
     if (this._stencil) {
-      const inState = this.state;
       this._state = 'select';
-      if (
-        inState === 'creating' &&
-        this._stencil.width < 10 &&
-        this._stencil.height < 10
-      ) {
-        this._stencil.width = this._stencil.defaultSize.width;
-        this._stencil.height = this._stencil.defaultSize.height;
-      } else {
-        this.manipulate(point);
-      }
-
-      if (
-        inState === 'creating' &&
-        this.onStencilCreated &&
-        this._suppressStencilCreateEvent === false
-      ) {
-        this.onStencilCreated(this);
-      }
+      this.manipulate(point);
     }
   }
 

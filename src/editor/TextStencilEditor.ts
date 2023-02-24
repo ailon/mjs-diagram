@@ -38,13 +38,6 @@ export class TextStencilEditor extends StencilBaseEditor {
     this.isMoved = false;
     this.pointerDownPoint = point;
     this.pointerDownTimestamp = Date.now();
-
-    if (this.state === 'new') {
-      this.stencil.moveVisual(point);
-      this._state = 'creating';
-    } else if (this.state === 'creating') {
-      this.setColor('#000000');
-    }
   }
 
   public dblClick(point: IPoint, target?: EventTarget): void {
@@ -69,18 +62,8 @@ export class TextStencilEditor extends StencilBaseEditor {
   }
 
   public pointerUp(point: IPoint): void {
-    const inState = this.state;
-    if (inState === 'creating') {
-      this._suppressStencilCreateEvent = true;
-    }
     super.pointerUp(point);
     this.setSize();
-    if (
-      inState === 'creating' ||
-      (!this.isMoved && Date.now() - this.pointerDownTimestamp > 500)
-    ) {
-      this.showTextEditor();
-    }
     this.pointerDownPoint = undefined;
   }
 
