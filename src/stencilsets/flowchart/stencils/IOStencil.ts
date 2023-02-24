@@ -17,7 +17,7 @@ export class IOStencil extends RectangleTextStencil {
 
     this.defaultSize = { width: 150, height: 70 };
 
-    this.disablePorts('bottomleft', 'topleft', 'bottomright', 'topright');
+    this.disablePorts('bottomleft', 'topleft', 'bottomright', 'topright', 'leftcenter', 'rightcenter');
   }
 
   protected setTextBoundingBox() {
