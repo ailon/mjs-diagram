@@ -351,7 +351,7 @@ export class DiagramEditor extends HTMLElement {
 
     this._toolboxContainer = document.createElement('div');
     this._toolboxContainer.style.display = 'flex';
-    this._toolboxContainer.style.minWidth = '200px';
+    this._toolboxContainer.style.minWidth = '250px';
     this._toolboxContainer.style.width = '250px';
     this._toolboxContainer.style.maxWidth = '250px';
     this._toolboxContainer.style.height = '100%';
