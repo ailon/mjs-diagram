@@ -97,6 +97,9 @@ export class TextStencilEditor extends StencilBaseEditor {
     this.textEditor.addEventListener('keyup', (ev) => {
       ev.cancelBubble = true;
     });
+    this.textEditor.addEventListener('blur', () => {
+      this.textEditDivClicked(this.textEditor.innerText);
+    });
     this.textEditor.addEventListener('paste', (ev) => {
       if (ev.clipboardData) {
         // paste plain text
