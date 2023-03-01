@@ -72,8 +72,17 @@ export class DiagramEditor extends HTMLElement {
     ['stroke-width', '0.5'],
     ['stroke-dasharray', '2 5'],
     ['fill', 'rgba(200,200,200,0.1)'],
-    ['pointer-events', 'none']
+    ['pointer-events', 'none'],
   ]);
+
+  private _marqueeSelectOutline: SVGRectElement = SvgHelper.createRect(0, 0, [
+    ['stroke', '#333'],
+    ['stroke-width', '0.5'],
+    ['stroke-dasharray', '5 5'],
+    ['fill', 'transparent'],
+    ['pointer-events', 'none'],
+  ]);
+  private _marqueeSelectRect = new DOMRect(0, 0, 0, 0);
 
   public zoomSteps = [0.5, 0.8, 1, 1.5, 2, 4];
   private _zoomLevel = 1;
@@ -84,16 +93,16 @@ export class DiagramEditor extends HTMLElement {
     this._zoomLevel = value;
     if (this._canvasContainer && this._contentContainer && this._mainCanvas) {
       this._mainCanvas.style.width = `${this.documentWidth * this.zoomLevel}px`;
-      this._mainCanvas.style.height = `${this.documentHeight * this.zoomLevel}px`;
+      this._mainCanvas.style.height = `${
+        this.documentHeight * this.zoomLevel
+      }px`;
       //this._mainCanvas.style.transform = `scale(${this._zoomLevel})`;
       this._canvasContainer.scrollTo({
         left:
-          (this._mainCanvas.clientWidth -
-            this._canvasContainer.clientWidth) /
+          (this._mainCanvas.clientWidth - this._canvasContainer.clientWidth) /
           2,
         top:
-          (this._mainCanvas.clientHeight -
-            this._canvasContainer.clientHeight) /
+          (this._mainCanvas.clientHeight - this._canvasContainer.clientHeight) /
           2,
       });
     }
@@ -175,6 +184,8 @@ export class DiagramEditor extends HTMLElement {
     this.addLogo = this.addLogo.bind(this);
     this.removeLogo = this.removeLogo.bind(this);
     this.positionLogo = this.positionLogo.bind(this);
+
+    this.finishMarqueeSelection = this.finishMarqueeSelection.bind(this);
 
     this.attachShadow({ mode: 'open' });
 
@@ -872,6 +883,7 @@ export class DiagramEditor extends HTMLElement {
 
   private touchPoints = 0;
   private isDragging = false;
+  private isSelecting = false;
 
   private connectionStartPort?: PortConnector;
   private connectionEndPort?: PortConnector;
@@ -990,6 +1002,27 @@ export class DiagramEditor extends HTMLElement {
           this._currentStencilEditor.state === 'creating')
       ) {
         // do nothing as the way new stencils are created has changed
+      } else if (this.mode === 'select' && ev.target === this._mainCanvas) {
+        // marquee select
+        this.deselectStencil();
+        this.isSelecting = true;
+        this.isDragging = true;
+        this._marqueeSelectRect.x = localCoordinates.x;
+        this._marqueeSelectRect.y = localCoordinates.y;
+        this._marqueeSelectRect.width = 0;
+        this._marqueeSelectRect.height = 0;
+        SvgHelper.setAttributes(this._marqueeSelectOutline, [
+          ['x', localCoordinates.x.toString()],
+          ['y', localCoordinates.y.toString()],
+          ['width', '0'],
+          ['height', '0'],
+        ]);
+        if (
+          this._objectLayer &&
+          !this._objectLayer.contains(this._marqueeSelectOutline)
+        ) {
+          this._objectLayer.appendChild(this._marqueeSelectOutline);
+        }
       } else if (this.mode === 'select' && ev.target) {
         const hitEditor = this.selectHitEditor(ev, localCoordinates);
         if (hitEditor === undefined) {
@@ -1095,10 +1128,10 @@ export class DiagramEditor extends HTMLElement {
           ev.clientY,
           this.zoomLevel
         );
-        if (this._currentStencilEditor !== undefined) {
+        if (this._currentStencilEditor !== undefined && this.isDragging) {
           this._currentStencilEditor.manipulate(localCoordinates);
         }
-        if (this._selectedStencilEditors.length > 1) {
+        if (this._selectedStencilEditors.length > 1 && this.isDragging) {
           this._selectedStencilEditors.forEach((se) =>
             se.manipulate(localCoordinates)
           );
@@ -1122,6 +1155,12 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private onCanvasPointerMove(ev: PointerEvent) {
+    const localPoint = SvgHelper.clientToLocalCoordinates(
+      this._mainCanvas,
+      ev.clientX,
+      ev.clientY,
+      this.zoomLevel
+    );
     if (
       this._currentStencilEditor !== undefined &&
       this._currentStencilEditor.state === 'new'
@@ -1143,15 +1182,39 @@ export class DiagramEditor extends HTMLElement {
           ),
         ],
       ]);
-      const localPoint = SvgHelper.clientToLocalCoordinates(
-        this._mainCanvas,
-        ev.clientX,
-        ev.clientY,
-        this.zoomLevel
-      );
       this._newStencilOutline.style.transform = `translate(${
         localPoint.x - size.width / 2
       }px, ${localPoint.y - size.height / 2}px)`;
+    } else if (this.isDragging && this.isSelecting) {
+      // adjust marquee
+      const localManipulationStart = SvgHelper.clientToLocalCoordinates(
+        this._mainCanvas,
+        this._manipulationStartX,
+        this._manipulationStartY,
+        this.zoomLevel
+      );
+
+      this._marqueeSelectRect.x = Math.min(
+        localPoint.x,
+        localManipulationStart.x
+      );
+      this._marqueeSelectRect.y = Math.min(
+        localPoint.y,
+        localManipulationStart.y
+      );
+      this._marqueeSelectRect.width = Math.abs(
+        ev.clientX - this._manipulationStartX
+      );
+      this._marqueeSelectRect.height = Math.abs(
+        ev.clientY - this._manipulationStartY
+      );
+
+      SvgHelper.setAttributes(this._marqueeSelectOutline, [
+        ['x', `${this._marqueeSelectRect.x}`],
+        ['y', `${this._marqueeSelectRect.y}`],
+        ['width', `${this._marqueeSelectRect.width}`],
+        ['height', `${this._marqueeSelectRect.height}`],
+      ]);
     } else {
       const hitEditor = this.getHitEditor(ev.target);
       if (this._currentHitEditor !== hitEditor) {
@@ -1285,6 +1348,7 @@ export class DiagramEditor extends HTMLElement {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private onCanvasPointerOut(ev: PointerEvent) {
     if (
       this._objectLayer !== undefined &&
@@ -1314,7 +1378,16 @@ export class DiagramEditor extends HTMLElement {
         this.zoomLevel
       );
 
-      if (
+      if (this.isDragging && this.isSelecting) {
+        // finish marquee selection
+        if (
+          this._objectLayer &&
+          this._objectLayer.contains(this._marqueeSelectOutline)
+        ) {
+          this._objectLayer.removeChild(this._marqueeSelectOutline);
+        }
+        this.finishMarqueeSelection();
+      } else if (
         this._currentStencilEditor !== undefined &&
         this._currentStencilEditor.state !== 'new' &&
         this.isDragging
@@ -1322,6 +1395,7 @@ export class DiagramEditor extends HTMLElement {
         this._currentStencilEditor.pointerUp(localPoint);
       }
     }
+    this.isSelecting = false;
     this.isDragging = false;
     this.addUndoStep();
   }
@@ -1508,6 +1582,26 @@ export class DiagramEditor extends HTMLElement {
         this.selectConnector(conEditor);
       }
     }
+  }
+
+  private finishMarqueeSelection() {
+    this.deselectStencil();
+    this._stencilEditors.forEach((se) => {
+      if (
+        se.stencil.left >= this._marqueeSelectRect.x &&
+        se.stencil.top >= this._marqueeSelectRect.y &&
+        se.stencil.right <= this._marqueeSelectRect.right &&
+        se.stencil.bottom <= this._marqueeSelectRect.bottom
+      )
+        this.selectStencil(se);
+    });
+
+    if (this._selectedStencilEditors.length === 1) {
+      this.setCurrentStencil(this._selectedStencilEditors[0]);
+      if (this._currentStencilEditor !== undefined) {
+        this._currentStencilEditor.focus();
+      }
+    }    
   }
 
   addEventListener<T extends keyof DiagramEditorEventMap>(

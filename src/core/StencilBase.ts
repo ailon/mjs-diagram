@@ -36,6 +36,12 @@ export class StencilBase {
   public top = 0;
   public width = 0;
   public height = 0;
+  public get right(): number {
+    return this.left + this.width;
+  }
+  public get bottom(): number {
+    return this.top + this.height;
+  }
 
   public defaultSize: ISize = { width: 120, height: 70 };
 
@@ -168,7 +174,10 @@ export class StencilBase {
   }
 
   protected createSelector(): void {
-    const pathString = this.getSelectorPathD(this.defaultSize.width, this.defaultSize.height);
+    const pathString = this.getSelectorPathD(
+      this.defaultSize.width,
+      this.defaultSize.height
+    );
     if (pathString && pathString.length > 0) {
       this._selectorFrame = SvgHelper.createPath(pathString, [
         ['fill', 'transparent'],
@@ -181,7 +190,10 @@ export class StencilBase {
 
   public createVisual(): void {
     this.createSelector();
-    const pathString = this.getPathD(this.defaultSize.width, this.defaultSize.height);
+    const pathString = this.getPathD(
+      this.defaultSize.width,
+      this.defaultSize.height
+    );
     if (pathString && pathString.length > 0) {
       this._frame = SvgHelper.createPath(pathString, [
         ['fill', this.fillColor],
