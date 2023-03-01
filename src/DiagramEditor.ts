@@ -83,18 +83,19 @@ export class DiagramEditor extends HTMLElement {
   public set zoomLevel(value: number) {
     this._zoomLevel = value;
     if (this._canvasContainer && this._contentContainer && this._mainCanvas) {
-      this._mainCanvas.style.transform = `scale(${this._zoomLevel})`;
-      // @todo scroll to selected object or center
-      // this._canvasContainer.scrollTo({
-      //   left:
-      //     (this._mainCanvas.clientWidth * this._zoomLevel -
-      //       this._canvasContainer.clientWidth) /
-      //     2,
-      //   top:
-      //     (this._mainCanvas.clientHeight * this._zoomLevel -
-      //       this._canvasContainer.clientHeight) /
-      //     2,
-      // });
+      this._mainCanvas.style.width = `${this.documentWidth * this.zoomLevel}px`;
+      this._mainCanvas.style.height = `${this.documentHeight * this.zoomLevel}px`;
+      //this._mainCanvas.style.transform = `scale(${this._zoomLevel})`;
+      this._canvasContainer.scrollTo({
+        left:
+          (this._mainCanvas.clientWidth -
+            this._canvasContainer.clientWidth) /
+          2,
+        top:
+          (this._mainCanvas.clientHeight -
+            this._canvasContainer.clientHeight) /
+          2,
+      });
     }
   }
 
