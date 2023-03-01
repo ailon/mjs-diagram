@@ -211,6 +211,23 @@ export class DiagramEditor extends HTMLElement {
         --i-mjstb-background-color: var(--mjstb-background-color, #333);
       }
 
+      .canvas-container {
+        background-color: #aaa;
+        scrollbar-width: thin;
+      }
+      .canvas-container::-webkit-scrollbar {
+        height: 10px;
+        width: 10px;
+      }
+      .canvas-container::-webkit-scrollbar-track {
+        background: #aaa;
+      }
+      .canvas-container::-webkit-scrollbar-thumb {
+        background-color: #444;
+        border-radius: 20px;
+        border: 1px solid #eee;
+      }      
+
       mjstb-panel.toolbar-panel::part(panel) {
         background-color: var(--i-mjstb-background-color);
         border-bottom: 2px solid #383838;
@@ -340,11 +357,11 @@ export class DiagramEditor extends HTMLElement {
     this._container.appendChild(this._contentContainer);
 
     this._canvasContainer = document.createElement('div');
+    this._canvasContainer.className = 'canvas-container';
     this._canvasContainer.style.display = 'grid';
     this._canvasContainer.style.gridTemplateColumns = '1fr';
     this._canvasContainer.style.flexGrow = '2';
     this._canvasContainer.style.flexShrink = '2';
-    this._canvasContainer.style.backgroundColor = '#aaa';
     this._canvasContainer.style.justifyItems = 'center';
     this._canvasContainer.style.alignItems = 'center';
     this._canvasContainer.style.overflow = 'auto';
