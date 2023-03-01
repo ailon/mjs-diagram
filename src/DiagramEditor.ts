@@ -727,7 +727,8 @@ export class DiagramEditor extends HTMLElement {
     this._mainCanvas.style.pointerEvents = 'auto';
     this._mainCanvas.style.backgroundColor = 'white';
     this._mainCanvas.style.filter = 'drop-shadow(2px 2px 8px #333)';
-    this._mainCanvas.style.transform = `scale(${this._zoomLevel})`;
+    this._mainCanvas.style.margin = '10px';
+    //this._mainCanvas.style.transform = `scale(${this._zoomLevel})`;
 
     this._groupLayer = SvgHelper.createGroup();
     this._connectorLayer = SvgHelper.createGroup();
