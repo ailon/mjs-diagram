@@ -50,7 +50,7 @@ export class NewStencilPanel extends PropertyPanelBase {
     title.className = 'new-stencil-block-title';
     title.innerText = st.displayName ?? st.stencilType.title;
     listItem.appendChild(title);
-    listItem.addEventListener('click', () => {
+    listItem.addEventListener('pointerdown', () => {
       this.setCurrentType(st.stencilType, listItem);
     });
 

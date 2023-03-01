@@ -72,6 +72,7 @@ export class DiagramEditor extends HTMLElement {
     ['stroke-width', '0.5'],
     ['stroke-dasharray', '2 5'],
     ['fill', 'rgba(200,200,200,0.1)'],
+    ['pointer-events', 'none']
   ]);
 
   public zoomSteps = [0.5, 0.8, 1, 1.5, 2, 4];
@@ -131,6 +132,7 @@ export class DiagramEditor extends HTMLElement {
     this.onCanvasPointerDown = this.onCanvasPointerDown.bind(this);
     this.onCanvasPointerMove = this.onCanvasPointerMove.bind(this);
     this.onCanvasPointerUp = this.onCanvasPointerUp.bind(this);
+    this.onCanvasPointerOut = this.onCanvasPointerOut.bind(this);
     this.onPointerUp = this.onPointerUp.bind(this);
     this.onPointerOut = this.onPointerOut.bind(this);
     this.toolbarButtonClicked = this.toolbarButtonClicked.bind(this);
@@ -809,6 +811,7 @@ export class DiagramEditor extends HTMLElement {
     this._mainCanvas?.addEventListener('pointerdown', this.onCanvasPointerDown);
     this._mainCanvas?.addEventListener('pointermove', this.onCanvasPointerMove);
     this._mainCanvas?.addEventListener('pointerup', this.onCanvasPointerUp);
+    this._mainCanvas?.addEventListener('pointerout', this.onCanvasPointerOut);
     this._mainCanvas?.addEventListener('dblclick', this.onDblClick);
     this.attachWindowEvents();
   }
@@ -1110,24 +1113,23 @@ export class DiagramEditor extends HTMLElement {
         !this._objectLayer.contains(this._newStencilOutline)
       ) {
         this._objectLayer.appendChild(this._newStencilOutline);
-        const size = this._currentStencilEditor.stencil.defaultSize;
-        SvgHelper.setAttributes(this._newStencilOutline, [
-          [
-            'd',
-            this._currentStencilEditor.stencil.getSelectorPathD(
-              size.width,
-              size.height
-            ),
-          ],
-        ]);
       }
+      const size = this._currentStencilEditor.stencil.defaultSize;
+      SvgHelper.setAttributes(this._newStencilOutline, [
+        [
+          'd',
+          this._currentStencilEditor.stencil.getSelectorPathD(
+            size.width,
+            size.height
+          ),
+        ],
+      ]);
       const localPoint = SvgHelper.clientToLocalCoordinates(
         this._mainCanvas,
         ev.clientX,
         ev.clientY,
         this.zoomLevel
       );
-      const size = this._currentStencilEditor.stencil.defaultSize;
       this._newStencilOutline.style.transform = `translate(${
         localPoint.x - size.width / 2
       }px, ${localPoint.y - size.height / 2}px)`;
@@ -1239,6 +1241,37 @@ export class DiagramEditor extends HTMLElement {
     ) {
       // delete new connector that isn't connecting to anything
       this.deleteConnector(this._currentConnectorEditor);
+    } else {
+      if (this.touchPoints > 0) {
+        this.touchPoints--;
+      }
+      if (this.touchPoints === 0) {
+        const localPoint = SvgHelper.clientToLocalCoordinates(
+          this._mainCanvas,
+          ev.clientX,
+          ev.clientY,
+          this.zoomLevel
+        );
+
+        if (this._currentStencilEditor !== undefined) {
+          if (
+            this._currentStencilEditor.state === 'new' &&
+            this._objectLayer?.contains(this._newStencilOutline)
+          ) {
+            this._objectLayer?.removeChild(this._newStencilOutline);
+            this._currentStencilEditor.create(localPoint);
+          }
+        }
+      }
+    }
+  }
+
+  private onCanvasPointerOut(ev: PointerEvent) {
+    if (
+      this._objectLayer !== undefined &&
+      this._objectLayer.contains(this._newStencilOutline)
+    ) {
+      this._objectLayer.removeChild(this._newStencilOutline);
     }
   }
 
@@ -1262,14 +1295,12 @@ export class DiagramEditor extends HTMLElement {
         this.zoomLevel
       );
 
-      if (this._currentStencilEditor !== undefined) {
-        if (this._currentStencilEditor.state === 'new') {
-          this._objectLayer?.removeChild(this._newStencilOutline);
-          this._currentStencilEditor.create(localPoint);
-        }
-        if (this.isDragging) {
-          this._currentStencilEditor.pointerUp(localPoint);
-        }
+      if (
+        this._currentStencilEditor !== undefined &&
+        this._currentStencilEditor.state !== 'new' &&
+        this.isDragging
+      ) {
+        this._currentStencilEditor.pointerUp(localPoint);
       }
     }
     this.isDragging = false;
