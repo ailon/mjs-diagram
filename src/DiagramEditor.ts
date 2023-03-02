@@ -385,7 +385,7 @@ export class DiagramEditor extends HTMLElement {
     this._toolboxContainer.style.maxWidth = '250px';
     this._toolboxContainer.style.height = '100%';
     this._toolboxContainer.style.backgroundColor = 'cyan';
-    this._toolboxContainer.style.zIndex = '10';
+    // this._toolboxContainer.style.zIndex = '10';
     this._toolboxContainer.style.filter = 'drop-shadow(-2px 0px 4px #333)';
 
     this._contentContainer.appendChild(this._toolboxContainer);
