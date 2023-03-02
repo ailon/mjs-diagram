@@ -4,7 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 1.0.0-alpha.5 - 2023-02-24
+## [1.0.0-alpha.6] - 2023-03-02
+### Added
+- marquee selection
+
+### Changed
+- creating new stencils to start on pointerdown to enable drag-n-drop-like behavior
+- margin on main canvas so edge is visible when zoomed in
+- scrollbar styling
+
+### Fixed
+- text editing doesn't end when clicking toolbars, toolbox, etc.
+- toolbox width isn't fixed
+- can't scroll over the whole diagram when zoomed in
+
+## [1.0.0-alpha.5] - 2023-02-24
 ### Changed
 - new stencil panel layout
 - new stencil are "placed" on the canvas instead of having to "draw" them
@@ -12,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - side ports on IOStencil removed as they were off stencil
 
-## 1.0.0-alpha.4 - 2023-02-21
+## [1.0.0-alpha.4] - 2023-02-21
 ### Added
 - transparent selector frame for better hover handling
 - `getSelectorPathD()` method for a \[potentially\] separate selector path
@@ -27,7 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - releasing connecter off of any stencil resulted in orphan connectors
 
-## 1.0.0-alpha.3 - 2023-02-17
+## [1.0.0-alpha.3] - 2023-02-17
 ### Changed
 - **BREAKING!** save button event name from `renderclick` to 'saveclick`
 - default stencil text to just 'Text'
@@ -37,14 +51,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - component width/height saved in the state instead of document width/height
 - no context checks before defining custom elements
 
-## 1.0.0-alpha.2 - 2023-02-14
+## [1.0.0-alpha.2] - 2023-02-14
 ### Fixed
 - stencil set not exported
 
-## 1.0.0-alpha.1 - 2023-02-14
+## [1.0.0-alpha.1] - 2023-02-14
 ### Added
 - Initial public release.
 
+[1.0.0-alpha.6]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.6
 [1.0.0-alpha.5]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.5
 [1.0.0-alpha.4]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.4
 [1.0.0-alpha.3]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.3
