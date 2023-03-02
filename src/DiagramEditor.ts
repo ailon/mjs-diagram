@@ -231,12 +231,12 @@ export class DiagramEditor extends HTMLElement {
         width: 10px;
       }
       .canvas-container::-webkit-scrollbar-track {
-        background: #aaa;
+        background-color: transparent;
       }
       .canvas-container::-webkit-scrollbar-thumb {
         background-color: #444;
         border-radius: 20px;
-        border: 1px solid #eee;
+        border: 2px solid #aaa;
       }      
 
       mjstb-panel.toolbar-panel::part(panel) {
