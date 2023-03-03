@@ -1323,7 +1323,10 @@ export class DiagramEditor extends HTMLElement {
     ) {
       // delete new connector that isn't connecting to anything
       this.deleteConnector(this._currentConnectorEditor);
-    } else if (this._currentConnectorEditor !== undefined) {
+    } else if (
+      this._currentConnectorEditor !== undefined &&
+      this._currentConnectorEditor.state === 'move-label'
+    ) {
       // moving label - @todo refactor
       this._currentConnectorEditor.pointerUp({ x: 0, y: 0 });
     } else {
@@ -1346,6 +1349,11 @@ export class DiagramEditor extends HTMLElement {
             this._objectLayer?.removeChild(this._newStencilOutline);
             this._currentStencilEditor.create(localPoint);
           }
+        }
+
+        // deselect connector if selected and not hit
+        if (this._currentConnectorEditor !== undefined && !this.getHitConnector(ev.target)) {
+          this.deselectCurrentConnector();
         }
       }
     }
@@ -1604,7 +1612,7 @@ export class DiagramEditor extends HTMLElement {
       if (this._currentStencilEditor !== undefined) {
         this._currentStencilEditor.focus();
       }
-    }    
+    }
   }
 
   addEventListener<T extends keyof DiagramEditorEventMap>(
