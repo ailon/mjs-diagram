@@ -151,14 +151,14 @@ export class ConnectorBaseEditor {
 
   protected hideControlBox(): void {
     this.controlBox.style.display = 'none';
-    this.connector.labelBackground.style.strokeOpacity = '0';
+    this.connector.textBlock.hideControlBox();
   }
   protected showControlBox(): void {
     if (this.controlBox === undefined) {
       this.setupControlBox();
     }
     this.controlBox.style.display = '';
-    this.connector.labelBackground.style.strokeOpacity = '1';
+    this.connector.textBlock.showControlBox();
   }
 
   public pointerDown(point: IPoint, target?: EventTarget): void {
@@ -270,11 +270,6 @@ export class ConnectorBaseEditor {
     this.connector.container.appendChild(this.controlBox);
 
     this.addControlGrips();
-
-    this.connector.labelBackground.style.stroke = '#aaa';
-    this.connector.labelBackground.style.strokeDasharray = '2 2';
-    this.connector.labelBackground.style.strokeWidth = '1';
-    this.connector.labelBackground.style.strokeOpacity = '0';
 
     this.controlBox.style.display = 'none';
   }
@@ -414,17 +409,15 @@ export class ConnectorBaseEditor {
         this.showTextEditor();
       } else {
         this.connector.textBlock.show();
-        this.connector.labelBackground.style.display = '';
 
-        this.textEditor.style.top = `${this.connector.labelBackground.y.baseVal.valueAsString}px`;
-        this.textEditor.style.left = `${this.connector.labelBackground.x.baseVal.valueAsString}px`;
+        this.textEditor.style.top = `${this.connector.textBlock.labelBackground.y.baseVal.valueAsString}px`;
+        this.textEditor.style.left = `${this.connector.textBlock.labelBackground.x.baseVal.valueAsString}px`;
         this.textEditor.style.maxWidth = `2000px`;
         this.textEditor.style.maxHeight = `1000px`;
         // this.textEditor.style.maxWidth = `${this.connector.labelBackground.width}px`;
         // this.textEditor.style.maxHeight = `${this.connector.labelBackground.height}px`;
         this.textEditor.style.fontSize = `1rem`; // @todo - configurable in stencil
         this.connector.textBlock.hide();
-        this.connector.labelBackground.style.display = 'none';
       }
     }
   }
@@ -433,7 +426,6 @@ export class ConnectorBaseEditor {
     this.connector.labelText = text.trim();
     this.overlayContainer.innerHTML = '';
     this.connector.textBlock.show();
-    this.connector.labelBackground.style.display = '';
     // this.connector.renderText();
     // this.connector.positionText();
     // this.showVisual();

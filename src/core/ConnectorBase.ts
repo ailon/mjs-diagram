@@ -51,9 +51,6 @@ export class ConnectorBase {
   public textBlock: TextBlock = new TextBlock();  
 
   public textBoundingBox= new DOMRect();
-  public labelBackground!: SVGRectElement
-  public labelOffsetX = 0;
-  public labelOffsetY = 0;
 
   protected arrow1!: SVGPolygonElement;
   protected arrow2!: SVGPolygonElement;
@@ -106,7 +103,6 @@ export class ConnectorBase {
     this.setStartPosition = this.setStartPosition.bind(this);
     this.setEndPosition = this.setEndPosition.bind(this);
     this.setTextBoundingBox = this.setTextBoundingBox.bind(this);
-    this.positionTextBg = this.positionTextBg.bind(this);
     this.moveLabel = this.moveLabel.bind(this);
     this.getArrowPoints = this.getArrowPoints.bind(this);
     this.createTips = this.createTips.bind(this);
@@ -137,8 +133,7 @@ export class ConnectorBase {
 
     this.createTips();
 
-    this.labelBackground = SvgHelper.createRect(10, 10, [['fill', 'white']]);
-    this.visual.appendChild(this.labelBackground);
+    this.visual.appendChild(this.textBlock.labelBackground);
 
     this.visual.appendChild(this.textBlock.textElement);
 
@@ -306,12 +301,9 @@ export class ConnectorBase {
   }
 
   public moveLabel(offsetX = 0, offsetY = 0) {
-    this.labelOffsetX += offsetX;
-    this.labelOffsetY += offsetY;
-    this.textBlock.offsetX = this.labelOffsetX;
-    this.textBlock.offsetY = this.labelOffsetY;
+    this.textBlock.offsetX += offsetX;
+    this.textBlock.offsetY += offsetY;
     this.setTextBoundingBox();
-    this.positionTextBg();
   }
 
   protected setTextBoundingBox() {
@@ -321,26 +313,6 @@ export class ConnectorBase {
     this.textBoundingBox.height = Math.max(this.y1, this.y2) - this.textBoundingBox.y;
     this.textBlock.boundingBox = this.textBoundingBox;
   }
-
-  public positionTextBg() {
-    const textBBox = this.textBlock.textElement.getBBox();
-    const centerX =
-      this.textBoundingBox.x +
-      this.textBoundingBox.width / 2 +
-      this.labelOffsetX;
-    const centerY =
-      this.textBoundingBox.y +
-      this.textBoundingBox.height / 2 - textBBox.height / 2 +
-      this.labelOffsetY;
-
-    const bgPadding = 1.2;
-    SvgHelper.setAttributes(this.labelBackground, [
-      ['width', (textBBox.width * bgPadding).toString()],
-      ['height', (textBBox.height * bgPadding).toString()],
-      ['x', (centerX - (textBBox.width * bgPadding / 2)).toString()],
-      ['y', (centerY - (textBBox.height / 2) * (bgPadding - 1) * 2).toString()]
-    ]);
-  }  
 
   public setStrokeColor(color: string): void {
     this.strokeColor = color;
@@ -372,8 +344,8 @@ export class ConnectorBase {
       endStencilId: this.endStencil?.IId,
       endPortLocation: this.endPort?.location,
 
-      labelOffsetX: this.labelOffsetX,
-      labelOffsetY: this.labelOffsetY,
+      labelOffsetX: this.textBlock.offsetX,
+      labelOffsetY: this.textBlock.offsetY,
 
       strokeColor: this.strokeColor,
       strokeWidth: this.strokeWidth,
@@ -392,8 +364,8 @@ export class ConnectorBase {
     this.strokeWidth = state.strokeWidth;
     this.strokeDasharray = state.strokeDasharray;
 
-    this.labelOffsetX = state.labelOffsetX;
-    this.labelOffsetY = state.labelOffsetY;
+    this.textBlock.offsetX = state.labelOffsetX;
+    this.textBlock.offsetY = state.labelOffsetY;
 
     this.startStencil = endPoints.startStencil;
     this.startPort = endPoints.startPort;

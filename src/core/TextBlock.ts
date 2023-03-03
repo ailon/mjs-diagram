@@ -12,6 +12,7 @@ export class TextBlock {
 
   public offsetX = 0;
   public offsetY = 0;
+
   private _boundingBox: DOMRect = new DOMRect();
   public get boundingBox(): DOMRect {
     return this._boundingBox;
@@ -19,6 +20,11 @@ export class TextBlock {
   public set boundingBox(value: DOMRect) {
     this._boundingBox = value;
     this.positionText();
+  }
+
+  private _labelBackground: SVGRectElement = SvgHelper.createRect(10, 10, [['fill', 'white']]);
+  public get labelBackground(): SVGRectElement {
+    return this._labelBackground;
   }
 
   private _textElement: SVGTextElement = SvgHelper.createText();
@@ -62,6 +68,8 @@ export class TextBlock {
     this.ownsTarget = this.ownsTarget.bind(this);
     this.show = this.show.bind(this);
     this.hide = this.hide.bind(this);
+    this.showControlBox = this.showControlBox.bind(this);
+    this.hideControlBox = this.hideControlBox.bind(this);
   }
 
   public ownsTarget(el: EventTarget) {
@@ -84,6 +92,11 @@ export class TextBlock {
     this._textElement.style.dominantBaseline = 'hanging';
     this._textElement.transform.baseVal.appendItem(SvgHelper.createTransform()); // translate transorm
     this._textElement.transform.baseVal.appendItem(SvgHelper.createTransform()); // scale transorm
+
+    this._labelBackground.style.stroke = '#aaa';
+    this._labelBackground.style.strokeDasharray = '2 2';
+    this._labelBackground.style.strokeWidth = '1';
+    this._labelBackground.style.strokeOpacity = '0';    
   }
 
   public renderText() {
@@ -129,12 +142,29 @@ export class TextBlock {
     });
     SvgHelper.setAttributes(self._textElement, [['x', `${centerX}`]]);
     SvgHelper.setAttributes(self._textElement, [['y', `${centerY}`]]);
+
+    const bgPadding = 1.2;
+    SvgHelper.setAttributes(self.labelBackground, [
+      ['width', (textBBox.width * bgPadding).toString()],
+      ['height', (textBBox.height * bgPadding).toString()],
+      ['x', (centerX - (textBBox.width * bgPadding / 2)).toString()],
+      ['y', (centerY - (textBBox.height / 2) * (bgPadding - 1) * 2).toString()]
+    ]);
   }
 
   public show() {
     this._textElement.style.display = '';
+    this._labelBackground.style.display = '';
   }
   public hide() {
     this._textElement.style.display = 'none';
+    this._labelBackground.style.display = 'none';
+  }
+
+  public showControlBox() {
+    this.labelBackground.style.strokeOpacity = '1';    
+  }
+  public hideControlBox() {
+    this.labelBackground.style.strokeOpacity = '0';    
   }
 }
