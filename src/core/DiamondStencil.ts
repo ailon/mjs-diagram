@@ -15,9 +15,7 @@ export class DiamondStencil extends RectangleTextStencil {
 
     this.setColor = this.setColor.bind(this);
     this.setFont = this.setFont.bind(this);
-    this.renderText = this.renderText.bind(this);
     this.setSize = this.setSize.bind(this);
-    this.positionText = this.positionText.bind(this);
 
     this.textBoundingBox = new DOMRect();
 
@@ -25,6 +23,7 @@ export class DiamondStencil extends RectangleTextStencil {
   }
 
   protected setTextBoundingBox() {
+    super.setTextBoundingBox();
     const angle = Math.atan(this.width !== 0 ? (this.height / 2) / (this.width / 2) : 1);
     const side = Math.sqrt(Math.pow(this.width / 2, 2) + Math.pow(this.height / 2, 2));
 

@@ -15,9 +15,7 @@ export class EllipseStencil extends RectangleTextStencil {
 
     this.setColor = this.setColor.bind(this);
     this.setFont = this.setFont.bind(this);
-    this.renderText = this.renderText.bind(this);
     this.setSize = this.setSize.bind(this);
-    this.positionText = this.positionText.bind(this);
 
     this.textBoundingBox = new DOMRect();
 
@@ -25,6 +23,8 @@ export class EllipseStencil extends RectangleTextStencil {
   }
 
   protected setTextBoundingBox() {
+    super.setTextBoundingBox();
+
     const rectWidth = this.width / 2 * Math.sqrt(2);
     const rectHeight = this.height / 2 * Math.sqrt(2);
 

@@ -29,6 +29,8 @@ export class TerminalStencil extends RectangleTextStencil {
   }
 
   protected setTextBoundingBox() {
+    super.setTextBoundingBox();
+
     const rectWidth = this.width - this.height;
     const rectHeight = this.height;
 

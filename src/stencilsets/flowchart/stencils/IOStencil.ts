@@ -21,6 +21,8 @@ export class IOStencil extends RectangleTextStencil {
   }
 
   protected setTextBoundingBox() {
+    super.setTextBoundingBox();
+
     const rectWidth = this.width * 0.6;
     const rectHeight = this.height;
 

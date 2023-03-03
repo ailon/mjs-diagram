@@ -129,14 +129,12 @@ export class TextStencilEditor extends StencilBaseEditor {
       if (this.textEditor === undefined) {
         this.showTextEditor();
       } else {
-        this.stencil.textElement.style.display = '';
-
         this.textEditor.style.top = `${this.stencil.top + this.stencil.textBoundingBox.top}px`;
         this.textEditor.style.left = `${this.stencil.left + this.stencil.textBoundingBox.left}px`;
         this.textEditor.style.maxWidth = `${this.stencil.textBoundingBox.width}px`;
         this.textEditor.style.maxHeight = `${this.stencil.textBoundingBox.height}px`;
         this.textEditor.style.fontSize = `1rem`; // @todo - configurable in stencil
-        this.stencil.textElement.style.display = 'none';
+        this.stencil.textBlock.hide();
       }
     }
   }
@@ -144,7 +142,7 @@ export class TextStencilEditor extends StencilBaseEditor {
   private textEditDivClicked(text: string) {
     this.stencil.text = text.trim();
     this.overlayContainer.innerHTML = '';
-    this.stencil.renderText();
+    this.stencil.textBlock.show();
     this.showVisual();
     if (this._suppressStencilCreateEvent) {
       this._suppressStencilCreateEvent = false;
@@ -198,7 +196,7 @@ export class TextStencilEditor extends StencilBaseEditor {
   }
 
   protected hideVisual(): void {
-    this.stencil.textElement.style.display = 'none';
+    this.stencil.textBlock.hide();
     this.hideControlBox();
   }
 
@@ -206,7 +204,7 @@ export class TextStencilEditor extends StencilBaseEditor {
     if (this.state === 'edit') {
       this._state = 'select';
     }
-    this.stencil.textElement.style.display = '';
+    this.stencil.textBlock.show();
     this.showControlBox();
   }
 

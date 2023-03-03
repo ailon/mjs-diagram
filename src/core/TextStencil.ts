@@ -1,5 +1,6 @@
 import { StencilBase } from './StencilBase';
 import { SvgHelper } from './SvgHelper';
+import { TextBlock } from './TextBlock';
 import { TextStencilState } from './TextStencilState';
 
 export class TextStencil extends StencilBase {
@@ -11,24 +12,30 @@ export class TextStencil extends StencilBase {
   public fontFamily = 'Helvetica, Arial, sans-serif';
 
   private readonly DEFAULT_TEXT = 'Text';
-  public text: string = this.DEFAULT_TEXT;
+  private _text: string = this.DEFAULT_TEXT;
+  public get text(): string {
+    return this.textBlock.text;
+  }
+  public set text(value: string) {
+    this._text = value;
+    this.textBlock.text = this._text;
+  }
+
 
   protected padding = 5;
 
   public textBoundingBox: DOMRect;
 
-  public textElement!: SVGTextElement;
-  public textContainer!: HTMLDivElement;
+  //public textElement!: SVGTextElement;
+  public textBlock: TextBlock = new TextBlock(this.DEFAULT_TEXT);
 
   constructor(iid: number, container: SVGGElement) {
     super(iid, container);
 
     this.setColor = this.setColor.bind(this);
     this.setFont = this.setFont.bind(this);
-    this.createTextElement = this.createTextElement.bind(this);
-    this.renderText = this.renderText.bind(this);
+    this.addTextElement = this.addTextElement.bind(this);
     this.setSize = this.setSize.bind(this);
-    this.positionText = this.positionText.bind(this);
 
     this.textBoundingBox = new DOMRect();
   }
@@ -60,35 +67,16 @@ export class TextStencil extends StencilBase {
   }  
 
   public ownsTarget(el: EventTarget): boolean {
-    if (super.ownsTarget(el) || el === this.visual || el === this.textElement) {
-      return true;
-    } else {
-      let found = false;
-      this.textElement.childNodes.forEach((span) => {
-        if (span === el) {
-          found = true;
-        }
-      });
-      return found;
-    }
+    return (super.ownsTarget(el) || el === this.visual || this.textBlock.ownsTarget(el));
   }
 
-  protected createTextElement() {
-    this.textElement = SvgHelper.createText();
-    this.textElement.style.fontSize = '1rem';
-    this.textElement.style.textAnchor = 'middle';
-    this.textElement.style.dominantBaseline = 'hanging';
-    this.textElement.transform.baseVal.appendItem(SvgHelper.createTransform()); // translate transorm
-    this.textElement.transform.baseVal.appendItem(SvgHelper.createTransform()); // scale transorm
-
-    this.visual.appendChild(this.textElement);
-
-    this.renderText();
+  protected addTextElement() {
+    this.visual.appendChild(this.textBlock.textElement);
   }
 
   public createVisual(): void {
     super.createVisual();
-    this.createTextElement();
+    this.addTextElement();
   }
 
   protected setTextBoundingBox() {
@@ -96,70 +84,20 @@ export class TextStencil extends StencilBase {
     this.textBoundingBox.y = this.padding;
     this.textBoundingBox.width = this.width - this.padding * 2;
     this.textBoundingBox.height = this.height - this.padding * 2;
+    this.textBlock.boundingBox = this.textBoundingBox;
   }
 
   public setSize(): void {
     super.setSize();
     this.setTextBoundingBox();
-    this.positionText();
-  }
-
-  public renderText() {
-    const LINE_SIZE = '1rem';
-
-    if (this.textElement) {
-      while (this.textElement.lastChild) {
-        this.textElement.removeChild(this.textElement.lastChild);
-      }
-
-      const lines = this.text.split(/\r\n|[\n\v\f\r\x85\u2028\u2029]/);
-      lines.forEach((line, lineno) => {
-        this.textElement.appendChild(
-          SvgHelper.createTSpan(
-            // workaround for swallowed empty lines
-            line.trim() === '' ? ' ' : line.trim(),
-            [
-              // ['x', '0'],
-              ['dy', lineno > 0 ? LINE_SIZE : '0'],
-            ]
-          )
-        );
-      });
-
-      setTimeout(this.positionText, 10);
-    }
-  }
-
-  public positionText() {
-    const textBBox = this.textElement.getBBox();
-    const centerX =
-      this.textBoundingBox.x +
-      this.textBoundingBox.width / 2;
-    const centerY =
-      this.textBoundingBox.y +
-      this.textBoundingBox.height / 2 - textBBox.height / 2;
-
-    this.textElement.childNodes.forEach((ts) => {
-      const tspan = <SVGTSpanElement>ts;
-      SvgHelper.setAttributes(tspan, [['x', `${centerX}`]]);
-    });
-    SvgHelper.setAttributes(this.textElement, [['x', `${centerX}`]]);
-    SvgHelper.setAttributes(this.textElement, [['y', `${centerY}`]]);
   }
 
   public setColor(color: string): void {
-    if (this.textElement) {
-      SvgHelper.setAttributes(this.textElement, [['fill', color]]);
-    }
-    this.color = color;
+    this.textBlock.color = color;
   }
 
   public setFont(font: string): void {
-    if (this.textElement) {
-      SvgHelper.setAttributes(this.textElement, [['font-family', font]]);
-    }
-    this.fontFamily = font;
-    this.renderText();
+    this.textBlock.fontFamily = font;
   }
 
   public getState(): TextStencilState {
@@ -184,7 +122,6 @@ export class TextStencil extends StencilBase {
     this.text = textState.text;
 
     super.restoreState(state);
-    this.renderText();
   }
 
   public scale(scaleX: number, scaleY: number): void {
