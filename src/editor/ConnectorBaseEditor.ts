@@ -11,7 +11,7 @@ import { PropertyPanelBase } from './panels/PropertyPanelBase';
 import { ColorPickerPanel } from './panels/ColorPickerPanel';
 import { ArrowTypePanel } from './panels/ArrowTypePanel';
 
-export type ConnectorState = 'new' | 'creating' | 'select' | 'move' | 'edit';
+export type ConnectorState = 'new' | 'creating' | 'select' | 'move' | 'edit' | 'move-label';
 
 export class ConnectorBaseEditor {
   protected _state: ConnectorState = 'new';
@@ -201,6 +201,8 @@ export class ConnectorBaseEditor {
         SvgHelper.setAttributes(this.connector.container, [
           ['pointer-events', 'none'],
         ]);
+      } else if (this.isDraggingLabel) {
+        this._state = 'move-label';
       } else {
         this._state = 'select';
       }
