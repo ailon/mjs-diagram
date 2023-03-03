@@ -1323,6 +1323,9 @@ export class DiagramEditor extends HTMLElement {
     ) {
       // delete new connector that isn't connecting to anything
       this.deleteConnector(this._currentConnectorEditor);
+    } else if (this._currentConnectorEditor !== undefined) {
+      // moving label - @todo refactor
+      this._currentConnectorEditor.pointerUp({ x: 0, y: 0 });
     } else {
       if (this.touchPoints > 0) {
         this.touchPoints--;
