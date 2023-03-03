@@ -10,6 +10,8 @@ export class TextBlock {
     this.renderText();
   }
 
+  public offsetX = 0;
+  public offsetY = 0;
   private _boundingBox: DOMRect = new DOMRect();
   public get boundingBox(): DOMRect {
     return this._boundingBox;
@@ -116,10 +118,10 @@ export class TextBlock {
     const textBBox = self._textElement.getBBox();
     const centerX =
       self.boundingBox.x +
-      self.boundingBox.width / 2;
+      self.boundingBox.width / 2 + self.offsetX;
     const centerY =
       self.boundingBox.y +
-      self.boundingBox.height / 2 - textBBox.height / 2;
+      self.boundingBox.height / 2 - textBBox.height / 2 + self.offsetY;
 
     self._textElement.childNodes.forEach((ts) => {
       const tspan = <SVGTSpanElement>ts;

@@ -298,7 +298,7 @@ export class CurvedConnector extends ConnectorBase {
 
       this.adjustTips();
 
-      this.positionText();
+      // this.positionText();
     }
   }
 }

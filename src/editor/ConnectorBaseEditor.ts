@@ -188,7 +188,7 @@ export class ConnectorBaseEditor {
       } else if (target && this.grip2.ownsTarget(target)) {
         this.activeGrip = this.grip2;
         this.movingPort = this.connector.endPort;
-      } else if (target && this.connector.labelOwnsTarget(target)) {
+      } else if (target && this.connector.textBlock.ownsTarget(target)) {
         this.isDraggingLabel = true;
       } else {
         this.activeGrip = undefined;
@@ -413,7 +413,7 @@ export class ConnectorBaseEditor {
       if (this.textEditor === undefined) {
         this.showTextEditor();
       } else {
-        this.connector.textElement.style.display = '';
+        this.connector.textBlock.show();
         this.connector.labelBackground.style.display = '';
 
         this.textEditor.style.top = `${this.connector.labelBackground.y.baseVal.valueAsString}px`;
@@ -423,7 +423,7 @@ export class ConnectorBaseEditor {
         // this.textEditor.style.maxWidth = `${this.connector.labelBackground.width}px`;
         // this.textEditor.style.maxHeight = `${this.connector.labelBackground.height}px`;
         this.textEditor.style.fontSize = `1rem`; // @todo - configurable in stencil
-        this.connector.textElement.style.display = 'none';
+        this.connector.textBlock.hide();
         this.connector.labelBackground.style.display = 'none';
       }
     }
@@ -432,10 +432,10 @@ export class ConnectorBaseEditor {
   private textEditDivClicked(text: string) {
     this.connector.labelText = text.trim();
     this.overlayContainer.innerHTML = '';
-    this.connector.textElement.style.display = '';
+    this.connector.textBlock.show();
     this.connector.labelBackground.style.display = '';
-    this.connector.renderText();
-    this.connector.positionText();
+    // this.connector.renderText();
+    // this.connector.positionText();
     // this.showVisual();
     // if (this._suppressStencilCreateEvent) {
     //   this._suppressStencilCreateEvent = false;
