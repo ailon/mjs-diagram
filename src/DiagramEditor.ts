@@ -1358,6 +1358,11 @@ export class DiagramEditor extends HTMLElement {
         ) {
           this.deselectCurrentConnector();
         }
+
+        // deselect connector if selected and not hit
+        if (this._currentConnectorEditor !== undefined && !this.getHitConnector(ev.target)) {
+          this.deselectCurrentConnector();
+        }
       }
     }
   }
