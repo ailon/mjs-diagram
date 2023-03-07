@@ -121,6 +121,9 @@ export class TextBlock {
         );
       });
 
+      // hide to prevent jerky movements during layout
+      this.textElement.style.opacity = '0';
+
       setTimeout(() => { this.positionText(this) }, 10);
     }
   }
@@ -150,6 +153,10 @@ export class TextBlock {
       ['x', (centerX - (textBBox.width * bgPadding / 2)).toString()],
       ['y', (centerY - (textBBox.height / 2) * (bgPadding - 1) * 2).toString()]
     ]);
+
+    // restore visibility
+    this.textElement.style.opacity = '1';
+
   }
 
   public show() {
