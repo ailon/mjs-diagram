@@ -10,8 +10,15 @@ import {
 import { PropertyPanelBase } from './panels/PropertyPanelBase';
 import { ColorPickerPanel } from './panels/ColorPickerPanel';
 import { ArrowTypePanel } from './panels/ArrowTypePanel';
+import { TextBlockEditor } from '../core/TextBlockEditor';
 
-export type ConnectorState = 'new' | 'creating' | 'select' | 'move' | 'edit' | 'move-label';
+export type ConnectorState =
+  | 'new'
+  | 'creating'
+  | 'select'
+  | 'move'
+  | 'edit'
+  | 'move-label';
 
 export class ConnectorBaseEditor {
   protected _state: ConnectorState = 'new';
@@ -34,8 +41,7 @@ export class ConnectorBaseEditor {
 
   private isDraggingLabel = false;
 
-  protected textEditDiv!: HTMLDivElement;
-  protected textEditor!: HTMLDivElement;
+  private textBlockEditor: TextBlockEditor;
 
   /**
    * Container for control elements.
@@ -74,6 +80,8 @@ export class ConnectorBaseEditor {
     this.connector.container = container;
     this.overlayContainer = overlayContainer;
 
+    this.textBlockEditor = new TextBlockEditor();
+
     this.strokePanel = new ColorPickerPanel(
       'Line color',
       [
@@ -92,7 +100,10 @@ export class ConnectorBaseEditor {
     );
     this.strokePanel.onColorChanged = this.connector.setStrokeColor;
 
-    this.arrowTypePanel = new ArrowTypePanel('Arrow type', this.connector.arrowType);
+    this.arrowTypePanel = new ArrowTypePanel(
+      'Arrow type',
+      this.connector.arrowType
+    );
     this.arrowTypePanel.onArrowTypeChanged = this.connector.setArrowType;
 
     this.select = this.select.bind(this);
@@ -109,7 +120,7 @@ export class ConnectorBaseEditor {
 
     this.showTextEditor = this.showTextEditor.bind(this);
     this.positionTextEditor = this.positionTextEditor.bind(this);
-    this.textEditDivClicked = this.textEditDivClicked.bind(this);
+    this.textChanged = this.textChanged.bind(this);
   }
 
   public ownsTarget(el: EventTarget | null): boolean {
@@ -236,13 +247,11 @@ export class ConnectorBaseEditor {
           x: this.manipulationStartX2 + point.x - this.manipulationStartX,
           y: this.manipulationStartY2 + point.y - this.manipulationStartY,
         });
-      } 
+      }
     } else if (this.isDraggingLabel) {
-      if (point.x !== 0 || point.y !== 0) { // not resetting
-        this.connector.moveLabel(
-          point.x - this.prevX,
-          point.y - this.prevY
-        );
+      if (point.x !== 0 || point.y !== 0) {
+        // not resetting
+        this.connector.moveLabel(point.x - this.prevX, point.y - this.prevY);
       }
     }
     this.adjustControlBox();
@@ -266,9 +275,9 @@ export class ConnectorBaseEditor {
 
   protected setupControlBox(): void {
     this.controlBox = SvgHelper.createGroup();
-    
-    this.controlBox.classList.add('control-box');    
-    
+
+    this.controlBox.classList.add('control-box');
+
     this.connector.container.appendChild(this.controlBox);
 
     this.addControlGrips();
@@ -351,80 +360,41 @@ export class ConnectorBaseEditor {
     this._state = 'edit';
     this.overlayContainer.innerHTML = '';
 
-    this.textEditDiv = document.createElement('div');
-    this.textEditDiv.style.flexGrow = '2';
-    this.textEditDiv.style.alignItems = 'center';
-    this.textEditDiv.style.justifyContent = 'center';
-    this.textEditDiv.style.pointerEvents = 'auto';
-    this.textEditDiv.style.overflow = 'hidden';
+    this.textBlockEditor.text = this.connector.labelText;
 
-    this.textEditor = document.createElement('div');
-    this.textEditor.style.position = 'absolute';
-    // this.textEditor.style.width = `${this.connector.labelBackground.width.baseVal.valueAsString}px`;
-    this.textEditor.style.minWidth = `80px`;
-    // this.textEditor.style.height = `${this.connector.labelBackground.height.baseVal.valueAsString}px`;
-    this.textEditor.style.minHeight = '1.5rem';
-    // this.textEditor.style.overflowY = 'scroll';
-    this.textEditor.style.textAlign = 'center';
-    // @todo
-    // this.textEditor.style.fontFamily = this.connector.fontFamily;
-    // this.textEditor.style.color = this.stencil.color;
-    this.textEditor.style.backgroundColor = 'white';
-    this.textEditor.style.lineHeight = '1em';
-    this.textEditor.innerText = this.connector.labelText;
-    this.textEditor.contentEditable = 'true';
-    this.textEditor.style.whiteSpace = 'pre';
     this.positionTextEditor();
-    this.textEditor.addEventListener('pointerup', (ev) => {
-      ev.stopPropagation();
-    });
-    this.textEditor.addEventListener('keyup', (ev) => {
-      ev.cancelBubble = true;
-    });
-    this.textEditor.addEventListener('paste', (ev) => {
-      if (ev.clipboardData) {
-        // paste plain text
-        const content = ev.clipboardData.getData('text');
-        const selection = window.getSelection();
-        if (!selection || !selection.rangeCount) return false;
-        selection.deleteFromDocument();
-        selection.getRangeAt(0).insertNode(document.createTextNode(content));
-        ev.preventDefault();
-      }
-    });
 
-    this.textEditDiv.addEventListener('pointerup', () => {
-      this.textEditDivClicked(this.textEditor.innerText);
-    });
-    this.textEditDiv.appendChild(this.textEditor);
-    this.overlayContainer.appendChild(this.textEditDiv);
+    this.textBlockEditor.onTextChanged = this.textChanged;
+
+    this.overlayContainer.appendChild(this.textBlockEditor.getEditorUi());
 
     // this.hideVisual();
 
-    this.textEditor.focus();
+    this.textBlockEditor.focus();
+
     document.execCommand('selectAll');
   }
 
   private positionTextEditor() {
     if (this.state === 'edit') {
-      if (this.textEditor === undefined) {
-        this.showTextEditor();
-      } else {
-        this.connector.textBlock.show();
+      this.textBlockEditor.width = 100;
+      this.textBlockEditor.height = 50;
+      this.textBlockEditor.left =
+        this.connector.textBoundingBox.x +
+        this.connector.textBlock.offsetX +
+        this.connector.textBoundingBox.width / 2 -
+        this.textBlockEditor.width / 2;
+      this.textBlockEditor.top =
+        this.connector.textBoundingBox.y +
+        this.connector.textBlock.offsetY +
+        this.connector.textBoundingBox.height / 2 -
+        this.textBlockEditor.height / 2;
 
-        this.textEditor.style.top = `${this.connector.textBlock.labelBackground.y.baseVal.valueAsString}px`;
-        this.textEditor.style.left = `${this.connector.textBlock.labelBackground.x.baseVal.valueAsString}px`;
-        this.textEditor.style.maxWidth = `2000px`;
-        this.textEditor.style.maxHeight = `1000px`;
-        // this.textEditor.style.maxWidth = `${this.connector.labelBackground.width}px`;
-        // this.textEditor.style.maxHeight = `${this.connector.labelBackground.height}px`;
-        this.textEditor.style.fontSize = `1rem`; // @todo - configurable in stencil
-        this.connector.textBlock.hide();
-      }
+      this.connector.textBlock.hide();
     }
   }
 
-  private textEditDivClicked(text: string) {
+  private textChanged(text: string) {
     this.connector.labelText = text.trim();
     this.overlayContainer.innerHTML = '';
     this.connector.textBlock.show();

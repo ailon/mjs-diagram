@@ -100,7 +100,11 @@ export class TextBlockEditor {
     this.textEditor.style.fontFamily = this._fontFamily;
     this.textEditor.style.fontSize = this._fontSize;
     this.textEditor.style.lineHeight = '1em';
-    this.textEditor.innerText = this._text;
+    if (this._text !== '') {
+      this.textEditor.innerText = this._text;
+    } else {
+      this.textEditor.innerHTML = '&nbsp;';
+    }
     this.textEditor.contentEditable = 'true';
     this.textEditor.style.outline = 'none';
     this.textEditor.style.color = this._textColor;
