@@ -73,6 +73,8 @@ export class TextStencilEditor extends StencilBaseEditor {
     this._state = 'edit';
     this.overlayContainer.innerHTML = '';
 
+    this.textBlockEditor.text = this.stencil.text;
+
     this.positionTextEditor();
 
     this.textBlockEditor.onTextChanged = this.textChanged;
