@@ -140,12 +140,12 @@ export class TextStencilEditor extends StencilBaseEditor {
 
   protected setColor(color: string): void {
     this.stencil.setColor(color);
-    this.textBlockEditor.textColor = this.stencil.color;
+    this.textBlockEditor.textColor = color;
   }
 
   protected setFont(font: string): void {
     this.stencil.setFont(font);
-    this.textBlockEditor.fontFamily = this.stencil.fontFamily;
+    this.textBlockEditor.fontFamily = font;
   }
 
   protected hideVisual(): void {

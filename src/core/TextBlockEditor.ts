@@ -85,6 +85,7 @@ export class TextBlockEditor {
 
   public getEditorUi(): HTMLDivElement {
     this.textEditor.style.position = 'absolute';
+    this.textEditor.style.pointerEvents = 'auto';
     this.textEditor.style.width = `${this._width}px`;
     this.textEditor.style.height = `${this._height}px`;
     this.textEditor.style.overflowY = 'scroll';
@@ -96,6 +97,9 @@ export class TextBlockEditor {
     this.textEditor.contentEditable = 'true';
     this.textEditor.style.color = this._textColor;
     this.textEditor.style.whiteSpace = 'pre';
+    this.textEditor.addEventListener('pointerdown', (ev) => {
+      ev.stopPropagation();
+    });
     this.textEditor.addEventListener('pointerup', (ev) => {
       ev.stopPropagation();
     });
