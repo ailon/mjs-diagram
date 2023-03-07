@@ -105,6 +105,9 @@ export class DiagramEditor extends HTMLElement {
           (this._mainCanvas.clientHeight - this._canvasContainer.clientHeight) /
           2,
       });
+
+      this._overlayContainer.style.transform = `scale(${this._zoomLevel})`;
+
     }
   }
 
