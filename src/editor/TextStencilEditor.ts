@@ -117,15 +117,15 @@ export class TextStencilEditor extends StencilBaseEditor {
 
   public select(): void {
     super.select();
-    // if (this.state === 'edit') {
-    //   this.textChanged(this.textEditor.innerText);
-    // }
+    if (this.state === 'edit') {
+      this.textBlockEditor.blur();
+    }
   }
 
   public deselect(): void {
-    // if (this.state === 'edit') {
-    //   this.textChanged(this.textEditor.innerText);
-    // }
+    if (this.state === 'edit') {
+      this.textBlockEditor.blur();
+    }
     super.deselect();
   }
 

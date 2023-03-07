@@ -126,4 +126,7 @@ export class TextBlockEditor {
   public focus() {
     this.textEditor.focus();
   }
+  public blur() {
+    this.textEditor.blur();
+  }
 }
