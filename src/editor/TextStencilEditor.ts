@@ -2,14 +2,14 @@ import { IPoint } from '../core/IPoint';
 import { StencilBaseEditor } from './StencilBaseEditor';
 import { RectangleTextStencil } from '../core/RectangleTextStencil';
 import { StencilBaseState } from '../core/StencilBaseState';
+import { TextBlockEditor } from '../core/TextBlockEditor';
 
 export class TextStencilEditor extends StencilBaseEditor {
   public get stencil(): RectangleTextStencil {
     return this._stencil as RectangleTextStencil;
   }
 
-  protected textEditDiv!: HTMLDivElement;
-  protected textEditor!: HTMLDivElement;
+  private textBlockEditor: TextBlockEditor;
 
   private isMoved = false;
   private pointerDownPoint?: IPoint;
@@ -24,9 +24,11 @@ export class TextStencilEditor extends StencilBaseEditor {
   ) {
     super(iid, container, overlayContainer, stencilType, stencil);
 
+    this.textBlockEditor = new TextBlockEditor();
+
     this.setColor = this.setColor.bind(this);
     this.setFont = this.setFont.bind(this);
-    this.textEditDivClicked = this.textEditDivClicked.bind(this);
+    this.textChanged = this.textChanged.bind(this);
     this.showTextEditor = this.showTextEditor.bind(this);
     this.setSize = this.setSize.bind(this);
     this.positionTextEditor = this.positionTextEditor.bind(this);
@@ -71,75 +73,28 @@ export class TextStencilEditor extends StencilBaseEditor {
     this._state = 'edit';
     this.overlayContainer.innerHTML = '';
 
-    this.textEditDiv = document.createElement('div');
-    this.textEditDiv.style.flexGrow = '2';
-    this.textEditDiv.style.alignItems = 'center';
-    this.textEditDiv.style.justifyContent = 'center';
-    this.textEditDiv.style.pointerEvents = 'auto';
-    this.textEditDiv.style.overflow = 'hidden';
-
-    this.textEditor = document.createElement('div');
-    this.textEditor.style.position = 'absolute';
-    this.textEditor.style.width = `${this.stencil.width}px`;
-    this.textEditor.style.height = `${this.stencil.height}px`;
-    this.textEditor.style.overflowY = 'scroll';
-    this.textEditor.style.textAlign = 'center';
-    this.textEditor.style.fontFamily = this.stencil.fontFamily;
-    this.textEditor.style.lineHeight = '1em';
-    this.textEditor.innerText = this.stencil.text;
-    this.textEditor.contentEditable = 'true';
-    this.textEditor.style.color = this.stencil.color;
-    this.textEditor.style.whiteSpace = 'pre';
     this.positionTextEditor();
-    this.textEditor.addEventListener('pointerup', (ev) => {
-      ev.stopPropagation();
-    });
-    this.textEditor.addEventListener('keyup', (ev) => {
-      ev.cancelBubble = true;
-    });
-    this.textEditor.addEventListener('blur', () => {
-      this.textEditDivClicked(this.textEditor.innerText);
-    });
-    this.textEditor.addEventListener('paste', (ev) => {
-      if (ev.clipboardData) {
-        // paste plain text
-        const content = ev.clipboardData.getData('text');
-        const selection = window.getSelection();
-        if (!selection || !selection.rangeCount) return false;
-        selection.deleteFromDocument();
-        selection.getRangeAt(0).insertNode(document.createTextNode(content));
-        ev.preventDefault();
-      }
-    });
 
-    this.textEditDiv.addEventListener('pointerup', () => {
-      this.textEditDivClicked(this.textEditor.innerText);
-    });
-    this.textEditDiv.appendChild(this.textEditor);
-    this.overlayContainer.appendChild(this.textEditDiv);
+    this.textBlockEditor.onTextChanged = this.textChanged;
+
+    this.overlayContainer.appendChild(this.textBlockEditor.getEditorUi());
 
     this.hideVisual();
 
-    this.textEditor.focus();
+    this.textBlockEditor.focus();
     document.execCommand('selectAll');
   }
 
   private positionTextEditor() {
     if (this.state === 'edit') {
-      if (this.textEditor === undefined) {
-        this.showTextEditor();
-      } else {
-        this.textEditor.style.top = `${this.stencil.top + this.stencil.textBoundingBox.top}px`;
-        this.textEditor.style.left = `${this.stencil.left + this.stencil.textBoundingBox.left}px`;
-        this.textEditor.style.maxWidth = `${this.stencil.textBoundingBox.width}px`;
-        this.textEditor.style.maxHeight = `${this.stencil.textBoundingBox.height}px`;
-        this.textEditor.style.fontSize = `1rem`; // @todo - configurable in stencil
-        this.stencil.textBlock.hide();
-      }
+      this.textBlockEditor.left = this.stencil.left + this.stencil.textBoundingBox.left;
+      this.textBlockEditor.top = this.stencil.top + this.stencil.textBoundingBox.top;
+      this.textBlockEditor.width = this.stencil.textBoundingBox.width;
+      this.textBlockEditor.height = this.stencil.textBoundingBox.height;
     }
   }
 
-  private textEditDivClicked(text: string) {
+  private textChanged(text: string) {
     this.stencil.text = text.trim();
     this.overlayContainer.innerHTML = '';
     this.stencil.textBlock.show();
@@ -162,15 +117,15 @@ export class TextStencilEditor extends StencilBaseEditor {
 
   public select(): void {
     super.select();
-    if (this.state === 'edit') {
-      this.textEditDivClicked(this.textEditor.innerText);
-    }
+    // if (this.state === 'edit') {
+    //   this.textChanged(this.textEditor.innerText);
+    // }
   }
 
   public deselect(): void {
-    if (this.state === 'edit') {
-      this.textEditDivClicked(this.textEditor.innerText);
-    }
+    // if (this.state === 'edit') {
+    //   this.textChanged(this.textEditor.innerText);
+    // }
     super.deselect();
   }
 
@@ -183,16 +138,12 @@ export class TextStencilEditor extends StencilBaseEditor {
 
   protected setColor(color: string): void {
     this.stencil.setColor(color);
-    if (this.textEditor) {
-      this.textEditor.style.color = this.stencil.color;
-    }
+    this.textBlockEditor.textColor = this.stencil.color;
   }
 
   protected setFont(font: string): void {
     this.stencil.setFont(font);
-    if (this.textEditor) {
-      this.textEditor.style.fontFamily = this.stencil.fontFamily;
-    }
+    this.textBlockEditor.fontFamily = this.stencil.fontFamily;
   }
 
   protected hideVisual(): void {
