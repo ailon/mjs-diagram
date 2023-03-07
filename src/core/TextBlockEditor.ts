@@ -2,6 +2,7 @@ export type TextChangedHandler = (text: string) => void;
 
 export class TextBlockEditor {
   private textEditor: HTMLDivElement;
+  private isInFocus = false;
 
   private _width = 0;
   public get width() {
@@ -81,20 +82,27 @@ export class TextBlockEditor {
 
     this.getEditorUi = this.getEditorUi.bind(this);
     this.focus = this.focus.bind(this);
+    this.setup = this.setup.bind(this);
   }
 
-  public getEditorUi(): HTMLDivElement {
+  private isSetupCompleted = false;
+  private setup() {
     this.textEditor.style.position = 'absolute';
     this.textEditor.style.pointerEvents = 'auto';
+    this.textEditor.style.display = 'flex';
+    this.textEditor.style.flexDirection = 'column';
+    this.textEditor.style.alignItems = 'center';
+    this.textEditor.style.justifyContent = 'center';
     this.textEditor.style.width = `${this._width}px`;
     this.textEditor.style.height = `${this._height}px`;
-    this.textEditor.style.overflowY = 'scroll';
+    this.textEditor.style.overflow = 'hidden';
     this.textEditor.style.textAlign = 'center';
     this.textEditor.style.fontFamily = this._fontFamily;
     this.textEditor.style.fontSize = this._fontSize;
     this.textEditor.style.lineHeight = '1em';
     this.textEditor.innerText = this._text;
     this.textEditor.contentEditable = 'true';
+    this.textEditor.style.outline = 'none';
     this.textEditor.style.color = this._textColor;
     this.textEditor.style.whiteSpace = 'pre';
     this.textEditor.addEventListener('pointerdown', (ev) => {
@@ -123,6 +131,14 @@ export class TextBlockEditor {
         ev.preventDefault();
       }
     });
+
+    this.isSetupCompleted = true;
+  }
+
+  public getEditorUi(): HTMLDivElement {
+    if (!this.isSetupCompleted) {
+      this.setup();
+    }
 
     return this.textEditor;
   }
