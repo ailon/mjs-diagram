@@ -2,7 +2,7 @@ import { IPoint } from '../core/IPoint';
 import { StencilBaseEditor } from './StencilBaseEditor';
 import { RectangleTextStencil } from '../core/RectangleTextStencil';
 import { StencilBaseState } from '../core/StencilBaseState';
-import { TextBlockEditor } from '../core/TextBlockEditor';
+import { TextBlockEditor } from './TextBlockEditor';
 
 export class TextStencilEditor extends StencilBaseEditor {
   public get stencil(): RectangleTextStencil {

@@ -7,6 +7,8 @@ export { StencilBaseEditor } from './editor/StencilBaseEditor';
 export { ConnectorBaseEditor } from './editor/ConnectorBaseEditor';
 export { TextStencilEditor } from './editor/TextStencilEditor';
 
+export { TextBlockEditor } from './editor/TextBlockEditor';
+
 export { StencilEditorSet } from './editor/StencilEditorSet';
 export { basicStencilEditorSet } from './editor/BasicStencilEditorSet';
 export { flowchartStencilEditorSet } from './stencilsets/flowchart/FlowchartStencilEditorSet';

@@ -10,7 +10,7 @@ import {
 import { PropertyPanelBase } from './panels/PropertyPanelBase';
 import { ColorPickerPanel } from './panels/ColorPickerPanel';
 import { ArrowTypePanel } from './panels/ArrowTypePanel';
-import { TextBlockEditor } from '../core/TextBlockEditor';
+import { TextBlockEditor } from './TextBlockEditor';
 
 export type ConnectorState =
   | 'new'

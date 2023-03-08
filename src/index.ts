@@ -13,6 +13,7 @@ export {
   CurvedConnector,
   ArrowConnector,
   CurvedArrowConnector,
+  TextBlock,
   StencilSet,
   basicStencilSet,
   flowchartStencilSet,
@@ -24,6 +25,7 @@ export {
   ConnectorBaseEditor,
   TextStencilEditor,
   StencilEditorSet,
+  TextBlockEditor,
   basicStencilEditorSet,
   flowchartStencilEditorSet,
   mindMapStencilEditorSet

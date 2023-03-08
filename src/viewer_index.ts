@@ -17,6 +17,8 @@ export { CurvedConnector } from './core/CurvedConnector';
 export { ArrowConnector } from './core/ArrowConnector';
 export { CurvedArrowConnector } from './core/CurvedArrowConnector';
 
+export { TextBlock } from './core/TextBlock';
+
 export { StencilSet } from './core/StencilSet';
 export { basicStencilSet } from './core/BasicStencilSet';
 export { flowchartStencilSet } from './stencilsets/flowchart/FlowchartStencilSet';
