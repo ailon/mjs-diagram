@@ -1207,10 +1207,10 @@ export class DiagramEditor extends HTMLElement {
       );
       this._marqueeSelectRect.width = Math.abs(
         ev.clientX - this._manipulationStartX
-      );
+      ) / this.zoomLevel;
       this._marqueeSelectRect.height = Math.abs(
         ev.clientY - this._manipulationStartY
-      );
+      ) / this.zoomLevel;
 
       SvgHelper.setAttributes(this._marqueeSelectOutline, [
         ['x', `${this._marqueeSelectRect.x}`],
