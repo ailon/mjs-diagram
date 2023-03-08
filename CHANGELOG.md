@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-alpha.7] - 2023-03-08
+### Changed
+- internal structures for text rendering and editing
+- remove outline in text editor
+
+### Fixed
+- z-index from toolbox panel (not needed) was causing layering issues on host pages
+- moving connector label got stuck
+- connector not deselected when clicked outside
+- text editors didn't respect zoom level
+- changed opacity during layout to hide jerky text movement
+- marquee selection doesn't react to zoom correctly
+
 ## [1.0.0-alpha.6] - 2023-03-02
 ### Added
 - marquee selection
@@ -59,6 +72,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial public release.
 
+[1.0.0-alpha.7]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.7
 [1.0.0-alpha.6]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.6
 [1.0.0-alpha.5]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.5
 [1.0.0-alpha.4]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.4
