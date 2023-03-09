@@ -119,12 +119,7 @@ export class DiagramViewer extends HTMLElement {
       'svg'
     );
     this._mainCanvas.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    this._mainCanvas.setAttribute('width', this.documentWidth.toString());
-    this._mainCanvas.setAttribute('height', this.documentHeight.toString());
-    this._mainCanvas.setAttribute(
-      'viewBox',
-      '0 0 ' + this.documentWidth.toString() + ' ' + this.documentHeight.toString()
-    );
+    this.setMainCanvasSize();
     this._mainCanvas.style.pointerEvents = 'auto';
     
     this._mainCanvas.style.fontFamily = 'Helvetica, Arial, Sans-Serif';
@@ -252,7 +247,29 @@ export class DiagramViewer extends HTMLElement {
     }
   }
 
+  private setMainCanvasSize() {
+    if (this._mainCanvas !== undefined) {
+      this._mainCanvas.setAttribute('width', this.documentWidth.toString());
+      this._mainCanvas.setAttribute('height', this.documentHeight.toString());
+      this._mainCanvas.setAttribute(
+        'viewBox',
+        '0 0 ' +
+        this.documentWidth.toString() +
+        ' ' +
+        this.documentHeight.toString()
+      );
+      this.zoomLevel = this.zoomLevel * 1;
+    }
+  }
+
+  private setDocumentSize(width: number, height: number) {
+    this.documentWidth = width;
+    this.documentHeight = height;
+    this.setMainCanvasSize();
+  }
+
   public show(state: DiagramState): void {
+    this.setDocumentSize(state.width, state.height);
     if (state.backgroundColor !== undefined) {
       this.setDocumentBgColor(state.backgroundColor);
     }

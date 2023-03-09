@@ -26,6 +26,7 @@ import { StencilEditorSet } from './editor_index';
 import Logo from './assets/markerjs-logo-m.svg';
 import { Activator } from './core/Activator';
 import { ColorPickerPanel } from './editor/panels/ColorPickerPanel';
+import { DimensionsPanel } from './editor/panels/DimensionsPanel';
 
 export type DiagramEditorMode = 'select' | 'connect';
 
@@ -68,6 +69,7 @@ export class DiagramEditor extends HTMLElement {
   private _newStencilPanel!: NewStencilPanel;
 
   private _documentBackgroundPanel!: ColorPickerPanel;
+  private _documentDimensionsPanel!: DimensionsPanel;
 
   private _newStencilOutline: SVGPathElement = SvgHelper.createPath('', [
     ['stroke', '#333'],
@@ -93,7 +95,7 @@ export class DiagramEditor extends HTMLElement {
   }
   public set zoomLevel(value: number) {
     this._zoomLevel = value;
-    if (this._canvasContainer && this._contentContainer && this._mainCanvas) {
+    if (this._canvasContainer && this._contentContainer && this._mainCanvas && this._overlayContainer) {
       this._mainCanvas.style.width = `${this.documentWidth * this.zoomLevel}px`;
       this._mainCanvas.style.height = `${
         this.documentHeight * this.zoomLevel
@@ -169,6 +171,9 @@ export class DiagramEditor extends HTMLElement {
     this.deleteStencilEditor = this.deleteStencilEditor.bind(this);
     this.findConnectorEditor = this.findConnectorEditor.bind(this);
 
+    this.addMainCanvas = this.addMainCanvas.bind(this);
+    this.setMainCanvasSize = this.setMainCanvasSize.bind(this);
+
     this.changeConnectorType = this.changeConnectorType.bind(this);
 
     this.showAddPanel = this.showAddPanel.bind(this);
@@ -177,6 +182,7 @@ export class DiagramEditor extends HTMLElement {
 
     this.showDocumentPropertiesPanel = this.showDocumentPropertiesPanel.bind(this);
     this.setDocumentBgColor = this.setDocumentBgColor.bind(this);
+    this.setDocumentSize = this.setDocumentSize.bind(this);
 
     this.zoom = this.zoom.bind(this);
 
@@ -225,6 +231,13 @@ export class DiagramEditor extends HTMLElement {
       '#ffffff'
     );
     this._documentBackgroundPanel.onColorChanged = this.setDocumentBgColor;
+
+    this._documentDimensionsPanel = new DimensionsPanel(
+      'Document size',
+      this.documentWidth,
+      this.documentHeight
+    );
+    this._documentDimensionsPanel.onDimensionsChanged = this.setDocumentSize;
   }
 
   private addStyles() {
@@ -669,7 +682,7 @@ export class DiagramEditor extends HTMLElement {
       this.toggleToolbox();
     }
     this.deselectStencil();
-    this.addToolboxPanels([this._documentBackgroundPanel]);
+    this.addToolboxPanels([this._documentBackgroundPanel, this._documentDimensionsPanel]);
   }
 
   private setDocumentBgColor(color: string) {
@@ -677,6 +690,12 @@ export class DiagramEditor extends HTMLElement {
     if (this._mainCanvas !== undefined) {
       this._mainCanvas.style.backgroundColor = color;
     }
+  }
+
+  private setDocumentSize(width: number, height: number) {
+    this.documentWidth = width;
+    this.documentHeight = height;
+    this.setMainCanvasSize();
   }
 
   private switchToConnectMode() {
@@ -777,15 +796,7 @@ export class DiagramEditor extends HTMLElement {
       'svg'
     );
     this._mainCanvas.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    this._mainCanvas.setAttribute('width', this.documentWidth.toString());
-    this._mainCanvas.setAttribute('height', this.documentHeight.toString());
-    this._mainCanvas.setAttribute(
-      'viewBox',
-      '0 0 ' +
-        this.documentWidth.toString() +
-        ' ' +
-        this.documentHeight.toString()
-    );
+    this.setMainCanvasSize();
     this._mainCanvas.style.gridColumnStart = '1';
     this._mainCanvas.style.gridRowStart = '1';
     this._mainCanvas.style.pointerEvents = 'auto';
@@ -803,6 +814,21 @@ export class DiagramEditor extends HTMLElement {
     this._mainCanvas.appendChild(this._objectLayer);
 
     this._canvasContainer?.appendChild(this._mainCanvas);
+  }
+
+  private setMainCanvasSize() {
+    if (this._mainCanvas !== undefined) {
+      this._mainCanvas.setAttribute('width', this.documentWidth.toString());
+      this._mainCanvas.setAttribute('height', this.documentHeight.toString());
+      this._mainCanvas.setAttribute(
+        'viewBox',
+        '0 0 ' +
+        this.documentWidth.toString() +
+        ' ' +
+        this.documentHeight.toString()
+      );
+      this.zoomLevel = this.zoomLevel * 1;
+    }
   }
 
   private initOverlay(): void {
@@ -1752,6 +1778,7 @@ export class DiagramEditor extends HTMLElement {
   }
 
   public restoreState(state: DiagramState): void {
+    this.setDocumentSize(state.width, state.height);
     if (state.backgroundColor !== undefined) {
       this.setDocumentBgColor(state.backgroundColor);
     }
