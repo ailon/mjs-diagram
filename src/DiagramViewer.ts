@@ -74,6 +74,9 @@ export class DiagramViewer extends HTMLElement {
     this.removeLogo = this.removeLogo.bind(this);
     this.positionLogo = this.positionLogo.bind(this);
 
+    this.show = this.show.bind(this);
+    this.setDocumentBgColor = this.setDocumentBgColor.bind(this);
+
     this.attachShadow({ mode: 'open' });
   }
 
@@ -103,6 +106,10 @@ export class DiagramViewer extends HTMLElement {
   private width = 0;
   private height = 0;
 
+  private documentWidth = 640;
+  private documentHeight = 360;
+  private documentBgColor = 'white';
+
   private addMainCanvas() {
     this.width = this._container?.clientWidth || 0;
     this.height = this._container?.clientHeight || 0;
@@ -112,15 +119,16 @@ export class DiagramViewer extends HTMLElement {
       'svg'
     );
     this._mainCanvas.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    this._mainCanvas.setAttribute('width', this.width.toString());
-    this._mainCanvas.setAttribute('height', this.height.toString());
+    this._mainCanvas.setAttribute('width', this.documentWidth.toString());
+    this._mainCanvas.setAttribute('height', this.documentHeight.toString());
     this._mainCanvas.setAttribute(
       'viewBox',
-      '0 0 ' + this.width.toString() + ' ' + this.height.toString()
+      '0 0 ' + this.documentWidth.toString() + ' ' + this.documentHeight.toString()
     );
     this._mainCanvas.style.pointerEvents = 'auto';
     
     this._mainCanvas.style.fontFamily = 'Helvetica, Arial, Sans-Serif';
+    this._mainCanvas.style.backgroundColor = this.documentBgColor;
 
     this._groupLayer = SvgHelper.createGroup();
     this._connectorLayer = SvgHelper.createGroup();
@@ -237,7 +245,18 @@ export class DiagramViewer extends HTMLElement {
     return new connectorType(this.getNewIId(), g);
   }
 
+  private setDocumentBgColor(color: string) {
+    this.documentBgColor = color;
+    if (this._mainCanvas !== undefined) {
+      this._mainCanvas.style.backgroundColor = color;
+    }
+  }
+
   public show(state: DiagramState): void {
+    if (state.backgroundColor !== undefined) {
+      this.setDocumentBgColor(state.backgroundColor);
+    }
+
     this._stencils.splice(0);
     while (this._objectLayer?.lastChild) {
       this._objectLayer.removeChild(this._objectLayer.lastChild);

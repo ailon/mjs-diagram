@@ -5,6 +5,8 @@ export interface DiagramState {
   width: number,
   height: number,
 
+  backgroundColor?: string,
+
   stencils: StencilBaseState[];
   connectors: ConnectorBaseState[];
 }

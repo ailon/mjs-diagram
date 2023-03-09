@@ -15,7 +15,6 @@ import { PropertyPanelBase } from './editor/panels/PropertyPanelBase';
 import { StencilBase } from './core/StencilBase';
 import { StencilBaseEditor } from './editor/StencilBaseEditor';
 import { SvgHelper } from './core/SvgHelper';
-import { RectangleTextStencil } from './core/RectangleTextStencil';
 import { Port } from './core/Port';
 import { Renderer } from './editor/Renderer';
 import { UndoRedoManager } from './editor/UndoRedoManager';
@@ -26,6 +25,7 @@ import { StencilEditorSet } from './editor_index';
 
 import Logo from './assets/markerjs-logo-m.svg';
 import { Activator } from './core/Activator';
+import { ColorPickerPanel } from './editor/panels/ColorPickerPanel';
 
 export type DiagramEditorMode = 'select' | 'connect';
 
@@ -66,6 +66,8 @@ export class DiagramEditor extends HTMLElement {
   private _connectorEditors: ConnectorBaseEditor[] = [];
   private _connectorTypePanel!: ConnectorTypePanel;
   private _newStencilPanel!: NewStencilPanel;
+
+  private _documentBackgroundPanel!: ColorPickerPanel;
 
   private _newStencilOutline: SVGPathElement = SvgHelper.createPath('', [
     ['stroke', '#333'],
@@ -173,6 +175,9 @@ export class DiagramEditor extends HTMLElement {
     this.createNewStencil = this.createNewStencil.bind(this);
     this.addNewStencil = this.addNewStencil.bind(this);
 
+    this.showDocumentPropertiesPanel = this.showDocumentPropertiesPanel.bind(this);
+    this.setDocumentBgColor = this.setDocumentBgColor.bind(this);
+
     this.zoom = this.zoom.bind(this);
 
     this.undo = this.undo.bind(this);
@@ -213,6 +218,13 @@ export class DiagramEditor extends HTMLElement {
       this._stencilEditorSet.stencilSet.stencilTypes
     );
     this._newStencilPanel.onCreateNewStencil = this.createNewStencil;
+
+    this._documentBackgroundPanel = new ColorPickerPanel(
+      'Background color',
+      ['#ffffff', '#cccccc', '#ffcccc', '#ccffcc', '#ccccff'],
+      '#ffffff'
+    );
+    this._documentBackgroundPanel.onColorChanged = this.setDocumentBgColor;
   }
 
   private addStyles() {
@@ -474,6 +486,15 @@ export class DiagramEditor extends HTMLElement {
     });
     createBlock.appendButton(connectButton);
 
+    const documentSetupButton = new Button({
+      icon: `<svg viewBox="0 0 24 24">
+        <path fill="currentColor" d="M6 2C4.89 2 4 2.9 4 4V20C4 21.11 4.89 22 6 22H12V20H6V4H13V9H18V12H20V8L14 2M18 14C17.87 14 17.76 14.09 17.74 14.21L17.55 15.53C17.25 15.66 16.96 15.82 16.7 16L15.46 15.5C15.35 15.5 15.22 15.5 15.15 15.63L14.15 17.36C14.09 17.47 14.11 17.6 14.21 17.68L15.27 18.5C15.25 18.67 15.24 18.83 15.24 19C15.24 19.17 15.25 19.33 15.27 19.5L14.21 20.32C14.12 20.4 14.09 20.53 14.15 20.64L15.15 22.37C15.21 22.5 15.34 22.5 15.46 22.5L16.7 22C16.96 22.18 17.24 22.35 17.55 22.47L17.74 23.79C17.76 23.91 17.86 24 18 24H20C20.11 24 20.22 23.91 20.24 23.79L20.43 22.47C20.73 22.34 21 22.18 21.27 22L22.5 22.5C22.63 22.5 22.76 22.5 22.83 22.37L23.83 20.64C23.89 20.53 23.86 20.4 23.77 20.32L22.7 19.5C22.72 19.33 22.74 19.17 22.74 19C22.74 18.83 22.73 18.67 22.7 18.5L23.76 17.68C23.85 17.6 23.88 17.47 23.82 17.36L22.82 15.63C22.76 15.5 22.63 15.5 22.5 15.5L21.27 16C21 15.82 20.73 15.65 20.42 15.53L20.23 14.21C20.22 14.09 20.11 14 20 14M19 17.5C19.83 17.5 20.5 18.17 20.5 19C20.5 19.83 19.83 20.5 19 20.5C18.16 20.5 17.5 19.83 17.5 19C17.5 18.17 18.17 17.5 19 17.5Z" />
+  </svg>`,
+      text: 'document setup',
+      command: 'document-setup',
+    });
+    createBlock.appendButton(documentSetupButton);
+
     const zoomInButton = new Button({
       icon: `<svg viewBox="0 0 24 24">
     <path fill="currentColor" d="M15.5,14L20.5,19L19,20.5L14,15.5V14.71L13.73,14.43C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.43,13.73L14.71,14H15.5M9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14M12,10H10V12H9V10H7V9H9V7H10V9H12V10Z" />
@@ -579,16 +600,12 @@ export class DiagramEditor extends HTMLElement {
         this.showAddPanel();
         break;
       }
-      case 'add-base': {
-        this.createNewStencil(StencilBase);
-        break;
-      }
-      case 'add-text': {
-        this.createNewStencil(RectangleTextStencil);
-        break;
-      }
       case 'connect': {
         this.toggleConnectMode();
+        break;
+      }
+      case 'document-setup': {
+        this.showDocumentPropertiesPanel();
         break;
       }
       case 'delete': {
@@ -644,6 +661,21 @@ export class DiagramEditor extends HTMLElement {
       this.switchConnectModeOff();
     } else {
       this.switchToConnectMode();
+    }
+  }
+
+  private showDocumentPropertiesPanel() {
+    if (!this._isToolboxVisible) {
+      this.toggleToolbox();
+    }
+    this.deselectStencil();
+    this.addToolboxPanels([this._documentBackgroundPanel]);
+  }
+
+  private setDocumentBgColor(color: string) {
+    this.documentBgColor = color;
+    if (this._mainCanvas !== undefined) {
+      this._mainCanvas.style.backgroundColor = color;
     }
   }
 
@@ -734,6 +766,7 @@ export class DiagramEditor extends HTMLElement {
 
   private documentWidth = 640;
   private documentHeight = 360;
+  private documentBgColor = 'white';
 
   private addMainCanvas() {
     this.width = this._contentContainer?.clientWidth || 0;
@@ -756,7 +789,7 @@ export class DiagramEditor extends HTMLElement {
     this._mainCanvas.style.gridColumnStart = '1';
     this._mainCanvas.style.gridRowStart = '1';
     this._mainCanvas.style.pointerEvents = 'auto';
-    this._mainCanvas.style.backgroundColor = 'white';
+    this._mainCanvas.style.backgroundColor = this.documentBgColor;
     this._mainCanvas.style.filter = 'drop-shadow(2px 2px 8px #333)';
     this._mainCanvas.style.margin = '10px';
     //this._mainCanvas.style.transform = `scale(${this._zoomLevel})`;
@@ -1654,6 +1687,8 @@ export class DiagramEditor extends HTMLElement {
       width: this.documentWidth,
       height: this.documentHeight,
 
+      backgroundColor: this.documentBgColor,
+
       stencils: [],
       connectors: [],
     };
@@ -1717,6 +1752,10 @@ export class DiagramEditor extends HTMLElement {
   }
 
   public restoreState(state: DiagramState): void {
+    if (state.backgroundColor !== undefined) {
+      this.setDocumentBgColor(state.backgroundColor);
+    }
+
     this._stencilEditors.splice(0);
     while (this._objectLayer?.lastChild) {
       this._objectLayer.removeChild(this._objectLayer.lastChild);
