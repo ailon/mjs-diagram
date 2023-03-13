@@ -27,8 +27,8 @@ flowchartStencilEditorSet.availableConnectorTypes = [
 flowchartStencilEditorSet.defaultConnectorType = ArrowConnector;
 
 flowchartStencilEditorSet.newDocumentTemplate = {
-  width: 872,
-  height: 752,
+  width: 640,
+  height: 360,
   stencils: [
     <TextStencilState>{
       color: '#000000',

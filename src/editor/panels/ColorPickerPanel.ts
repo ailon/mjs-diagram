@@ -4,7 +4,7 @@ export type ColorChangeHandler = (newColor: string) => void;
 
 export class ColorPickerPanel extends PropertyPanelBase {
   public colors: string[] = [];
-  private currentColor?: string;
+  public currentColor?: string;
   private colorBoxes: HTMLDivElement[] = [];
 
   public onColorChanged?: ColorChangeHandler;

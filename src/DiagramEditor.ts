@@ -307,14 +307,31 @@ export class DiagramEditor extends HTMLElement {
         background-color: #444;
         border-radius: 20px;
         border: 1px solid #222;
-      }      
+      }
+
       .toolbox-panel .content-block {
         background-color: #333;
+        color: #ccc;
+        font-size: 0.8rem;
         padding: 5px;
         border-bottom: 2px solid #444;
         border-radius: 3px;
         overflow: hidden;
       }
+      .toolbox-panel .content-block input[type=text] {
+        background-color: #222;
+        color: #ccc;
+        font-size: 0.8rem;
+        padding: 3px;
+        border: 1px solid #333;
+        outline-color: #444;
+        outline-style: solid;
+        outline-width: 1px;
+      }
+      .toolbox-panel .content-block input[type=text]:focus {
+        background-color: #444;
+      }
+
       .toolbox-panel .content-block-title {
         margin: -5px;
         margin-bottom: 5px;
@@ -658,7 +675,6 @@ export class DiagramEditor extends HTMLElement {
         break;
       }
     }
-    console.log(`'${ev.detail.button.command}' button clicked.`);
   }
 
   private showAddPanel() {
@@ -682,6 +698,11 @@ export class DiagramEditor extends HTMLElement {
       this.toggleToolbox();
     }
     this.deselectStencil();
+
+    this._documentBackgroundPanel.currentColor = this.documentBgColor;
+    this._documentDimensionsPanel.currentWidth = this.documentWidth;
+    this._documentDimensionsPanel.currentHeight = this.documentHeight;
+
     this.addToolboxPanels([this._documentBackgroundPanel, this._documentDimensionsPanel]);
   }
 

@@ -3,8 +3,8 @@ import { PropertyPanelBase } from './PropertyPanelBase';
 export type DimensionsChangeHandler = (newWidth: number, newHeight: number) => void;
 
 export class DimensionsPanel extends PropertyPanelBase {
-  private currentWidth = 0;
-  private currentHeight = 0;
+  public currentWidth = 0;
+  public currentHeight = 0;
 
   private widthInput!: HTMLInputElement;
   private heightInput!: HTMLInputElement;
@@ -23,21 +23,37 @@ export class DimensionsPanel extends PropertyPanelBase {
     const panelDiv = document.createElement('div');
     panelDiv.style.display = 'flex';
     panelDiv.style.flexWrap = 'wrap';
+    panelDiv.style.alignItems = 'center';
+
+    const widthLabel = document.createElement('span');
+    widthLabel.innerText = 'W:';
+    panelDiv.appendChild(widthLabel);
 
     this.widthInput = document.createElement('input');
     this.widthInput.type = 'text';
     this.widthInput.value = this.currentWidth.toString();
     this.widthInput.addEventListener('change', () => {
       this.setCurrentDimensions(Number.parseInt(this.widthInput.value), undefined);
-    })
+    });
+    this.widthInput.style.textAlign = 'right';
+    this.widthInput.style.margin = '0px 10px 0px 4px';
+    this.widthInput.style.width = '2.5rem';
+
     panelDiv.appendChild(this.widthInput);
+
+    const heightLabel = document.createElement('span');
+    heightLabel.innerText = 'H:';
+    panelDiv.appendChild(heightLabel);
 
     this.heightInput = document.createElement('input');
     this.heightInput.type = 'text';
     this.heightInput.value = this.currentHeight.toString();
     this.heightInput.addEventListener('change', () => {
       this.setCurrentDimensions(undefined, Number.parseInt(this.heightInput.value));
-    })
+    });
+    this.heightInput.style.textAlign = 'right';
+    this.heightInput.style.marginLeft = '4px';
+    this.heightInput.style.width = '2.5rem';
     panelDiv.appendChild(this.heightInput);
 
     return panelDiv;
