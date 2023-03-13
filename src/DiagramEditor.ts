@@ -849,6 +849,11 @@ export class DiagramEditor extends HTMLElement {
         this.documentHeight.toString()
       );
       this.zoomLevel = this.zoomLevel * 1;
+      
+      if (this._overlayContainer !== undefined) {
+        this._overlayContentContainer.style.width = `${this.documentWidth}px`;
+        this._overlayContentContainer.style.height = `${this.documentHeight}px`;
+      }
     }
   }
 
