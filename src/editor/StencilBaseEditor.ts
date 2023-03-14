@@ -7,6 +7,7 @@ import { GripLocation, ResizeGrip } from './ResizeGrip';
 import { StencilBase } from '../core/StencilBase';
 import { StencilBaseState } from '../core/StencilBaseState';
 import { SvgHelper } from '../core/SvgHelper';
+import { EditorSettings } from './EditorSettings';
 
 export type StencilEditorState =
   | 'new'
@@ -44,6 +45,11 @@ export class StencilBaseEditor {
     this._state = value;
   }
 
+  private _settings: EditorSettings;
+  protected get settings(): EditorSettings {
+    return this._settings;
+  }
+
   protected resizeGrips = new Map<GripLocation, ResizeGrip>([
     ['topleft', new ResizeGrip()],
     ['topcenter', new ResizeGrip()],
@@ -73,6 +79,7 @@ export class StencilBaseEditor {
     iid: number,
     container: SVGGElement,
     overlayContainer: HTMLDivElement,
+    settings: EditorSettings,
     stencilType: typeof StencilBase,
     stencil?: StencilBase
   ) {
@@ -80,29 +87,19 @@ export class StencilBaseEditor {
     this._overlayContainer = overlayContainer;
     this._stencilType = stencilType;
     this._stencil = stencil ?? new stencilType(iid, container);
+    this._settings = settings;
 
     this.strokePanel = new ColorPickerPanel(
       'Line color',
-      [
-        'red',
-        'orange',
-        'yellow',
-        'green',
-        'lightblue',
-        'blue',
-        'magenta',
-        'black',
-        'white',
-        'brown',
-      ],
-      'blue'
+      this.settings.getColorSet(this.stencil.typeName, 'stroke'),
+      this.settings.getColor(this.stencil.typeName, 'stroke')
     );
     this.strokePanel.onColorChanged = this._stencil.setStrokeColor;
 
     this.fillPanel = new ColorPickerPanel(
       'Fill color',
-      ['#cccccc', '#ffcccc', '#ccffcc', '#ccccff', 'transparent'],
-      'blue'
+      this.settings.getColorSet(this.stencil.typeName, 'fill'),
+      this.settings.getColor(this.stencil.typeName, 'fill')
     );
     this.fillPanel.onColorChanged = this._stencil.setFillColor;
 

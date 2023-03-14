@@ -27,6 +27,7 @@ import Logo from './assets/markerjs-logo-m.svg';
 import { Activator } from './core/Activator';
 import { ColorPickerPanel } from './editor/panels/ColorPickerPanel';
 import { DimensionsPanel } from './editor/panels/DimensionsPanel';
+import { EditorSettings } from './editor/EditorSettings';
 
 export type DiagramEditorMode = 'select' | 'connect';
 
@@ -133,6 +134,8 @@ export class DiagramEditor extends HTMLElement {
   private undoRedoManager: UndoRedoManager<DiagramState> =
     new UndoRedoManager<DiagramState>();
 
+  public readonly settings: EditorSettings = new EditorSettings();
+
   constructor() {
     super();
 
@@ -227,8 +230,8 @@ export class DiagramEditor extends HTMLElement {
 
     this._documentBackgroundPanel = new ColorPickerPanel(
       'Background color',
-      ['#ffffff', '#cccccc', '#ffcccc', '#ccffcc', '#ccccff'],
-      '#ffffff'
+      this.settings.defaultBackgroundColorSet,
+      this.settings.defaultBackgroundColor
     );
     this._documentBackgroundPanel.onColorChanged = this.setDocumentBgColor;
 
@@ -1655,6 +1658,7 @@ export class DiagramEditor extends HTMLElement {
       this.getNewIId(),
       g,
       this._overlayContentContainer,
+      this.settings,
       stencilType
     );
   }
@@ -1672,6 +1676,7 @@ export class DiagramEditor extends HTMLElement {
       this.getNewIId(),
       g,
       this._overlayContentContainer,
+      this.settings,
       connectorType
     );
   }

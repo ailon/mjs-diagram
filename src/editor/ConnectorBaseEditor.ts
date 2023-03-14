@@ -11,6 +11,7 @@ import { PropertyPanelBase } from './panels/PropertyPanelBase';
 import { ColorPickerPanel } from './panels/ColorPickerPanel';
 import { ArrowTypePanel } from './panels/ArrowTypePanel';
 import { TextBlockEditor } from './TextBlockEditor';
+import { EditorSettings } from './EditorSettings';
 
 export type ConnectorState =
   | 'new'
@@ -69,34 +70,32 @@ export class ConnectorBaseEditor {
   private strokePanel: ColorPickerPanel;
   private arrowTypePanel: ArrowTypePanel;
 
+  private _settings: EditorSettings;
+  protected get settings(): EditorSettings {
+    return this._settings;
+  }
+
   constructor(
     iid: number,
     container: SVGGElement,
     overlayContainer: HTMLDivElement,
+    settings: EditorSettings,
     connectorType: typeof ConnectorBase,
     connector?: ConnectorBase
   ) {
     this.connector = connector ?? new connectorType(iid, container);
     this.connector.container = container;
     this.overlayContainer = overlayContainer;
+    this._settings = settings;
+
+    this.connector.strokeColor = this.settings.getColor(this.connector.typeName, 'stroke');
 
     this.textBlockEditor = new TextBlockEditor();
 
     this.strokePanel = new ColorPickerPanel(
       'Line color',
-      [
-        'red',
-        'orange',
-        'yellow',
-        'green',
-        'lightblue',
-        'blue',
-        'magenta',
-        'black',
-        'white',
-        'brown',
-      ],
-      'blue'
+      this.settings.getColorSet(this.connector.typeName, 'stroke'),
+      this.connector.strokeColor      
     );
     this.strokePanel.onColorChanged = this.connector.setStrokeColor;
 

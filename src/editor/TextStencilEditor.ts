@@ -3,6 +3,7 @@ import { StencilBaseEditor } from './StencilBaseEditor';
 import { RectangleTextStencil } from '../core/RectangleTextStencil';
 import { StencilBaseState } from '../core/StencilBaseState';
 import { TextBlockEditor } from './TextBlockEditor';
+import { EditorSettings } from './EditorSettings';
 
 export class TextStencilEditor extends StencilBaseEditor {
   public get stencil(): RectangleTextStencil {
@@ -19,10 +20,11 @@ export class TextStencilEditor extends StencilBaseEditor {
     iid: number,
     container: SVGGElement,
     overlayContainer: HTMLDivElement,
+    settings: EditorSettings,
     stencilType: typeof RectangleTextStencil,
     stencil?: RectangleTextStencil
   ) {
-    super(iid, container, overlayContainer, stencilType, stencil);
+    super(iid, container, overlayContainer, settings,  stencilType, stencil);
 
     this.textBlockEditor = new TextBlockEditor();
 

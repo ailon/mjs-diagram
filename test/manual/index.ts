@@ -12,6 +12,7 @@ import { mindMapStencilSet } from '../../src/stencilsets/mindmap/MindMapStencilS
 import { mindMapStencilEditorSet } from '../../src/stencilsets/mindmap/MindMapStencilEditorSet';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { DiagramState, DiagramViewer } from '../../src/viewer_index';
+import { ColorSet } from '../../src/editor/EditorSettings';
 
 export * from './../../src/index';
 
@@ -133,6 +134,8 @@ export class Experiments {
     this.editor.stencilEditorSet = flowchartStencilEditorSet;
     // this.editor.stencilEditorSet = mindMapStencilEditorSet;
 
+    this.editor.settings.setContextColor('ArrowConnector', 'stroke', 'red');
+    this.editor.settings.setContextColorSet('ArrowConnector', 'stroke', new ColorSet('red','blue','black'));
 
     this.editor.addEventListener('saveclick', (ev) => {
       console.log(JSON.stringify(ev.detail.state));
