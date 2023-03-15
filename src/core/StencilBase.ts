@@ -66,8 +66,14 @@ export class StencilBase {
     this._visual.transform.baseVal.appendItem(translate);
   }
 
-  protected fillColor = '#eeeeee';
-  protected strokeColor = 'black';
+  protected _fillColor = '#eeeeee';
+  public get fillColor() {
+    return this._fillColor;
+  }
+  protected _strokeColor = 'black';
+  public get strokeColor() {
+    return this._strokeColor;
+  }
   protected strokeWidth = 1;
   protected strokeDasharray = '';
 
@@ -196,8 +202,8 @@ export class StencilBase {
     );
     if (pathString && pathString.length > 0) {
       this._frame = SvgHelper.createPath(pathString, [
-        ['fill', this.fillColor],
-        ['stroke', this.strokeColor],
+        ['fill', this._fillColor],
+        ['stroke', this._strokeColor],
         ['stroke-width', this.strokeWidth.toString()],
         ['stroke-dasharray', this.strokeDasharray],
       ]);
@@ -241,15 +247,15 @@ export class StencilBase {
   }
 
   public setStrokeColor(color: string): void {
-    this.strokeColor = color;
+    this._strokeColor = color;
     if (this._frame !== undefined) {
-      SvgHelper.setAttributes(this._frame, [['stroke', this.strokeColor]]);
+      SvgHelper.setAttributes(this._frame, [['stroke', this._strokeColor]]);
     }
   }
   public setFillColor(color: string): void {
-    this.fillColor = color;
+    this._fillColor = color;
     if (this._frame !== undefined) {
-      SvgHelper.setAttributes(this._frame, [['fill', this.fillColor]]);
+      SvgHelper.setAttributes(this._frame, [['fill', this._fillColor]]);
     }
   }
   protected setStrokeWidth(width: number): void {
@@ -315,8 +321,8 @@ export class StencilBase {
       width: this.width,
       height: this.height,
 
-      fillColor: this.fillColor,
-      strokeColor: this.strokeColor,
+      fillColor: this._fillColor,
+      strokeColor: this._strokeColor,
       strokeWidth: this.strokeWidth,
       strokeDasharray: this.strokeDasharray,
     };
@@ -331,8 +337,8 @@ export class StencilBase {
     this.width = state.width;
     this.height = state.height;
 
-    this.fillColor = state.fillColor;
-    this.strokeColor = state.strokeColor;
+    this._fillColor = state.fillColor;
+    this._strokeColor = state.strokeColor;
     this.strokeWidth = state.strokeWidth;
     this.strokeDasharray = state.strokeDasharray;
 

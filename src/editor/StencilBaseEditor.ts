@@ -1,4 +1,3 @@
-import { ColorPickerPanel } from './panels/ColorPickerPanel';
 import { IPoint } from '../core/IPoint';
 import { PortLocation } from '../core/Port';
 import { PortConnector } from './PortConnector';
@@ -9,6 +8,7 @@ import { StencilBaseState } from '../core/StencilBaseState';
 import { SvgHelper } from '../core/SvgHelper';
 import { EditorSettings } from './EditorSettings';
 import { StencilEditorProperties } from './StencilEditorProperties';
+import { ShapePropertiesPanel } from './panels/ShapePropertiesPanel';
 
 export type StencilEditorState =
   | 'new'
@@ -73,8 +73,9 @@ export class StencilBaseEditor {
   protected _portBox = SvgHelper.createGroup();
   protected _connectorOutline?: SVGPathElement;
 
-  private strokePanel: ColorPickerPanel;
-  private fillPanel: ColorPickerPanel;
+  // private strokePanel: ColorPickerPanel;
+  // private fillPanel: ColorPickerPanel;
+  private shapePanel: ShapePropertiesPanel;
 
   constructor(properties: StencilEditorProperties) {
     this._container = properties.container;
@@ -85,19 +86,14 @@ export class StencilBaseEditor {
       new properties.stencilType(properties.iid, properties.container);
     this._settings = properties.settings;
 
-    this.strokePanel = new ColorPickerPanel(
-      'Line color',
-      this.settings.getColorSet(this.stencil.typeName, 'stroke'),
-      this.settings.getColor(this.stencil.typeName, 'stroke')
-    );
-    this.strokePanel.onColorChanged = this._stencil.setStrokeColor;
-
-    this.fillPanel = new ColorPickerPanel(
-      'Fill color',
-      this.settings.getColorSet(this.stencil.typeName, 'fill'),
-      this.settings.getColor(this.stencil.typeName, 'fill')
-    );
-    this.fillPanel.onColorChanged = this._stencil.setFillColor;
+    this.shapePanel = new ShapePropertiesPanel('Shape', {
+      strokeColors: this.settings.getColorSet(this.stencil.typeName, 'stroke'),
+      strokeColor: this.settings.getColor(this.stencil.typeName, 'stroke'),
+      fillColors: this.settings.getColorSet(this.stencil.typeName, 'fill'),
+      fillColor: this.settings.getColor(this.stencil.typeName, 'fill')
+    });
+    this.shapePanel.onStrokeColorChanged = this._stencil.setStrokeColor;
+    this.shapePanel.onFillColorChanged = this._stencil.setFillColor;
 
     this.findGripByVisual = this.findGripByVisual.bind(this);
     this.ownsTarget = this.ownsTarget.bind(this);
@@ -674,7 +670,9 @@ export class StencilBaseEditor {
   }
 
   public get propertyPanels(): PropertyPanelBase[] {
-    return [this.strokePanel, this.fillPanel];
+    this.shapePanel.fillColor = this.stencil.fillColor;
+    this.shapePanel.strokeColor = this.stencil.strokeColor;
+    return [this.shapePanel];
   }
 
   public restoreState(state: StencilBaseState): void {

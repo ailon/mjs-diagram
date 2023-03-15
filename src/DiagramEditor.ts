@@ -340,6 +340,11 @@ export class DiagramEditor extends HTMLElement {
         background-color: #444;
       }
 
+      .toolbox-panel .content-block h3 {
+        font-size: 0.8rem;
+        margin-bottom: 2px;
+      }
+
       .toolbox-panel .content-block-title {
         margin: -5px;
         margin-bottom: 5px;
