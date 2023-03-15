@@ -96,7 +96,12 @@ export class DiagramEditor extends HTMLElement {
   }
   public set zoomLevel(value: number) {
     this._zoomLevel = value;
-    if (this._canvasContainer && this._contentContainer && this._mainCanvas && this._overlayContainer) {
+    if (
+      this._canvasContainer &&
+      this._contentContainer &&
+      this._mainCanvas &&
+      this._overlayContainer
+    ) {
       this._mainCanvas.style.width = `${this.documentWidth * this.zoomLevel}px`;
       this._mainCanvas.style.height = `${
         this.documentHeight * this.zoomLevel
@@ -112,7 +117,6 @@ export class DiagramEditor extends HTMLElement {
       });
 
       this._overlayContainer.style.transform = `scale(${this._zoomLevel})`;
-
     }
   }
 
@@ -183,7 +187,8 @@ export class DiagramEditor extends HTMLElement {
     this.createNewStencil = this.createNewStencil.bind(this);
     this.addNewStencil = this.addNewStencil.bind(this);
 
-    this.showDocumentPropertiesPanel = this.showDocumentPropertiesPanel.bind(this);
+    this.showDocumentPropertiesPanel =
+      this.showDocumentPropertiesPanel.bind(this);
     this.setDocumentBgColor = this.setDocumentBgColor.bind(this);
     this.setDocumentSize = this.setDocumentSize.bind(this);
 
@@ -706,7 +711,10 @@ export class DiagramEditor extends HTMLElement {
     this._documentDimensionsPanel.currentWidth = this.documentWidth;
     this._documentDimensionsPanel.currentHeight = this.documentHeight;
 
-    this.addToolboxPanels([this._documentBackgroundPanel, this._documentDimensionsPanel]);
+    this.addToolboxPanels([
+      this._documentBackgroundPanel,
+      this._documentDimensionsPanel,
+    ]);
   }
 
   private setDocumentBgColor(color: string) {
@@ -847,12 +855,12 @@ export class DiagramEditor extends HTMLElement {
       this._mainCanvas.setAttribute(
         'viewBox',
         '0 0 ' +
-        this.documentWidth.toString() +
-        ' ' +
-        this.documentHeight.toString()
+          this.documentWidth.toString() +
+          ' ' +
+          this.documentHeight.toString()
       );
       this.zoomLevel = this.zoomLevel * 1;
-      
+
       if (this._overlayContainer !== undefined) {
         this._overlayContentContainer.style.width = `${this.documentWidth}px`;
         this._overlayContentContainer.style.height = `${this.documentHeight}px`;
@@ -1293,12 +1301,10 @@ export class DiagramEditor extends HTMLElement {
         localPoint.y,
         localManipulationStart.y
       );
-      this._marqueeSelectRect.width = Math.abs(
-        ev.clientX - this._manipulationStartX
-      ) / this.zoomLevel;
-      this._marqueeSelectRect.height = Math.abs(
-        ev.clientY - this._manipulationStartY
-      ) / this.zoomLevel;
+      this._marqueeSelectRect.width =
+        Math.abs(ev.clientX - this._manipulationStartX) / this.zoomLevel;
+      this._marqueeSelectRect.height =
+        Math.abs(ev.clientY - this._manipulationStartY) / this.zoomLevel;
 
       SvgHelper.setAttributes(this._marqueeSelectOutline, [
         ['x', `${this._marqueeSelectRect.x}`],
@@ -1451,7 +1457,10 @@ export class DiagramEditor extends HTMLElement {
         }
 
         // deselect connector if selected and not hit
-        if (this._currentConnectorEditor !== undefined && !this.getHitConnector(ev.target)) {
+        if (
+          this._currentConnectorEditor !== undefined &&
+          !this.getHitConnector(ev.target)
+        ) {
           this.deselectCurrentConnector();
         }
       }
@@ -1654,13 +1663,13 @@ export class DiagramEditor extends HTMLElement {
 
     const editor = this._stencilEditorSet.getStencilEditor(stencilType);
 
-    return new editor(
-      this.getNewIId(),
-      g,
-      this._overlayContentContainer,
-      this.settings,
-      stencilType
-    );
+    return new editor({
+      iid: this.getNewIId(),
+      container: g,
+      overlayContainer: this._overlayContentContainer,
+      settings: this.settings,
+      stencilType: stencilType,
+    });
   }
 
   private addNewConnector(
@@ -1672,13 +1681,13 @@ export class DiagramEditor extends HTMLElement {
 
     const connectorEditorType =
       this._stencilEditorSet.getConnectorEditor(connectorType);
-    return new connectorEditorType(
-      this.getNewIId(),
-      g,
-      this._overlayContentContainer,
-      this.settings,
-      connectorType
-    );
+    return new connectorEditorType({
+      iid: this.getNewIId(),
+      container: g,
+      overlayContainer: this._overlayContentContainer,
+      settings: this.settings,
+      connectorType: connectorType,
+    });
   }
 
   private changeConnectorType(newType: typeof ConnectorBase) {

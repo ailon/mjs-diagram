@@ -3,7 +3,7 @@ import { StencilBaseEditor } from './StencilBaseEditor';
 import { RectangleTextStencil } from '../core/RectangleTextStencil';
 import { StencilBaseState } from '../core/StencilBaseState';
 import { TextBlockEditor } from './TextBlockEditor';
-import { EditorSettings } from './EditorSettings';
+import { StencilEditorProperties } from './StencilEditorProperties';
 
 export class TextStencilEditor extends StencilBaseEditor {
   public get stencil(): RectangleTextStencil {
@@ -16,15 +16,8 @@ export class TextStencilEditor extends StencilBaseEditor {
   private pointerDownPoint?: IPoint;
   private pointerDownTimestamp!: number;
 
-  constructor(
-    iid: number,
-    container: SVGGElement,
-    overlayContainer: HTMLDivElement,
-    settings: EditorSettings,
-    stencilType: typeof RectangleTextStencil,
-    stencil?: RectangleTextStencil
-  ) {
-    super(iid, container, overlayContainer, settings,  stencilType, stencil);
+  constructor(properties: StencilEditorProperties) {
+    super(properties);
 
     this.textBlockEditor = new TextBlockEditor();
 
@@ -91,8 +84,10 @@ export class TextStencilEditor extends StencilBaseEditor {
 
   private positionTextEditor() {
     if (this.state === 'edit') {
-      this.textBlockEditor.left = this.stencil.left + this.stencil.textBoundingBox.left;
-      this.textBlockEditor.top = this.stencil.top + this.stencil.textBoundingBox.top;
+      this.textBlockEditor.left =
+        this.stencil.left + this.stencil.textBoundingBox.left;
+      this.textBlockEditor.top =
+        this.stencil.top + this.stencil.textBoundingBox.top;
       this.textBlockEditor.width = this.stencil.textBoundingBox.width;
       this.textBlockEditor.height = this.stencil.textBoundingBox.height;
     }

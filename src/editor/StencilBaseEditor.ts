@@ -8,6 +8,7 @@ import { StencilBase } from '../core/StencilBase';
 import { StencilBaseState } from '../core/StencilBaseState';
 import { SvgHelper } from '../core/SvgHelper';
 import { EditorSettings } from './EditorSettings';
+import { StencilEditorProperties } from './StencilEditorProperties';
 
 export type StencilEditorState =
   | 'new'
@@ -75,19 +76,14 @@ export class StencilBaseEditor {
   private strokePanel: ColorPickerPanel;
   private fillPanel: ColorPickerPanel;
 
-  constructor(
-    iid: number,
-    container: SVGGElement,
-    overlayContainer: HTMLDivElement,
-    settings: EditorSettings,
-    stencilType: typeof StencilBase,
-    stencil?: StencilBase
-  ) {
-    this._container = container;
-    this._overlayContainer = overlayContainer;
-    this._stencilType = stencilType;
-    this._stencil = stencil ?? new stencilType(iid, container);
-    this._settings = settings;
+  constructor(properties: StencilEditorProperties) {
+    this._container = properties.container;
+    this._overlayContainer = properties.overlayContainer;
+    this._stencilType = properties.stencilType;
+    this._stencil =
+      properties.stencil ??
+      new properties.stencilType(properties.iid, properties.container);
+    this._settings = properties.settings;
 
     this.strokePanel = new ColorPickerPanel(
       'Line color',
