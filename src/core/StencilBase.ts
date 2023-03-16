@@ -266,7 +266,7 @@ export class StencilBase {
       ]);
     }
   }
-  protected setStrokeDasharray(dashes: string): void {
+  public setStrokeDasharray(dashes: string): void {
     this.strokeDasharray = dashes;
     if (this._frame !== undefined) {
       SvgHelper.setAttributes(this._frame, [

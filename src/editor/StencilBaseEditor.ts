@@ -90,10 +90,13 @@ export class StencilBaseEditor {
       strokeColors: this.settings.getColorSet(this.stencil.typeName, 'stroke'),
       strokeColor: this.settings.getColor(this.stencil.typeName, 'stroke'),
       fillColors: this.settings.getColorSet(this.stencil.typeName, 'fill'),
-      fillColor: this.settings.getColor(this.stencil.typeName, 'fill')
+      fillColor: this.settings.getColor(this.stencil.typeName, 'fill'),
+      lineStyles: this.settings.getDashArrays(this.stencil.typeName),
+      lineStyle: this.settings.getDashArray(this.stencil.typeName),
     });
     this.shapePanel.onStrokeColorChanged = this._stencil.setStrokeColor;
     this.shapePanel.onFillColorChanged = this._stencil.setFillColor;
+    this.shapePanel.onLineStyleChanged = this._stencil.setStrokeDasharray;
 
     this.findGripByVisual = this.findGripByVisual.bind(this);
     this.ownsTarget = this.ownsTarget.bind(this);

@@ -35,6 +35,43 @@ export class ColorSet extends Array<Color> {
 }
 
 export class EditorSettings {
+  private _contextStrings: Map<string, Map<string, string>> = new Map();
+  private _contextStringArrays: Map<string, Map<string, string[]>> = new Map();
+
+  public getContextString(context: string, name: string): string | undefined {
+    const contextBucket = this._contextStrings.get(context);
+    if (contextBucket !== undefined) {
+      return contextBucket.get(name);
+    } else {
+      return undefined;
+    }
+  }
+  public setContextString(context: string, name: string, value: string) {
+    let contextBucket = this._contextStrings.get(context);
+    if (contextBucket === undefined) {
+      contextBucket = new Map<string, string>();
+      this._contextStrings.set(context, contextBucket);
+    }
+    contextBucket.set(name, value);
+  }
+
+  public getContextStringArray(context: string, name: string): string[] | undefined {
+    const contextBucket = this._contextStringArrays.get(context);
+    if (contextBucket !== undefined) {
+      return contextBucket.get(name);
+    } else {
+      return undefined;
+    }
+  }
+  public setContextStringArray(context: string, name: string, value: string[]) {
+    let contextBucket = this._contextStringArrays.get(context);
+    if (contextBucket === undefined) {
+      contextBucket = new Map<string, string[]>();
+      this._contextStringArrays.set(context, contextBucket);
+    }
+    contextBucket.set(name, value);
+  }
+
   public defaultColor = '#000';
   public defaultTextColor = this.defaultColor;
   public defaultStrokeColor = this.defaultColor;
@@ -148,6 +185,23 @@ export class EditorSettings {
       this._colorSets.set(context, contextColorSet);
     }
     contextColorSet.set(type, colorSet);
+  }
+
+  public defaultStrokeDasharray = '';
+  public defaultStrokeDasharrays = ['', '3', '12 3', '9 6 3 6'];
+
+  public getDashArray(context: string): string {
+    return this.getContextString(context, 'strokeDashArray') ?? this.defaultStrokeDasharray;
+  }
+  public setContextDashArray(context: string, value: string) {
+    this.setContextString(context, 'strokeDashArray', value);
+  }
+
+  public getDashArrays(context: string): string[] {
+    return this.getContextStringArray(context, 'strokeDashArrays') ?? this.defaultStrokeDasharrays;
+  }
+  public setContextDashArrays(context: string, value: string[]) {
+    this.setContextStringArray(context, 'strokeDashArrays', value);
   }
 
 }
