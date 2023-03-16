@@ -1,4 +1,5 @@
 import { ConnectorBase } from '../../core/ConnectorBase';
+import { ToolboxPanelItem } from '../ToolboxPanelItem';
 import { PropertyPanelBase } from './PropertyPanelBase';
 
 export type ConnectorTypeChangeHandler = (newType: typeof ConnectorBase) => void;
@@ -6,7 +7,7 @@ export type ConnectorTypeChangeHandler = (newType: typeof ConnectorBase) => void
 export class ConnectorTypePanel extends PropertyPanelBase {
   public connectorTypes: typeof ConnectorBase[] = [];
   private currentType?: typeof ConnectorBase;
-  private typeBoxes: HTMLDivElement[] = [];
+  private typeBoxes: ToolboxPanelItem<typeof ConnectorBase>[] = [];
 
   public onConnectorTypeChanged?: ConnectorTypeChangeHandler;
 
@@ -29,14 +30,14 @@ export class ConnectorTypePanel extends PropertyPanelBase {
     panelDiv.style.display = 'flex';
     panelDiv.style.flexWrap = 'wrap';
     this.connectorTypes.forEach((t) => {
-      const typeBoxContainer = this.getTypeBox(t);
-      panelDiv.appendChild(typeBoxContainer);
-      this.typeBoxes.push(typeBoxContainer);
+      const typeBox = this.getTypeBox(t);
+      panelDiv.appendChild(typeBox.getUi());
+      this.typeBoxes.push(typeBox);
     });
     return panelDiv;
   }
 
-  private getTypeBox(connectorType: typeof ConnectorBase): HTMLDivElement {
+  private getTypeBox(connectorType: typeof ConnectorBase): ToolboxPanelItem<typeof ConnectorBase> {
     const baseHeight = 40; // @todo: configurable
     // const accentColor = 'red'; // @todo: configurable
 
@@ -45,32 +46,26 @@ export class ConnectorTypePanel extends PropertyPanelBase {
 
     const thumbnail = connectorType.getThumbnail(buttonHeight - 2, buttonHeight - 2);
 
-    const typeBox = document.createElement('div');
-    typeBox.appendChild(thumbnail);
-    typeBox.style.display = 'flex';
-    typeBox.style.width = `${buttonHeight - 2}px`;
-    typeBox.style.height = `${buttonHeight - 2}px`;
-    typeBox.style.borderWidth = '2px';
-    typeBox.style.borderStyle = 'solid';
-    typeBox.style.borderColor =
-      connectorType === this.currentType ? 'var(--i-mjstb-accent-color)' : '#444';
-    typeBox.style.stroke = 'var(--i-mjstb-accent-color)';
-    typeBox.addEventListener('click', () => {
-      this.setCurrentType(connectorType, typeBox);
-    });
+    const typeBox = new ToolboxPanelItem<typeof ConnectorBase>();
+    typeBox.width = buttonHeight - 2;
+    typeBox.height = buttonHeight - 2;
+    typeBox.content = thumbnail;
+    typeBox.dataItem = connectorType;
+    typeBox.isSelected = connectorType === this.currentType;
+    typeBox.onClick = this.setCurrentType;
 
     return typeBox;
   }
 
-  private setCurrentType(connectorType: typeof ConnectorBase, target: HTMLDivElement) {
-    this.currentType = connectorType;
+  private setCurrentType(typeBox: ToolboxPanelItem<typeof ConnectorBase>) {
+    this.currentType = typeBox.dataItem;
 
     this.typeBoxes.forEach((box) => {
-      box.style.borderColor = box === target ? 'var(--i-mjstb-accent-color)' : '#444';
+      box.isSelected = box.dataItem === this.currentType;
     });
 
-    if (this.onConnectorTypeChanged) {
-      this.onConnectorTypeChanged(connectorType);
+    if (this.onConnectorTypeChanged && this.currentType) {
+      this.onConnectorTypeChanged(this.currentType);
     }
   }
 
@@ -78,9 +73,9 @@ export class ConnectorTypePanel extends PropertyPanelBase {
     this.connectorTypes.forEach((t, index) => {
       if (t.typeName === typeName) {
         this.currentType = t;
-        this.typeBoxes[index].style.borderColor = 'var(--i-mjstb-accent-color)';
+        this.typeBoxes[index].isSelected = true;
       } else {
-        this.typeBoxes[index].style.borderColor = '#444';
+        this.typeBoxes[index].isSelected = false;
       }
     })
   }
