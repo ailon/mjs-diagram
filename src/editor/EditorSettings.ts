@@ -204,4 +204,20 @@ export class EditorSettings {
     this.setContextStringArray(context, 'strokeDashArrays', value);
   }
 
+  public defaultStrokeWidth = '1';
+  public defaultStrokeWidths = ['1', '2', '3', '5'];
+
+  public getStrokeWidth(context: string): string {
+    return this.getContextString(context, 'strokeWidth') ?? this.defaultStrokeWidth;
+  }
+  public setContextStrokeWidth(context: string, value: string) {
+    this.setContextString(context, 'strokeWidth', value);
+  }
+
+  public getStrokeWidths(context: string): string[] {
+    return this.getContextStringArray(context, 'strokeWidths') ?? this.defaultStrokeWidths;
+  }
+  public setContextStrokeWidths(context: string, value: string[]) {
+    this.setContextStringArray(context, 'strokeWidths', value);
+  }
 }

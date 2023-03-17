@@ -9,10 +9,14 @@ export class LineStylePanel extends PropertyPanelBase {
   public currentStyle?: string;
   private typeBoxes: ToolboxPanelItem<string>[] = [];
 
+  public lineAttributes: Array<[string, string]> = [];
+  public lineStyleAttribute: string;
+
   public onLineStyleChanged?: LineStyleChangeHandler;
 
-  constructor(title: string, lineStyles: string[], currentStyle?: string) {
+  constructor(title: string, lineStyleAttribute: string, lineStyles: string[], currentStyle?: string) {
     super(title);
+    this.lineStyleAttribute = lineStyleAttribute;
     this.lineStyles = lineStyles;
     this.currentStyle = currentStyle;
 
@@ -63,8 +67,8 @@ export class LineStylePanel extends PropertyPanelBase {
       buttonWidth - 3,
       buttonHeight / 2,
       [
-        ['stroke-width', '3'],
-        ['stroke-dasharray', lineStyle],
+        ...this.lineAttributes,
+        [this.lineStyleAttribute, lineStyle],
       ]
     );
     thumbnail.appendChild(line);

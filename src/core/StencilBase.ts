@@ -258,8 +258,9 @@ export class StencilBase {
       SvgHelper.setAttributes(this._frame, [['fill', this._fillColor]]);
     }
   }
-  protected setStrokeWidth(width: number): void {
-    this.strokeWidth = width;
+  public setStrokeWidth(width: number | string): void {
+    const numWidth = typeof(width) === 'string' ? Number.parseFloat(width) : width;
+    this.strokeWidth = numWidth;
     if (this._frame !== undefined) {
       SvgHelper.setAttributes(this._frame, [
         ['stroke-width', this.strokeWidth.toString()],

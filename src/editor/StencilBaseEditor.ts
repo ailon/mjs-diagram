@@ -93,10 +93,13 @@ export class StencilBaseEditor {
       fillColor: this.settings.getColor(this.stencil.typeName, 'fill'),
       lineStyles: this.settings.getDashArrays(this.stencil.typeName),
       lineStyle: this.settings.getDashArray(this.stencil.typeName),
+      lineWidths: this.settings.getStrokeWidths(this.stencil.typeName),
+      lineWidth: this.settings.getStrokeWidth(this.stencil.typeName),
     });
     this.shapePanel.onStrokeColorChanged = this._stencil.setStrokeColor;
     this.shapePanel.onFillColorChanged = this._stencil.setFillColor;
     this.shapePanel.onLineStyleChanged = this._stencil.setStrokeDasharray;
+    this.shapePanel.onLineWidthChanged = this._stencil.setStrokeWidth;
 
     this.findGripByVisual = this.findGripByVisual.bind(this);
     this.ownsTarget = this.ownsTarget.bind(this);
