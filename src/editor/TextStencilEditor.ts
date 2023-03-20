@@ -34,10 +34,13 @@ export class TextStencilEditor extends StencilBaseEditor {
 
     this.textPanel = new TextPropertiesPanel('Text', {
       textColors: this.settings.getColorSet(this.stencil.typeName, 'text'),
-      textColor: this.settings.getColor(this.stencil.typeName, 'text')
+      textColor: this.settings.getColor(this.stencil.typeName, 'text'),
+      fontFamilies: this.settings.getFontFamilies(this.stencil.typeName),
+      fontFamily: this.settings.getFontFamily(this.stencil.typeName),
     });
 
     this.textPanel.onColorChanged = (<TextStencil>this._stencil).setColor;
+    this.textPanel.onFontFamilyChanged = (<TextStencil>this._stencil).setFont;
   }
 
   public get propertyPanels(): PropertyPanelBase[] {

@@ -17,7 +17,14 @@ export class TextStencil extends StencilBase {
     this.textBlock.color = value;
   }
 
-  public fontFamily = 'Helvetica, Arial, sans-serif';
+  private _fontFamily = 'Helvetica, Arial, sans-serif';
+  public get fontFamily() {
+    return this._fontFamily;
+  }
+  public set fontFamily(value) {
+    this._fontFamily = value;
+    this.textBlock.fontFamily = value;
+  }
 
   private readonly DEFAULT_TEXT = 'Text';
   private _text: string = this.DEFAULT_TEXT;
@@ -105,7 +112,7 @@ export class TextStencil extends StencilBase {
   }
 
   public setFont(font: string): void {
-    this.textBlock.fontFamily = font;
+    this.fontFamily = font;
   }
 
   public getState(): TextStencilState {

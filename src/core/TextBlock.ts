@@ -49,7 +49,8 @@ export class TextBlock {
   }
   public set fontFamily(value) {
     if (this._textElement) {
-      SvgHelper.setAttributes(this.textElement, [['font-family', value]]);
+      this._textElement.style.fontFamily = value;
+      this.applyFontStyles();
     }
     this._fontFamily = value;
     this.positionText();
@@ -70,6 +71,7 @@ export class TextBlock {
     this.hide = this.hide.bind(this);
     this.showControlBox = this.showControlBox.bind(this);
     this.hideControlBox = this.hideControlBox.bind(this);
+    this.applyFontStyles = this.applyFontStyles.bind(this);
   }
 
   public ownsTarget(el: EventTarget) {
@@ -128,8 +130,17 @@ export class TextBlock {
     }
   }
 
+  private applyFontStyles() {
+    this._textElement.childNodes.forEach((ts) => {
+      const tspan = <SVGTSpanElement>ts;
+      tspan.style.fontFamily = this._textElement.style.fontFamily;
+    });
+  }
+
   public positionText(textBlock?: TextBlock) {
     const self = textBlock === undefined ? this : textBlock;
+
+    self.applyFontStyles();
 
     const textBBox = self._textElement.getBBox();
     const centerX =
