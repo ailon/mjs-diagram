@@ -1,13 +1,14 @@
-import { ColorSet, FontFamily } from "../EditorSettings";
+import { ColorSet, FontFamily, FontSize } from "../EditorSettings";
 import { ColorChangeHandler, ColorPickerPanel } from "./ColorPickerPanel";
-import { FontFamilyChangeHandler, FontPanel } from "./FontPanel";
+import { FontFamilyChangeHandler, FontPanel, FontSizeChangeHandler } from "./FontPanel";
 import { PropertyPanelBase } from "./PropertyPanelBase";
 
 export interface TextPropertiesPanelProperties {
   textColors: ColorSet,
   textColor?: string,
   fontFamilies: FontFamily[],
-  fontFamily?: string
+  fontFamily?: string,
+  fontSize?: FontSize
 }
 
 export class TextPropertiesPanel extends PropertyPanelBase {
@@ -16,15 +17,18 @@ export class TextPropertiesPanel extends PropertyPanelBase {
 
   public onColorChanged?: ColorChangeHandler;
   public onFontFamilyChanged?: FontFamilyChangeHandler;
+  public onFontSizeChanged?: FontSizeChangeHandler;
 
   public textColor?: string;
   public fontFamily?: string;
+  public fontSize?: FontSize;
 
   constructor(title: string, properties: TextPropertiesPanelProperties) {
     super(title);
 
     this.colorChanged = this.colorChanged.bind(this);
     this.fontFamilyChanged = this.fontFamilyChanged.bind(this);
+    this.fontSizeChanged = this.fontSizeChanged.bind(this);
 
     this.textColor = properties.textColor;
     this.colorPanel = new ColorPickerPanel(
@@ -38,9 +42,11 @@ export class TextPropertiesPanel extends PropertyPanelBase {
     this.fontPanel = new FontPanel(
       'Font',
       properties.fontFamilies,
-      this.fontFamily
+      this.fontFamily,
+      this.fontSize
     );
     this.fontPanel.onFontFamilyChanged = this.fontFamilyChanged;
+    this.fontPanel.onFontSizeChanged = this.fontSizeChanged;
 
 
   }
@@ -60,6 +66,9 @@ export class TextPropertiesPanel extends PropertyPanelBase {
 
     panelDiv.appendChild(addTitle('Font'));
     this.fontPanel.currentFontFamily = this.fontFamily;
+    if (this.fontSize !== undefined) {
+      this.fontPanel.currentFontSize = this.fontSize;
+    }
     panelDiv.appendChild(this.fontPanel.getUi());
 
     return panelDiv;
@@ -74,6 +83,11 @@ export class TextPropertiesPanel extends PropertyPanelBase {
   private fontFamilyChanged(newFontFamily: string) {
     if (this.onFontFamilyChanged) {
       this.onFontFamilyChanged(newFontFamily);
+    }
+  }
+  private fontSizeChanged(newFontSize: FontSize) {
+    if (this.onFontSizeChanged) {
+      this.onFontSizeChanged(newFontSize);
     }
   }
 }

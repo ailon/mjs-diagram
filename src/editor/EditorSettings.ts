@@ -53,6 +53,12 @@ export class FontFamily {
   }
 }
 
+export interface FontSize {
+  value: number;
+  units: string;
+  step: number;
+}
+
 export class EditorSettings {
   private _contextStrings: Map<string, Map<string, string>> = new Map();
   private _contextStringArrays: Map<string, Map<string, string[]>> = new Map();
@@ -287,5 +293,20 @@ export class EditorSettings {
   }
   public setContextFontFamily(context: string, value: string) {
     this._fontFamily.set(context, value);
+  }
+
+  public defaultFontSize: FontSize = {
+    value: 1,
+    units: 'rem',
+    step: 0.1
+  };
+
+  private _fontSizes: Map<string, FontSize> = new Map();
+  public getFontSize(context: string): FontSize {
+    const fontSize = this._fontSizes.get(context);
+    return fontSize ?? this.defaultFontSize;
+  }
+  public setContextFontSize(context: string, value: FontSize) {
+    this._fontSizes.set(context, value);
   }
 }

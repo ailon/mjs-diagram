@@ -1,3 +1,4 @@
+import { FontSize } from '../editor/EditorSettings';
 import { StencilBase } from './StencilBase';
 import { SvgHelper } from './SvgHelper';
 import { TextBlock } from './TextBlock';
@@ -26,6 +27,19 @@ export class TextStencil extends StencilBase {
     this.textBlock.fontFamily = value;
   }
 
+  private _fontSize: FontSize = {
+    value: 1,
+    units: 'rem',
+    step: 0.1
+  };
+  public get fontSize(): FontSize {
+    return this._fontSize;
+  }
+  public set fontSize(value: FontSize) {
+    this._fontSize = value;
+    this.textBlock.fontSize = value;
+  }
+
   private readonly DEFAULT_TEXT = 'Text';
   private _text: string = this.DEFAULT_TEXT;
   public get text(): string {
@@ -49,6 +63,7 @@ export class TextStencil extends StencilBase {
 
     this.setColor = this.setColor.bind(this);
     this.setFont = this.setFont.bind(this);
+    this.setFontSize = this.setFontSize.bind(this);
     this.addTextElement = this.addTextElement.bind(this);
     this.setSize = this.setSize.bind(this);
 
@@ -115,11 +130,16 @@ export class TextStencil extends StencilBase {
     this.fontFamily = font;
   }
 
+  public setFontSize(fontSize: FontSize): void {
+    this.fontSize = fontSize;
+  }
+
   public getState(): TextStencilState {
     const result: TextStencilState = Object.assign(
       {
         color: this._color,
         fontFamily: this.fontFamily,
+        fontSize: this.fontSize,
         padding: this.padding,
         text: this.text,
       },
@@ -133,6 +153,9 @@ export class TextStencil extends StencilBase {
     const textState = state as TextStencilState;
     this.color = textState.color;
     this.fontFamily = textState.fontFamily;
+    if (state.fontSize !== undefined) {
+      this.fontSize = textState.fontSize;
+    }
     this.padding = textState.padding;
     this.text = textState.text;
 

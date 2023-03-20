@@ -1,3 +1,4 @@
+import { FontSize } from "../editor/EditorSettings";
 import { SvgHelper } from "./SvgHelper";
 
 export class TextBlock {
@@ -50,9 +51,24 @@ export class TextBlock {
   public set fontFamily(value) {
     if (this._textElement) {
       this._textElement.style.fontFamily = value;
-      this.applyFontStyles();
     }
     this._fontFamily = value;
+    this.positionText();
+  }
+
+  private _fontSize: FontSize = {
+    value: 1,
+    units: 'rem',
+    step: 0.1
+  };
+  public get fontSize() {
+    return this._fontSize;
+  }
+  public set fontSize(value: FontSize) {
+    if (this._textElement) {
+      this._textElement.style.fontSize = `${value.value}${value.units}`;
+    }
+    this._fontSize = value;
     this.positionText();
   }
 
@@ -89,9 +105,9 @@ export class TextBlock {
   }
 
   private setupTextElement() {
-    this._textElement.style.fontSize = '1rem';
+    this._textElement.style.fontSize = `${this.fontSize.value}${this.fontSize.units}`;
     this._textElement.style.textAnchor = 'middle';
-    this._textElement.style.dominantBaseline = 'hanging';
+    this._textElement.style.dominantBaseline = 'text-before-edge';
     this._textElement.transform.baseVal.appendItem(SvgHelper.createTransform()); // translate transorm
     this._textElement.transform.baseVal.appendItem(SvgHelper.createTransform()); // scale transorm
 
@@ -102,7 +118,7 @@ export class TextBlock {
   }
 
   public renderText() {
-    const LINE_SIZE = '1rem';
+    const LINE_SIZE = `${this.fontSize.value}${this.fontSize.units}`;
 
     if (this._textElement) {
       while (this._textElement.lastChild) {
@@ -134,6 +150,7 @@ export class TextBlock {
     this._textElement.childNodes.forEach((ts) => {
       const tspan = <SVGTSpanElement>ts;
       tspan.style.fontFamily = this._textElement.style.fontFamily;
+      tspan.style.fontSize = this._textElement.style.fontSize;
     });
   }
 
