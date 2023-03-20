@@ -8,7 +8,15 @@ export class TextStencil extends StencilBase {
 
   public static title = 'Text stencil';
 
-  public color = 'transparent';
+  private _color = 'transparent';
+  public get color() {
+    return this._color;
+  }
+  public set color(value) {
+    this._color = value;
+    this.textBlock.color = value;
+  }
+
   public fontFamily = 'Helvetica, Arial, sans-serif';
 
   private readonly DEFAULT_TEXT = 'Text';
@@ -93,7 +101,7 @@ export class TextStencil extends StencilBase {
   }
 
   public setColor(color: string): void {
-    this.textBlock.color = color;
+    this.color = color;
   }
 
   public setFont(font: string): void {
@@ -103,7 +111,7 @@ export class TextStencil extends StencilBase {
   public getState(): TextStencilState {
     const result: TextStencilState = Object.assign(
       {
-        color: this.color,
+        color: this._color,
         fontFamily: this.fontFamily,
         padding: this.padding,
         text: this.text,

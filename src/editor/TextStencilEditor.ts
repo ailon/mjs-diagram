@@ -4,8 +4,12 @@ import { RectangleTextStencil } from '../core/RectangleTextStencil';
 import { StencilBaseState } from '../core/StencilBaseState';
 import { TextBlockEditor } from './TextBlockEditor';
 import { StencilEditorProperties } from './StencilEditorProperties';
+import { TextPropertiesPanel } from './panels/TextPropertiesPanel';
+import { TextStencil } from '../core/TextStencil';
+import { PropertyPanelBase } from './panels/PropertyPanelBase';
 
 export class TextStencilEditor extends StencilBaseEditor {
+  private textPanel: TextPropertiesPanel;
   public get stencil(): RectangleTextStencil {
     return this._stencil as RectangleTextStencil;
   }
@@ -27,6 +31,17 @@ export class TextStencilEditor extends StencilBaseEditor {
     this.showTextEditor = this.showTextEditor.bind(this);
     this.setSize = this.setSize.bind(this);
     this.positionTextEditor = this.positionTextEditor.bind(this);
+
+    this.textPanel = new TextPropertiesPanel('Text', {
+      textColors: this.settings.getColorSet(this.stencil.typeName, 'text'),
+      textColor: this.settings.getColor(this.stencil.typeName, 'text')
+    });
+
+    this.textPanel.onColorChanged = (<TextStencil>this._stencil).setColor;
+  }
+
+  public get propertyPanels(): PropertyPanelBase[] {
+    return [...super.propertyPanels, this.textPanel];
   }
 
   public pointerDown(point: IPoint, target?: EventTarget): void {
