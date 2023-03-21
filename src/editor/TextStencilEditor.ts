@@ -134,7 +134,8 @@ export class TextStencilEditor extends StencilBaseEditor {
     super.create(point);
     this.setSize();
     this.showTextEditor();
-    this.setColor('#000000');
+    this.setFont(this.settings.getFontFamily(this.stencil.typeName));
+    this.setColor(this.settings.getColor(this.stencil.typeName, 'text'));
   }
 
   public select(): void {

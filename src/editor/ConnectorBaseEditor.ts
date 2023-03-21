@@ -83,6 +83,7 @@ export class ConnectorBaseEditor {
     this.connector.container = properties.container;
     this.overlayContainer = properties.overlayContainer;
     this._settings = properties.settings;
+    this.connector.textBlock.fontFamily = this.settings.getFontFamily(this.connector.typeName);
 
     this.connector.strokeColor = this.settings.getColor(
       this.connector.typeName,
