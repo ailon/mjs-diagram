@@ -252,7 +252,6 @@ export class DiagramEditor extends HTMLElement {
     const styleSheet = document.createElement('style');
     styleSheet.innerHTML = `
       * {
-        font-family: Helvetica, Arial, Sans-Serif;
         --i-mjstb-accent-color: var(--mjstb-accent-color, #cceeff);
         --i-mjstb-accent-color2: var(--mjstb-accent-color2, #335577);
         --i-mjstb-background-color: var(--mjstb-background-color, #333);

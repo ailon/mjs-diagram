@@ -89,6 +89,9 @@ export class TextStencilEditor extends StencilBaseEditor {
     this.overlayContainer.innerHTML = '';
 
     this.textBlockEditor.text = this.stencil.text;
+    this.textBlockEditor.fontFamily = this.stencil.fontFamily;
+    this.textBlockEditor.fontSize = `${this.stencil.fontSize.value}${this.stencil.fontSize.units}`;
+    this.textBlockEditor.textColor = this.stencil.textBlock.color;
 
     this.positionTextEditor();
 
