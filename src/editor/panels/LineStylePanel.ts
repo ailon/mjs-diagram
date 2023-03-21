@@ -32,7 +32,7 @@ export class LineStylePanel extends PropertyPanelBase {
 
     const panelDiv = document.createElement('div');
     panelDiv.style.display = 'flex';
-    panelDiv.style.flexWrap = 'wrap';
+    panelDiv.style.justifyContent = 'stretch';
     this.lineStyles.forEach((t) => {
       const typeBox = this.getTypeBox(t);
       panelDiv.appendChild(typeBox.getUi());
@@ -43,7 +43,7 @@ export class LineStylePanel extends PropertyPanelBase {
 
   private getTypeBox(lineStyle: string): ToolboxPanelItem<string> {
     const baseHeight = 40; // @todo: configurable
-    const baseWidth = 60; // @todo: configurable
+    const baseWidth = 160; // @todo: configurable
 
     const buttonHPadding = baseHeight / 4;
     const buttonHeight = baseHeight - buttonHPadding;
@@ -57,14 +57,14 @@ export class LineStylePanel extends PropertyPanelBase {
     thumbnail.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     thumbnail.setAttribute('width', buttonWidth.toString());
     thumbnail.setAttribute('height', buttonHeight.toString());
-    thumbnail.setAttribute(
-      'viewBox',
-      '0 0 ' + buttonWidth.toString() + ' ' + buttonHeight.toString()
-    );
+    // thumbnail.setAttribute(
+    //   'viewBox',
+    //   '0 0 ' + buttonWidth.toString() + ' ' + buttonHeight.toString()
+    // );
     const line = SvgHelper.createLine(
-      3,
+      0,
       buttonHeight / 2,
-      buttonWidth - 3,
+      buttonWidth,
       buttonHeight / 2,
       [
         ...this.lineAttributes,

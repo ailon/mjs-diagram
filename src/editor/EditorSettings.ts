@@ -146,24 +146,18 @@ export class EditorSettings {
     'orange',
     'yellow',
     'green',
-    'lightblue',
     'blue',
-    'magenta',
     'black',
     'white',
-    'brown'
   );
   public defaultStrokeColorSet = new ColorSet(
     'red',
     'orange',
     'yellow',
     'green',
-    'lightblue',
     'blue',
-    'magenta',
     'black',
     'white',
-    'brown'
   );
   public defaultFillColorSet = new ColorSet(
     '#cccccc',

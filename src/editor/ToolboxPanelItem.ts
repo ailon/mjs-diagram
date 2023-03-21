@@ -34,6 +34,8 @@ export class ToolboxPanelItem<T> {
     this.itemUi.style.display = 'flex';
     this.itemUi.style.borderWidth = '2px';
     this.itemUi.style.borderStyle = 'solid';
+    this.itemUi.style.flexGrow = '1';
+    this.itemUi.style.padding = '0 3px';
     this.itemUi.addEventListener('click', () => {
       if (this.onClick !== undefined) {
         this.onClick(this);
@@ -46,7 +48,9 @@ export class ToolboxPanelItem<T> {
       this.setupUi();
     }
     if (this.itemUi !== undefined) {
-      this.itemUi.style.width = `${this.width}px`;
+      this.itemUi.style.maxWidth = `${this.width}px`;
+      this.itemUi.style.minWidth = `20px`;
+      this.itemUi.style.overflow = `hidden`;
       this.itemUi.style.height = `${this.height}px`;
       this.itemUi.style.borderColor =
         this.isSelected ? 'var(--i-mjstb-accent-color)' : '#444';
