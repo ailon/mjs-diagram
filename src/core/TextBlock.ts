@@ -1,5 +1,5 @@
-import { FontSize } from "../editor/EditorSettings";
-import { SvgHelper } from "./SvgHelper";
+import { FontSize } from '../editor/EditorSettings';
+import { SvgHelper } from './SvgHelper';
 
 export class TextBlock {
   private _text = '';
@@ -23,7 +23,9 @@ export class TextBlock {
     this.positionText();
   }
 
-  private _labelBackground: SVGRectElement = SvgHelper.createRect(10, 10, [['fill', 'white']]);
+  private _labelBackground: SVGRectElement = SvgHelper.createRect(10, 10, [
+    ['fill', 'white'],
+  ]);
   public get labelBackground(): SVGRectElement {
     return this._labelBackground;
   }
@@ -59,7 +61,7 @@ export class TextBlock {
   private _fontSize: FontSize = {
     value: 1,
     units: 'rem',
-    step: 0.1
+    step: 0.1,
   };
   public get fontSize() {
     return this._fontSize;
@@ -101,7 +103,7 @@ export class TextBlock {
         }
       });
       return found;
-    }    
+    }
   }
 
   private setupTextElement() {
@@ -114,7 +116,7 @@ export class TextBlock {
     this._labelBackground.style.stroke = '#aaa';
     this._labelBackground.style.strokeDasharray = '2 2';
     this._labelBackground.style.strokeWidth = '1';
-    this._labelBackground.style.strokeOpacity = '0';    
+    this._labelBackground.style.strokeOpacity = '0';
   }
 
   public renderText() {
@@ -142,7 +144,9 @@ export class TextBlock {
       // hide to prevent jerky movements during layout
       this.textElement.style.opacity = '0';
 
-      setTimeout(() => { this.positionText(this) }, 10);
+      setTimeout(() => {
+        this.positionText(this);
+      }, 10);
     }
   }
 
@@ -156,20 +160,25 @@ export class TextBlock {
 
   public positionText(textBlock?: TextBlock) {
     const self = textBlock === undefined ? this : textBlock;
+    const LINE_SIZE = `${this.fontSize.value}${this.fontSize.units}`;
 
     self.applyFontStyles();
 
     const textBBox = self._textElement.getBBox();
     const centerX =
-      self.boundingBox.x +
-      self.boundingBox.width / 2 + self.offsetX;
+      self.boundingBox.x + self.boundingBox.width / 2 + self.offsetX;
     const centerY =
       self.boundingBox.y +
-      self.boundingBox.height / 2 - textBBox.height / 2 + self.offsetY;
+      self.boundingBox.height / 2 -
+      textBBox.height / 2 +
+      self.offsetY;
 
-    self._textElement.childNodes.forEach((ts) => {
+    self._textElement.childNodes.forEach((ts, lineno) => {
       const tspan = <SVGTSpanElement>ts;
-      SvgHelper.setAttributes(tspan, [['x', `${centerX}`]]);
+      SvgHelper.setAttributes(tspan, [
+        ['x', `${centerX}`],
+        ['dy', lineno > 0 ? LINE_SIZE : '0'],
+      ]);
     });
     SvgHelper.setAttributes(self._textElement, [['x', `${centerX}`]]);
     SvgHelper.setAttributes(self._textElement, [['y', `${centerY}`]]);
@@ -178,13 +187,12 @@ export class TextBlock {
     SvgHelper.setAttributes(self.labelBackground, [
       ['width', (textBBox.width * bgPadding).toString()],
       ['height', (textBBox.height * bgPadding).toString()],
-      ['x', (centerX - (textBBox.width * bgPadding / 2)).toString()],
-      ['y', (centerY - (textBBox.height / 2) * (bgPadding - 1) * 2).toString()]
+      ['x', (centerX - (textBBox.width * bgPadding) / 2).toString()],
+      ['y', (centerY - (textBBox.height / 2) * (bgPadding - 1) * 2).toString()],
     ]);
 
     // restore visibility
     this.textElement.style.opacity = '1';
-
   }
 
   public show() {
@@ -197,9 +205,9 @@ export class TextBlock {
   }
 
   public showControlBox() {
-    this.labelBackground.style.strokeOpacity = '1';    
+    this.labelBackground.style.strokeOpacity = '1';
   }
   public hideControlBox() {
-    this.labelBackground.style.strokeOpacity = '0';    
+    this.labelBackground.style.strokeOpacity = '0';
   }
 }
