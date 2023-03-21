@@ -302,6 +302,7 @@ export class DiagramEditor extends HTMLElement {
         padding: 2px;
         scrollbar-width: thin;
         overflow-y: auto;
+        font-family: Helvetica, Arial, sans-serif;
       }
       .toolbox-panel::-webkit-scrollbar {
         width: 12px;
@@ -338,6 +339,32 @@ export class DiagramEditor extends HTMLElement {
       .toolbox-panel .content-block input[type=text]:focus {
         background-color: #444;
       }
+      .toolbox-panel .content-block select {
+        background-color: #222;
+        color: #ccc;
+        font-size: 0.8rem;
+        padding: 3px;
+        border: 1px solid #333;
+        outline-color: #444;
+        outline-style: solid;
+        outline-width: 1px;
+      }
+      .toolbox-panel .content-block select:focus {
+        background-color: #444;
+      }
+      .toolbox-panel .content-block button {
+        background-color: #444;
+        color: #ccc;
+        font-size: 0.8rem;
+        padding: 3px;
+        border: 1px solid #333;
+        outline-color: #333;
+        outline-style: solid;
+        outline-width: 1px;
+      }
+      .toolbox-panel .content-block button:hover {
+        background-color: #222;
+      }      
 
       .toolbox-panel .content-block h3 {
         font-size: 0.8rem;
