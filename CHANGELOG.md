@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-alpha.9] - 2023-03-22
+### Added
+- editor settings
+- ShapePropertiesPanel meta-panel
+- line style panel
+- line width panel
+- text properties panel
+- font family panel
+- font size controls
+
+### Changed
+- stencil/connector Editor contstructor parameters to a single properties object
+- extracted toolbox panel item into a separate class for reuse
+- text editing to reflect font styles
+- panel layout/look
+
 ## [1.0.0-alpha.8] - 2023-03-14
 ### Added
 - document background setting and UI
@@ -77,6 +93,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial public release.
 
+[1.0.0-alpha.9]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.9
 [1.0.0-alpha.8]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.8
 [1.0.0-alpha.7]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.7
 [1.0.0-alpha.6]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.6
