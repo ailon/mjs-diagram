@@ -151,13 +151,21 @@ export class TextStencil extends StencilBase {
 
   public restoreState(state: TextStencilState): void {
     const textState = state as TextStencilState;
-    this.color = textState.color;
-    this.fontFamily = textState.fontFamily;
-    if (state.fontSize !== undefined) {
+    if (textState.color !== undefined) {
+      this.color = textState.color;
+    }
+    if (textState.fontFamily !== undefined) {
+      this.fontFamily = textState.fontFamily;
+    }
+    if (textState.fontSize !== undefined) {
       this.fontSize = textState.fontSize;
     }
-    this.padding = textState.padding;
-    this.text = textState.text;
+    if (textState.padding !== undefined) {
+      this.padding = textState.padding;
+    }
+    if (textState.text !== undefined) {
+      this.text = textState.text;
+    }
 
     super.restoreState(state);
   }

@@ -5,11 +5,11 @@ export interface StencilBaseState {
 
   left: number;
   top: number;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
 
-  fillColor: string;
-  strokeColor: string;
-  strokeWidth: number;
-  strokeDasharray: string;
+  fillColor?: string;
+  strokeColor?: string;
+  strokeWidth?: number;
+  strokeDasharray?: string;
 }

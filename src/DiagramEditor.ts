@@ -1791,10 +1791,12 @@ export class DiagramEditor extends HTMLElement {
     };
 
     this._stencilEditors.forEach((se) =>
-      result.stencils.push(se.stencil.getState())
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      result.stencils!.push(se.stencil.getState())
     );
     this._connectorEditors.forEach((ce) =>
-      result.connectors.push(ce.connector.getState())
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      result.connectors!.push(ce.connector.getState())
     );
 
     return result;
@@ -1849,7 +1851,10 @@ export class DiagramEditor extends HTMLElement {
   }
 
   public restoreState(state: DiagramState): void {
-    this.setDocumentSize(state.width, state.height);
+    if (state.width !== undefined && state.height !== undefined) {
+      this.setDocumentSize(state.width, state.height);
+    }
+
     if (state.backgroundColor !== undefined) {
       this.setDocumentBgColor(state.backgroundColor);
     }
@@ -1864,23 +1869,27 @@ export class DiagramEditor extends HTMLElement {
     }
     this._iid = 0;
 
-    state.stencils.forEach((stencilState) => {
-      const stencilType =
-        this._stencilEditorSet.stencilSet.getStencilProperties(
-          stencilState.typeName
-        );
-      if (stencilType !== undefined) {
-        const stencilEditor = this.addNewStencil(stencilType.stencilType);
-        stencilEditor.restoreState(stencilState);
-        this._iid = Math.max(this._iid, stencilEditor.stencil.IId); // adjust current iid counter
-        stencilEditor.onStencilChanged = this.stencilChanged;
-        this._stencilEditors.push(stencilEditor);
-      }
-    });
+    if (state.stencils !== undefined && state.stencils.length > 0) {
+      state.stencils.forEach((stencilState) => {
+        const stencilType =
+          this._stencilEditorSet.stencilSet.getStencilProperties(
+            stencilState.typeName
+          );
+        if (stencilType !== undefined) {
+          const stencilEditor = this.addNewStencil(stencilType.stencilType);
+          stencilEditor.restoreState(stencilState);
+          this._iid = Math.max(this._iid, stencilEditor.stencil.IId); // adjust current iid counter
+          stencilEditor.onStencilChanged = this.stencilChanged;
+          this._stencilEditors.push(stencilEditor);
+        }
+      });
+    }
 
-    state.connectors.forEach((conState) => {
-      this.restoreConnector(conState);
-    });
+    if (state.connectors !== undefined && state.connectors.length > 0) {
+      state.connectors.forEach((conState) => {
+        this.restoreConnector(conState);
+      });
+    }
   }
 
   public zoom(factor: number): void {

@@ -12,12 +12,12 @@ export interface ConnectorBaseState {
   endStencilId?: number;
   endPortLocation?: PortLocation;
 
-  labelOffsetX: number;
-  labelOffsetY: number;
+  labelOffsetX?: number;
+  labelOffsetY?: number;
 
-  strokeColor: string;
-  strokeWidth: number;
-  strokeDasharray: string;
+  strokeColor?: string;
+  strokeWidth?: number;
+  strokeDasharray?: string;
 
   arrowType?: ArrowType;
 

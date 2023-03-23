@@ -335,13 +335,24 @@ export class StencilBase {
 
     this.left = state.left;
     this.top = state.top;
-    this.width = state.width;
-    this.height = state.height;
-
-    this._fillColor = state.fillColor;
-    this._strokeColor = state.strokeColor;
-    this.strokeWidth = state.strokeWidth;
-    this.strokeDasharray = state.strokeDasharray;
+    if (state.width !== undefined) {
+      this.width = state.width;
+    }
+    if (state.height !== undefined) {
+      this.height = state.height;
+    }
+    if (state.fillColor !== undefined) {
+      this._fillColor = state.fillColor;
+    }
+    if (state.strokeColor !== undefined) {
+      this._strokeColor = state.strokeColor;
+    }
+    if (state.strokeWidth !== undefined) {
+      this.strokeWidth = state.strokeWidth;
+    }
+    if (state.strokeDasharray !== undefined) {
+      this.strokeDasharray = state.strokeDasharray;
+    }
 
     this.createVisual();
     this.setSize();

@@ -121,7 +121,7 @@ export class DiagramViewer extends HTMLElement {
     this._mainCanvas.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     this.setMainCanvasSize();
     this._mainCanvas.style.pointerEvents = 'auto';
-    
+
     this._mainCanvas.style.fontFamily = 'Helvetica, Arial, Sans-Serif';
     this._mainCanvas.style.backgroundColor = this.documentBgColor;
 
@@ -254,9 +254,9 @@ export class DiagramViewer extends HTMLElement {
       this._mainCanvas.setAttribute(
         'viewBox',
         '0 0 ' +
-        this.documentWidth.toString() +
-        ' ' +
-        this.documentHeight.toString()
+          this.documentWidth.toString() +
+          ' ' +
+          this.documentHeight.toString()
       );
       this.zoomLevel = this.zoomLevel * 1;
     }
@@ -269,7 +269,9 @@ export class DiagramViewer extends HTMLElement {
   }
 
   public show(state: DiagramState): void {
-    this.setDocumentSize(state.width, state.height);
+    if (state.width !== undefined && state.height !== undefined) {
+      this.setDocumentSize(state.width, state.height);
+    }
     if (state.backgroundColor !== undefined) {
       this.setDocumentBgColor(state.backgroundColor);
     }
@@ -283,49 +285,55 @@ export class DiagramViewer extends HTMLElement {
       this._connectorLayer.removeChild(this._connectorLayer.lastChild);
     }
 
-    state.stencils.forEach((stencilState) => {
-      const sp = this._stencilSet.getStencilProperties(stencilState.typeName);
-      if (sp !== undefined) {
-        const stencil = this.addNewStencil(sp.stencilType);
-        stencil.restoreState(stencilState);
-        this._stencils.push(stencil);
-      }
-    });
+    if (state.stencils !== undefined && state.stencils.length > 0) {
+      state.stencils.forEach((stencilState) => {
+        const sp = this._stencilSet.getStencilProperties(stencilState.typeName);
+        if (sp !== undefined) {
+          const stencil = this.addNewStencil(sp.stencilType);
+          stencil.restoreState(stencilState);
+          this._stencils.push(stencil);
+        }
+      });
+    }
 
-    state.connectors.forEach((conState) => {
-      const cp = this._stencilSet.getConnectorProperties(conState.typeName);
-      if (cp !== undefined) {
-        const startStencil = this._stencils.find(
-          (s) => s.IId === conState.startStencilId
-        );
-        const endStencil = this._stencils.find(
-          (s) => s.IId === conState.endStencilId
-        );
+    if (state.connectors !== undefined && state.connectors.length > 0) {
+      state.connectors.forEach((conState) => {
+        const cp = this._stencilSet.getConnectorProperties(conState.typeName);
+        if (cp !== undefined) {
+          const startStencil = this._stencils.find(
+            (s) => s.IId === conState.startStencilId
+          );
+          const endStencil = this._stencils.find(
+            (s) => s.IId === conState.endStencilId
+          );
 
-        if (
-          startStencil &&
-          endStencil &&
-          conState.startPortLocation &&
-          conState.endPortLocation
-        ) {
-          const startPort = startStencil.ports.get(conState.startPortLocation);
-          const endPort = endStencil.ports.get(conState.endPortLocation);
+          if (
+            startStencil &&
+            endStencil &&
+            conState.startPortLocation &&
+            conState.endPortLocation
+          ) {
+            const startPort = startStencil.ports.get(
+              conState.startPortLocation
+            );
+            const endPort = endStencil.ports.get(conState.endPortLocation);
 
-          if (startPort && endPort) {
-            const connector = this.addNewConnector(cp.connectorType);
-            connector.restoreState(conState, {
-              startStencil: startStencil,
-              startPort: startPort,
-              endStencil: endStencil,
-              endPort: endPort,
-            });
-            this._connectors.push(connector);
-            startPort.connectors.push(connector);
-            endPort.connectors.push(connector);
+            if (startPort && endPort) {
+              const connector = this.addNewConnector(cp.connectorType);
+              connector.restoreState(conState, {
+                startStencil: startStencil,
+                startPort: startPort,
+                endStencil: endStencil,
+                endPort: endPort,
+              });
+              this._connectors.push(connector);
+              startPort.connectors.push(connector);
+              endPort.connectors.push(connector);
+            }
           }
         }
-      }
-    });
+      });
+    }
   }
 
   /**

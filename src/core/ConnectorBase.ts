@@ -48,9 +48,9 @@ export class ConnectorBase {
     this.textBlock.text = this._labelText;
   }
 
-  public textBlock: TextBlock = new TextBlock();  
+  public textBlock: TextBlock = new TextBlock();
 
-  public textBoundingBox= new DOMRect();
+  public textBoundingBox = new DOMRect();
 
   protected arrow1!: SVGPolygonElement;
   protected arrow2!: SVGPolygonElement;
@@ -58,7 +58,7 @@ export class ConnectorBase {
   public arrowType: ArrowType = 'none';
 
   protected arrowBaseHeight = 10;
-  protected arrowBaseWidth = 10;  
+  protected arrowBaseWidth = 10;
 
   public static getThumbnail(width: number, height: number): SVGSVGElement {
     const result = document.createElementNS(
@@ -70,16 +70,17 @@ export class ConnectorBase {
     result.setAttribute('height', height.toString());
     result.setAttribute(
       'viewBox',
-      '0 0 ' +
-        width.toString() +
-        ' ' +
-        height.toString()
+      '0 0 ' + width.toString() + ' ' + height.toString()
     );
 
     const xPadding = Math.max(Math.floor(width * 0.05), 2);
     const yPadding = Math.max(Math.floor(height * 0.05), 2);
 
-    const line = SvgHelper.createLine(xPadding, yPadding, width - xPadding, height - xPadding,
+    const line = SvgHelper.createLine(
+      xPadding,
+      yPadding,
+      width - xPadding,
+      height - xPadding,
       [['stroke-width', Math.max(Math.round(width / 20), 2).toString()]]
     );
 
@@ -87,7 +88,7 @@ export class ConnectorBase {
 
     return result;
   }
-  
+
   constructor(iid: number, container: SVGGElement) {
     this._iid = iid;
     this.container = container;
@@ -178,16 +179,23 @@ export class ConnectorBase {
     const height = this.arrowBaseHeight + this.strokeWidth * 2;
     return `${offsetX - width / 2},${
       offsetY + height - this.strokeWidth
-    } ${offsetX},${offsetY - this.strokeWidth} ${
-      offsetX + width / 2},${offsetY + height - this.strokeWidth}`;
+    } ${offsetX},${offsetY - this.strokeWidth} ${offsetX + width / 2},${
+      offsetY + height - this.strokeWidth
+    }`;
   }
 
   private createTips() {
-    this.arrow1 = SvgHelper.createPolygon(this.getArrowPoints(this.x1, this.y1), [['fill', this.strokeColor]]);
+    this.arrow1 = SvgHelper.createPolygon(
+      this.getArrowPoints(this.x1, this.y1),
+      [['fill', this.strokeColor]]
+    );
     this.arrow1.transform.baseVal.appendItem(SvgHelper.createTransform());
     this.visual.appendChild(this.arrow1);
 
-    this.arrow2 = SvgHelper.createPolygon(this.getArrowPoints(this.x2, this.y2), [['fill', this.strokeColor]]);
+    this.arrow2 = SvgHelper.createPolygon(
+      this.getArrowPoints(this.x2, this.y2),
+      [['fill', this.strokeColor]]
+    );
     this.arrow2.transform.baseVal.appendItem(SvgHelper.createTransform());
     this.visual.appendChild(this.arrow2);
   }
@@ -246,8 +254,12 @@ export class ConnectorBase {
       this.visibleLine.setAttribute('y2', ending2.y.toString());
 
       SvgHelper.setAttributes(this.visibleLine, [['stroke', this.strokeColor]]);
-      SvgHelper.setAttributes(this.visibleLine, [['stroke-width', this.strokeWidth.toString()]]);
-      SvgHelper.setAttributes(this.visibleLine, [['stroke-dasharray', this.strokeDasharray.toString()]]);
+      SvgHelper.setAttributes(this.visibleLine, [
+        ['stroke-width', this.strokeWidth.toString()],
+      ]);
+      SvgHelper.setAttributes(this.visibleLine, [
+        ['stroke-dasharray', this.strokeDasharray.toString()],
+      ]);
 
       this.adjustTips();
 
@@ -258,16 +270,24 @@ export class ConnectorBase {
 
   public adjustTips() {
     if (this.arrow1 && this.arrow2) {
-      this.arrow1.style.display = (this.arrowType === 'both' || this.arrowType === 'start') && this.startPort !== undefined ? '' : 'none';
-      this.arrow2.style.display = (this.arrowType === 'both' || this.arrowType === 'end') && this.endPort !== undefined ? '' : 'none';
+      this.arrow1.style.display =
+        (this.arrowType === 'both' || this.arrowType === 'start') &&
+        this.startPort !== undefined
+          ? ''
+          : 'none';
+      this.arrow2.style.display =
+        (this.arrowType === 'both' || this.arrowType === 'end') &&
+        this.endPort !== undefined
+          ? ''
+          : 'none';
 
       SvgHelper.setAttributes(this.arrow1, [
         ['points', this.getArrowPoints(this.x1, this.y1)],
-        ['fill', this.strokeColor]
+        ['fill', this.strokeColor],
       ]);
       SvgHelper.setAttributes(this.arrow2, [
         ['points', this.getArrowPoints(this.x2, this.y2)],
-        ['fill', this.strokeColor]
+        ['fill', this.strokeColor],
       ]);
 
       this.rotateArrows();
@@ -276,7 +296,9 @@ export class ConnectorBase {
 
   protected rotateArrows() {
     if (Math.abs(this.x1 - this.x2) > 0.1) {
-      const lineAngle1 = (Math.atan((this.y2 - this.y1) / (this.x2 - this.x1)) * 180) / Math.PI + 90 * Math.sign(this.x1 - this.x2);
+      const lineAngle1 =
+        (Math.atan((this.y2 - this.y1) / (this.x2 - this.x1)) * 180) / Math.PI +
+        90 * Math.sign(this.x1 - this.x2);
 
       const a1transform = this.arrow1.transform.baseVal.getItem(0);
       a1transform.setRotate(lineAngle1, this.x1, this.y1);
@@ -309,8 +331,10 @@ export class ConnectorBase {
   protected setTextBoundingBox() {
     this.textBoundingBox.x = Math.min(this.x1, this.x2);
     this.textBoundingBox.y = Math.min(this.y1, this.y2);
-    this.textBoundingBox.width = Math.max(this.x1, this.x2) - this.textBoundingBox.x;
-    this.textBoundingBox.height = Math.max(this.y1, this.y2) - this.textBoundingBox.y;
+    this.textBoundingBox.width =
+      Math.max(this.x1, this.x2) - this.textBoundingBox.x;
+    this.textBoundingBox.height =
+      Math.max(this.y1, this.y2) - this.textBoundingBox.y;
     this.textBlock.boundingBox = this.textBoundingBox;
   }
 
@@ -332,7 +356,7 @@ export class ConnectorBase {
 
     this.adjustVisual();
   }
-  
+
   public getState(): ConnectorBaseState {
     return {
       typeName: this.typeName,
@@ -353,19 +377,32 @@ export class ConnectorBase {
 
       arrowType: this.arrowType,
 
-      labelText: this.labelText
-    }
+      labelText: this.labelText,
+    };
   }
 
-  public restoreState(state: ConnectorBaseState, endPoints: ConnectorEndPoints) {
+  public restoreState(
+    state: ConnectorBaseState,
+    endPoints: ConnectorEndPoints
+  ) {
     this._iid = state.iid;
 
-    this.strokeColor = state.strokeColor;
-    this.strokeWidth = state.strokeWidth;
-    this.strokeDasharray = state.strokeDasharray;
+    if (state.strokeColor !== undefined) {
+      this.strokeColor = state.strokeColor;
+    }
+    if (state.strokeWidth !== undefined) {
+      this.strokeWidth = state.strokeWidth;
+    }
+    if (state.strokeDasharray !== undefined) {
+      this.strokeDasharray = state.strokeDasharray;
+    }
 
-    this.textBlock.offsetX = state.labelOffsetX;
-    this.textBlock.offsetY = state.labelOffsetY;
+    if (state.labelOffsetX !== undefined) {
+      this.textBlock.offsetX = state.labelOffsetX;
+    }
+    if (state.labelOffsetY !== undefined) {
+      this.textBlock.offsetY = state.labelOffsetY;
+    }
 
     this.startStencil = endPoints.startStencil;
     this.startPort = endPoints.startPort;
@@ -380,5 +417,4 @@ export class ConnectorBase {
     this.adjustPoints();
     this.adjustVisual();
   }
-
 }
