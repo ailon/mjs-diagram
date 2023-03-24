@@ -1,4 +1,5 @@
-import { FontFamily, FontSize } from '../EditorSettings';
+import { FontSize } from "../../core/FontSize";
+import { FontFamily } from "../FontFamily";
 import { PropertyPanelBase } from './PropertyPanelBase';
 
 export type FontFamilyChangeHandler = (newStyle: string) => void;

@@ -1,4 +1,5 @@
-import { Color, ColorSet } from '../EditorSettings';
+import { ColorSet } from "../ColorSet";
+import { Color } from "../Color";
 import { PropertyPanelBase } from './PropertyPanelBase';
 
 export type ColorChangeHandler = (newColor: string) => void;

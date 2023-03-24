@@ -1,4 +1,6 @@
-import { ColorSet, FontFamily, FontSize } from "../EditorSettings";
+import { FontSize } from "../../core/FontSize";
+import { FontFamily } from "../FontFamily";
+import { ColorSet } from "../ColorSet";
 import { ColorChangeHandler, ColorPickerPanel } from "./ColorPickerPanel";
 import { FontFamilyChangeHandler, FontPanel, FontSizeChangeHandler } from "./FontPanel";
 import { PropertyPanelBase } from "./PropertyPanelBase";

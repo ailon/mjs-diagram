@@ -1,4 +1,5 @@
-import { FontSize } from '../editor/EditorSettings';
+import { DiagramSettings } from "./DiagramSettings";
+import { FontSize } from "./FontSize";
 import { StencilBase } from './StencilBase';
 import { SvgHelper } from './SvgHelper';
 import { TextBlock } from './TextBlock';
@@ -58,8 +59,8 @@ export class TextStencil extends StencilBase {
   //public textElement!: SVGTextElement;
   public textBlock: TextBlock = new TextBlock(this.DEFAULT_TEXT);
 
-  constructor(iid: number, container: SVGGElement) {
-    super(iid, container);
+  constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
+    super(iid, container, settings);
 
     this.setColor = this.setColor.bind(this);
     this.setFont = this.setFont.bind(this);

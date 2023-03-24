@@ -11,8 +11,8 @@ import { mindMapStencilSet } from '../../src/stencilsets/mindmap/MindMapStencilS
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { mindMapStencilEditorSet } from '../../src/stencilsets/mindmap/MindMapStencilEditorSet';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { DiagramState, DiagramViewer } from '../../src/viewer_index';
-import { ColorSet } from '../../src/editor/EditorSettings';
+import { ArrowConnector, DiagramState, DiagramViewer } from '../../src/viewer_index';
+import { ColorSet } from "../../src/editor/ColorSet";
 
 export * from './../../src/index';
 
@@ -159,6 +159,35 @@ export class Experiments {
 
     this.viewer = <DiagramViewer>document.getElementById('mjsDiaView');
     this.viewer.stencilSet = flowchartStencilSet;
-    this.viewer.show(this.oldState);
+
+    const manualState: DiagramState = {
+      stencils: [
+        <TextStencilState>{
+          typeName: 'TerminalStencil',
+          iid: 1,
+          left: 300,
+          top: 40,
+          text: 'Start'
+        },
+        <TextStencilState>{
+          typeName: 'DecisionStencil',
+          iid: 2,
+          left: 300,
+          top: 140,
+          text: 'What\'s up?'
+        }
+      ],
+      connectors: [
+        {
+          typeName: ArrowConnector.typeName,
+          iid: 101,
+          startStencilId: 1,
+          startPortLocation: 'bottomcenter',
+          endStencilId: 2,
+          endPortLocation: 'topcenter'
+        }
+      ]
+    }
+    this.viewer.show(manualState);
   }
 }

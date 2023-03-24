@@ -1,4 +1,4 @@
-import { FontSize } from '../editor/EditorSettings';
+import { FontSize } from "./FontSize";
 import { SvgHelper } from './SvgHelper';
 
 export class TextBlock {

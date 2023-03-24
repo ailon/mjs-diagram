@@ -1,3 +1,4 @@
+import { DiagramSettings } from "../../../core/DiagramSettings";
 import { RectangleTextStencil } from "../../../core/RectangleTextStencil";
 
 export class IOStencil extends RectangleTextStencil {
@@ -10,8 +11,8 @@ export class IOStencil extends RectangleTextStencil {
     return result;
   }
 
-  constructor(iid: number, container: SVGGElement) {
-    super(iid, container);
+  constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
+    super(iid, container, settings);
 
     this.textBoundingBox = new DOMRect();
 

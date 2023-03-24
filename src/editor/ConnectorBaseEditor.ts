@@ -79,7 +79,7 @@ export class ConnectorBaseEditor {
   constructor(properties: ConnectorEditorProperties) {
     this.connector =
       properties.connector ??
-      new properties.connectorType(properties.iid, properties.container);
+      new properties.connectorType(properties.iid, properties.container, properties.settings);
     this.connector.container = properties.container;
     this.overlayContainer = properties.overlayContainer;
     this._settings = properties.settings;

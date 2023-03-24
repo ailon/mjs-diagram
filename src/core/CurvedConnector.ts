@@ -1,4 +1,5 @@
 import { ConnectorBase } from './ConnectorBase';
+import { DiagramSettings } from './DiagramSettings';
 import { IPoint } from './IPoint';
 import { Port } from './Port';
 import { SvgHelper } from './SvgHelper';
@@ -38,8 +39,8 @@ export class CurvedConnector extends ConnectorBase {
 
   protected andgledCorners = true;
 
-  constructor(iid: number, container: SVGGElement) {
-    super(iid, container);
+  constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
+    super(iid, container, settings);
 
     this.getPathD = this.getPathD.bind(this);
     // this.createCoreVisual = this.createCoreVisual.bind(this);

@@ -7,6 +7,7 @@ import { SvgHelper } from './core/SvgHelper';
 
 import Logo from './assets/markerjs-logo-m.svg';
 import { Activator } from './core/Activator';
+import { DiagramSettings } from './core/DiagramSettings';
 
 export class DiagramViewer extends HTMLElement {
   private _container?: HTMLDivElement;
@@ -59,6 +60,8 @@ export class DiagramViewer extends HTMLElement {
       this.removeLogo();
     }
   }
+
+  public readonly settings: DiagramSettings = new DiagramSettings();
 
   constructor() {
     super();
@@ -230,14 +233,14 @@ export class DiagramViewer extends HTMLElement {
     const g = SvgHelper.createGroup();
     this._objectLayer?.appendChild(g);
 
-    return new stencilType(this.getNewIId(), g);
+    return new stencilType(this.getNewIId(), g, this.settings);
   }
 
   private addNewConnector(connectorType: typeof ConnectorBase): ConnectorBase {
     const g = SvgHelper.createGroup();
     this._connectorLayer?.appendChild(g);
 
-    return new connectorType(this.getNewIId(), g);
+    return new connectorType(this.getNewIId(), g, this.settings);
   }
 
   private setDocumentBgColor(color: string) {

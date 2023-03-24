@@ -81,10 +81,10 @@ export class StencilBaseEditor {
     this._container = properties.container;
     this._overlayContainer = properties.overlayContainer;
     this._stencilType = properties.stencilType;
+    this._settings = properties.settings;
     this._stencil =
       properties.stencil ??
-      new properties.stencilType(properties.iid, properties.container);
-    this._settings = properties.settings;
+      new properties.stencilType(properties.iid, properties.container, this.settings);
 
     this.shapePanel = new ShapePropertiesPanel('Shape', {
       strokeColors: this.settings.getColorSet(this.stencil.typeName, 'stroke'),

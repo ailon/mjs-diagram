@@ -1,3 +1,4 @@
+import { DiagramSettings } from './DiagramSettings';
 import { RectangleTextStencil } from './RectangleTextStencil';
 
 export class DiamondStencil extends RectangleTextStencil {
@@ -10,8 +11,8 @@ export class DiamondStencil extends RectangleTextStencil {
     return result;
   }
 
-  constructor(iid: number, container: SVGGElement) {
-    super(iid, container);
+  constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
+    super(iid, container, settings);
 
     this.setColor = this.setColor.bind(this);
     this.setFont = this.setFont.bind(this);

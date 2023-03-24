@@ -1,4 +1,5 @@
 import { ConnectorBaseState, ConnectorEndPoints } from './ConnectorBaseState';
+import { DiagramSettings } from './DiagramSettings';
 import { IPoint } from './IPoint';
 import { Port } from './Port';
 import { StencilBase } from './StencilBase';
@@ -89,9 +90,15 @@ export class ConnectorBase {
     return result;
   }
 
-  constructor(iid: number, container: SVGGElement) {
+  private _settings: DiagramSettings;
+  protected get settings(): DiagramSettings {
+    return this._settings;
+  }
+
+  constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     this._iid = iid;
     this.container = container;
+    this._settings = settings;
 
     this.ownsTarget = this.ownsTarget.bind(this);
     this.createVisual = this.createVisual.bind(this);
@@ -409,7 +416,9 @@ export class ConnectorBase {
     this.endStencil = endPoints.endStencil;
     this.endPort = endPoints.endPort;
 
-    this.arrowType = state.arrowType ?? 'none';
+    if (state.arrowType !== undefined) {
+      this.arrowType = state.arrowType;
+    }
 
     this.labelText = state.labelText ?? '';
 

@@ -1,3 +1,4 @@
+import { DiagramSettings } from './DiagramSettings';
 import { IPoint } from './IPoint';
 import { ISize } from './ISize';
 import { Port, PortLocation } from './Port';
@@ -28,22 +29,35 @@ export class StencilBase {
     return this._container;
   }
 
+  private _settings: DiagramSettings;
+  protected get settings(): DiagramSettings {
+    return this._settings;
+  }
+
   public notes?: string;
 
   public onStencilCreated?: (stencil: StencilBase) => void;
 
+  protected _defaultSize: ISize = { width: 120, height: 70 }
+  public get defaultSize(): ISize {
+    return this._defaultSize;
+  }
+  public set defaultSize(value: ISize) {
+    this._defaultSize = value;
+    this.width = value.width;
+    this.height = value.height;
+  }
+
   public left = 0;
   public top = 0;
-  public width = 0;
-  public height = 0;
+  public width = this._defaultSize.width;
+  public height = this._defaultSize.height;
   public get right(): number {
     return this.left + this.width;
   }
   public get bottom(): number {
     return this.top + this.height;
   }
-
-  public defaultSize: ISize = { width: 120, height: 70 };
 
   protected get centerX(): number {
     return this.left + this.width / 2;
@@ -88,9 +102,10 @@ export class StencilBase {
     ['bottomright', new Port('bottomright')],
   ]);
 
-  constructor(iid: number, container: SVGGElement) {
+  constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     this._iid = iid;
     this._container = container;
+    this._settings = settings;
 
     this.getPathD = this.getPathD.bind(this);
     this.getSelectorPathD = this.getSelectorPathD.bind(this);
@@ -103,6 +118,11 @@ export class StencilBase {
     this.createSelector = this.createSelector.bind(this);
     this.adjustSelector = this.adjustSelector.bind(this);
     this.adjustVisual = this.adjustVisual.bind(this);
+
+    this._strokeColor = this.settings.getColor(this.typeName, 'stroke');
+    this._fillColor = this.settings.getColor(this.typeName, 'fill');
+    this.setStrokeWidth(this.settings.getStrokeWidth(this.typeName));
+    this.strokeDasharray = this.settings.getDashArray(this.typeName);
   }
 
   protected static getThumbnailSVG(

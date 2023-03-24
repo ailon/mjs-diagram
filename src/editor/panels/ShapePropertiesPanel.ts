@@ -1,4 +1,4 @@
-import { ColorSet } from "../EditorSettings";
+import { ColorSet } from "../ColorSet";
 import { ColorChangeHandler, ColorPickerPanel } from "./ColorPickerPanel";
 import { LineStyleChangeHandler, LineStylePanel } from "./LineStylePanel";
 import { PropertyPanelBase } from "./PropertyPanelBase";

@@ -1,3 +1,4 @@
+import { DiagramSettings } from "../../../core/DiagramSettings";
 import { RectangleTextStencil } from "../../../core/RectangleTextStencil";
 
 export class SubTopicStencil extends RectangleTextStencil {
@@ -25,8 +26,8 @@ export class SubTopicStencil extends RectangleTextStencil {
     return super.getThumbnail(width, width / 4);
   }
 
-  constructor(iid: number, container: SVGGElement) {
-    super(iid, container);
+  constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
+    super(iid, container, settings);
 
     this.defaultSize.height = 40;
 

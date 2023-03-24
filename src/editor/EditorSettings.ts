@@ -1,84 +1,10 @@
-export class Color {
-  public value: string;
+import { DiagramSettings } from "../core/DiagramSettings";
+import { ColorSet } from "./ColorSet";
+import { ColorType } from "../core/ColorType";
+import { FontFamily } from "./FontFamily";
 
-  private _label?: string | undefined;
-  public get label(): string {
-    return this._label ?? this.value;
-  }
-  public set label(value: string | undefined) {
-    this._label = value;
-  }
-
-  constructor(value: string, label?: string) {
-    this.value = value;
-    if (label !== undefined) {
-      this.label = label;
-    }
-  }
-}
-
-export type ColorType = 'text' | 'stroke' | 'fill' | 'background';
-
-export class ColorSet extends Array<Color> {
-  constructor(...colors: (Color | string)[]) {
-    super();
-    if (colors.length > 0) {
-      colors.forEach((color) => {
-        if (typeof color === 'string') {
-          this.push(new Color(color));
-        } else {
-          this.push(color);
-        }
-      });
-    }
-  }
-}
-
-export class FontFamily {
-  public value: string;
-
-  private _label?: string | undefined;
-  public get label(): string {
-    return this._label ?? this.value;
-  }
-  public set label(value: string | undefined) {
-    this._label = value;
-  }
-
-  constructor(value: string, label?: string) {
-    this.value = value;
-    if (label !== undefined) {
-      this.label = label;
-    }
-  }
-}
-
-export interface FontSize {
-  value: number;
-  units: string;
-  step: number;
-}
-
-export class EditorSettings {
-  private _contextStrings: Map<string, Map<string, string>> = new Map();
+export class EditorSettings extends DiagramSettings {
   private _contextStringArrays: Map<string, Map<string, string[]>> = new Map();
-
-  public getContextString(context: string, name: string): string | undefined {
-    const contextBucket = this._contextStrings.get(context);
-    if (contextBucket !== undefined) {
-      return contextBucket.get(name);
-    } else {
-      return undefined;
-    }
-  }
-  public setContextString(context: string, name: string, value: string) {
-    let contextBucket = this._contextStrings.get(context);
-    if (contextBucket === undefined) {
-      contextBucket = new Map<string, string>();
-      this._contextStrings.set(context, contextBucket);
-    }
-    contextBucket.set(name, value);
-  }
 
   public getContextStringArray(
     context: string,
@@ -100,37 +26,6 @@ export class EditorSettings {
     contextBucket.set(name, value);
   }
 
-  public defaultColor = '#000';
-  public defaultTextColor = this.defaultColor;
-  public defaultStrokeColor = this.defaultColor;
-  public defaultFillColor = '#ccc';
-  public defaultBackgroundColor = '#fff';
-
-  private _colors: Map<string, Map<ColorType, string>> = new Map();
-  public getColor(context: string, type: ColorType): string {
-    const contextColor = this._colors.get(context)?.get(type);
-    if (contextColor !== undefined) {
-      return contextColor;
-    } else {
-      switch (type) {
-        case 'background': {
-          return this.defaultBackgroundColor;
-        }
-        case 'fill': {
-          return this.defaultFillColor;
-        }
-        case 'stroke': {
-          return this.defaultStrokeColor;
-        }
-        case 'text': {
-          return this.defaultTextColor;
-        }
-        default: {
-          return this.defaultColor;
-        }
-      }
-    }
-  }
 
   public setContextColor(context: string, type: ColorType, color: string) {
     let contextColors = this._colors.get(context);
@@ -213,18 +108,7 @@ export class EditorSettings {
     contextColorSet.set(type, colorSet);
   }
 
-  public defaultStrokeDasharray = '';
   public defaultStrokeDasharrays = ['', '3', '12 3', '9 6 3 6'];
-
-  public getDashArray(context: string): string {
-    return (
-      this.getContextString(context, 'strokeDashArray') ??
-      this.defaultStrokeDasharray
-    );
-  }
-  public setContextDashArray(context: string, value: string) {
-    this.setContextString(context, 'strokeDashArray', value);
-  }
 
   public getDashArrays(context: string): string[] {
     return (
@@ -236,17 +120,7 @@ export class EditorSettings {
     this.setContextStringArray(context, 'strokeDashArrays', value);
   }
 
-  public defaultStrokeWidth = '1';
   public defaultStrokeWidths = ['1', '2', '3', '5'];
-
-  public getStrokeWidth(context: string): string {
-    return (
-      this.getContextString(context, 'strokeWidth') ?? this.defaultStrokeWidth
-    );
-  }
-  public setContextStrokeWidth(context: string, value: string) {
-    this.setContextString(context, 'strokeWidth', value);
-  }
 
   public getStrokeWidths(context: string): string[] {
     return (
@@ -263,7 +137,6 @@ export class EditorSettings {
     new FontFamily('Helvetica, Arial, sans-serif', 'Sans-serif'),
     new FontFamily('Courier, "Courier New", monospace', 'Monospace'),
   ];
-  public defaultFontFamily = 'Helvetica, Arial, sans-serif';
 
   private _fontFamilies: Map<string, Array<FontFamily>> = new Map();
   public getFontFamilies(context: string): FontFamily[] {
@@ -275,32 +148,5 @@ export class EditorSettings {
   }
   public setContextFontFamilies(context: string, value: FontFamily[]) {
     this._fontFamilies.set(context, value);
-  }
-
-  private _fontFamily: Map<string, string> = new Map();
-  public getFontFamily(context: string): string {
-    const fontFamily = this._fontFamily.get(context);
-    return (
-      fontFamily ??
-      this.defaultFontFamily
-    );
-  }
-  public setContextFontFamily(context: string, value: string) {
-    this._fontFamily.set(context, value);
-  }
-
-  public defaultFontSize: FontSize = {
-    value: 1,
-    units: 'rem',
-    step: 0.1
-  };
-
-  private _fontSizes: Map<string, FontSize> = new Map();
-  public getFontSize(context: string): FontSize {
-    const fontSize = this._fontSizes.get(context);
-    return fontSize ?? this.defaultFontSize;
-  }
-  public setContextFontSize(context: string, value: FontSize) {
-    this._fontSizes.set(context, value);
   }
 }

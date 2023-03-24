@@ -1,4 +1,4 @@
-import { FontSize } from '../editor/EditorSettings';
+import { FontSize } from "./FontSize";
 import { StencilBaseState } from './StencilBaseState';
 
 export interface TextStencilState extends StencilBaseState {
