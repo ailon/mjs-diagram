@@ -71,7 +71,9 @@ export class DiagramViewer extends HTMLElement {
     this.onStencilPointerUp = this.onStencilPointerUp.bind(this);
     this.onPointerUp = this.onPointerUp.bind(this);
     this.onPointerOut = this.onPointerOut.bind(this);
+
     this.clientToLocalCoordinates = this.clientToLocalCoordinates.bind(this);
+    this.addStyles = this.addStyles.bind(this);
 
     this.addLogo = this.addLogo.bind(this);
     this.removeLogo = this.removeLogo.bind(this);
@@ -231,6 +233,7 @@ export class DiagramViewer extends HTMLElement {
 
   private addNewStencil(stencilType: typeof StencilBase): StencilBase {
     const g = SvgHelper.createGroup();
+    g.classList.add('stencil-container');
     this._objectLayer?.appendChild(g);
 
     return new stencilType(this.getNewIId(), g, this.settings);
@@ -238,6 +241,7 @@ export class DiagramViewer extends HTMLElement {
 
   private addNewConnector(connectorType: typeof ConnectorBase): ConnectorBase {
     const g = SvgHelper.createGroup();
+    g.classList.add('connector-container');
     this._connectorLayer?.appendChild(g);
 
     return new connectorType(this.getNewIId(), g, this.settings);
@@ -271,7 +275,97 @@ export class DiagramViewer extends HTMLElement {
     this.setMainCanvasSize();
   }
 
+  private addStyles() {
+    const styleSheet = document.createElement('style');
+    styleSheet.innerHTML = `
+      .stencil-container {
+        cursor: default;
+      }
+      .connector-container {
+        cursor: default;
+      }
+      .hidden {
+        opacity: 0;
+      }
+
+      @keyframes fade_in_animation_frames {
+        from {
+          opacity: 0;
+          transform: scale(0);
+        }
+        to {
+          opacity: 1;
+        }        
+      }
+
+      @keyframes connector_fade_in_animation_frames {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }        
+      }
+
+      @keyframes stencil_hover_frames {
+        from {
+          transform: scale(1);
+          filter: drop-shadow(0px #888);
+        }
+        to {
+          transform: scale(1.02);
+          filter: drop-shadow(1px 2px 3px #888);
+        }        
+      }
+
+      @keyframes connector_hover_frames {
+        from {
+          filter: drop-shadow(0px #888);
+        }
+        to {
+          filter: drop-shadow(1px 2px 1px #888);
+        }        
+      }
+
+      .fade-in {
+        transform-origin: center;
+        transform-box: fill-box;
+        animation-duration: 0.3s;
+        animation-fill-mode: forwards;
+        animation-name: fade_in_animation_frames;     
+        animation-timing-function: ease-out;   
+      }
+      .connector-fade-in {
+        transform-origin: center;
+        transform-box: fill-box;
+        animation-duration: 0.3s;
+        animation-fill-mode: forwards;
+        animation-name: connector_fade_in_animation_frames;        
+      }
+
+      .stencil-container:hover {
+        transform-origin: center;
+        transform-box: fill-box;
+        animation-duration: 0.1s;
+        animation-fill-mode: forwards;
+        animation-name: stencil_hover_frames;        
+        animation-timing-function: ease-out;   
+      }
+      .connector-container:hover {
+        transform-origin: center;
+        transform-box: fill-box;
+        animation-duration: 0.1s;
+        animation-fill-mode: forwards;
+        animation-name: connector_hover_frames;        
+      }
+    `;
+
+    this.shadowRoot?.appendChild(styleSheet);
+  }
+
   public show(state: DiagramState): void {
+    this.addStyles();
+
     if (state.width !== undefined && state.height !== undefined) {
       this.setDocumentSize(state.width, state.height);
     }
@@ -289,18 +383,25 @@ export class DiagramViewer extends HTMLElement {
     }
 
     if (state.stencils !== undefined && state.stencils.length > 0) {
-      state.stencils.forEach((stencilState) => {
+      state.stencils.forEach((stencilState, index) => {
         const sp = this._stencilSet.getStencilProperties(stencilState.typeName);
         if (sp !== undefined) {
           const stencil = this.addNewStencil(sp.stencilType);
+          stencil.container.classList.add('hidden');
+          stencil.container.addEventListener('animationend', () => {
+            stencil.container.classList.remove('hidden', 'fade-in');
+          });
           stencil.restoreState(stencilState);
           this._stencils.push(stencil);
+          setTimeout(() => {
+            stencil.container.classList.add('fade-in');
+          }, index * 250);
         }
       });
     }
 
     if (state.connectors !== undefined && state.connectors.length > 0) {
-      state.connectors.forEach((conState) => {
+      state.connectors.forEach((conState, index) => {
         const cp = this._stencilSet.getConnectorProperties(conState.typeName);
         if (cp !== undefined) {
           const startStencil = this._stencils.find(
@@ -323,6 +424,10 @@ export class DiagramViewer extends HTMLElement {
 
             if (startPort && endPort) {
               const connector = this.addNewConnector(cp.connectorType);
+              connector.container.classList.add('hidden');
+              connector.container.addEventListener('animationend', () => {
+                connector.container.classList.remove('hidden', 'connector-fade-in');
+              });
               connector.restoreState(conState, {
                 startStencil: startStencil,
                 startPort: startPort,
@@ -332,6 +437,9 @@ export class DiagramViewer extends HTMLElement {
               this._connectors.push(connector);
               startPort.connectors.push(connector);
               endPort.connectors.push(connector);
+              setTimeout(() => {
+                connector.container.classList.add('connector-fade-in');
+              }, this._stencils.length * 250 + index * 50);
             }
           }
         }
