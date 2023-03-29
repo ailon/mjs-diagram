@@ -9,6 +9,36 @@ import Logo from './assets/markerjs-logo-m.svg';
 import { Activator } from './core/Activator';
 import { DiagramSettings } from './core/DiagramSettings';
 
+export interface DiagramViewerEventData {
+  viewer: DiagramViewer;
+}
+
+export interface DiagramViewerEventMap {
+  viewerinit: CustomEvent<DiagramViewerEventData>;
+  diagramload: CustomEvent<DiagramViewerEventData>;
+}
+
+export interface StencilEventData {
+  viewer: DiagramViewer;
+  stencil: StencilBase;
+}
+
+export interface ConnectorEventData {
+  viewer: DiagramViewer;
+  connector: ConnectorBase;
+}
+
+export interface DiagramViewerEventMap {
+  viewerinit: CustomEvent<DiagramViewerEventData>;
+  diagramload: CustomEvent<DiagramViewerEventData>;
+  stencilpointerenter: CustomEvent<StencilEventData>;
+  stencilpointerleave: CustomEvent<StencilEventData>;
+  stencilclick: CustomEvent<StencilEventData>;
+  connectorpointerenter: CustomEvent<ConnectorEventData>;
+  connectorpointerleave: CustomEvent<ConnectorEventData>;
+  connectorclick: CustomEvent<ConnectorEventData>;
+}
+
 export class DiagramViewer extends HTMLElement {
   private _container?: HTMLDivElement;
 
@@ -81,6 +111,8 @@ export class DiagramViewer extends HTMLElement {
 
     this.show = this.show.bind(this);
     this.setDocumentBgColor = this.setDocumentBgColor.bind(this);
+
+    this.connectedCallback = this.connectedCallback.bind(this);
 
     this.attachShadow({ mode: 'open' });
   }
@@ -236,7 +268,31 @@ export class DiagramViewer extends HTMLElement {
     g.classList.add('stencil-container');
     this._objectLayer?.appendChild(g);
 
-    return new stencilType(this.getNewIId(), g, this.settings);
+    const stencil = new stencilType(this.getNewIId(), g, this.settings);
+
+    stencil.container.addEventListener('pointerenter', () =>
+      this.dispatchEvent(
+        new CustomEvent<StencilEventData>('stencilpointerenter', {
+          detail: { viewer: this, stencil: stencil },
+        })
+      )
+    );
+    stencil.container.addEventListener('pointerleave', () =>
+      this.dispatchEvent(
+        new CustomEvent<StencilEventData>('stencilpointerleave', {
+          detail: { viewer: this, stencil: stencil },
+        })
+      )
+    );
+    stencil.container.addEventListener('click', () =>
+      this.dispatchEvent(
+        new CustomEvent<StencilEventData>('stencilclick', {
+          detail: { viewer: this, stencil: stencil },
+        })
+      )
+    );
+
+    return stencil;
   }
 
   private addNewConnector(connectorType: typeof ConnectorBase): ConnectorBase {
@@ -244,7 +300,31 @@ export class DiagramViewer extends HTMLElement {
     g.classList.add('connector-container');
     this._connectorLayer?.appendChild(g);
 
-    return new connectorType(this.getNewIId(), g, this.settings);
+    const connector = new connectorType(this.getNewIId(), g, this.settings);
+
+    connector.container.addEventListener('pointerenter', () =>
+      this.dispatchEvent(
+        new CustomEvent<ConnectorEventData>('connectorpointerenter', {
+          detail: { viewer: this, connector: connector },
+        })
+      )
+    );
+    connector.container.addEventListener('pointerleave', () =>
+      this.dispatchEvent(
+        new CustomEvent<ConnectorEventData>('connectorpointerleave', {
+          detail: { viewer: this, connector: connector },
+        })
+      )
+    );
+    connector.container.addEventListener('click', () =>
+      this.dispatchEvent(
+        new CustomEvent<ConnectorEventData>('connectorclick', {
+          detail: { viewer: this, connector: connector },
+        })
+      )
+    );
+
+    return connector
   }
 
   private setDocumentBgColor(color: string) {
@@ -364,6 +444,12 @@ export class DiagramViewer extends HTMLElement {
   }
 
   public show(state: DiagramState): void {
+    this.dispatchEvent(
+      new CustomEvent<DiagramViewerEventData>('viewerinit', {
+        detail: { viewer: this },
+      })
+    );
+
     this.addStyles();
 
     if (state.width !== undefined && state.height !== undefined) {
@@ -426,7 +512,10 @@ export class DiagramViewer extends HTMLElement {
               const connector = this.addNewConnector(cp.connectorType);
               connector.container.classList.add('hidden');
               connector.container.addEventListener('animationend', () => {
-                connector.container.classList.remove('hidden', 'connector-fade-in');
+                connector.container.classList.remove(
+                  'hidden',
+                  'connector-fade-in'
+                );
               });
               connector.restoreState(conState, {
                 startStencil: startStencil,
@@ -445,6 +534,11 @@ export class DiagramViewer extends HTMLElement {
         }
       });
     }
+    this.dispatchEvent(
+      new CustomEvent<DiagramViewerEventData>('diagramload', {
+        detail: { viewer: this },
+      })
+    );
   }
 
   /**
@@ -501,5 +595,28 @@ export class DiagramViewer extends HTMLElement {
         this._container.offsetHeight - this._logoUI.clientHeight - 20
       }px`;
     }
+  }
+
+  addEventListener<T extends keyof DiagramViewerEventMap>(
+    // the event name, a key of DiagramViewerEventMap
+    type: T,
+
+    // the listener, using a value of DiagramViewerEventMap
+    listener: (this: DiagramViewer, ev: DiagramViewerEventMap[T]) => void,
+
+    // any options
+    options?: boolean | AddEventListenerOptions
+  ): void;
+  addEventListener<K extends keyof HTMLElementEventMap>(
+    type: K,
+    listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions | undefined
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions | undefined
+  ): void {
+    super.addEventListener(type, listener, options);
   }
 }

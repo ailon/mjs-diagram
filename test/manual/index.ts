@@ -13,6 +13,7 @@ import { mindMapStencilEditorSet } from '../../src/stencilsets/mindmap/MindMapSt
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ArrowConnector, DiagramState, DiagramViewer } from '../../src/viewer_index';
 import { ColorSet } from "../../src/editor/ColorSet";
+import { ConnectorEventData, DiagramViewerEventData, StencilEventData } from '../../src/DiagramViewer';
 
 export * from './../../src/index';
 
@@ -158,6 +159,33 @@ export class Experiments {
       });
 
     this.viewer = <DiagramViewer>document.getElementById('mjsDiaView');
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    this.viewer.addEventListener('viewerinit', (ev) => {
+      console.log('viewer init');
+    });
+    this.viewer.addEventListener('diagramload', (ev) => {
+      console.log(`diagram load ${(<DiagramViewerEventData>ev.detail).viewer.zoomLevel}`);
+    });
+    this.viewer.addEventListener('stencilpointerenter', (ev) => {
+      console.log(`stencil pointer enter ${(<StencilEventData>ev.detail).stencil.typeName}`);
+    });
+    this.viewer.addEventListener('stencilpointerleave', (ev) => {
+      console.log(`stencil pointer leave ${(<StencilEventData>ev.detail).stencil.typeName}`);
+    });
+    this.viewer.addEventListener('stencilclick', (ev) => {
+      console.log(`stencil click ${(<StencilEventData>ev.detail).stencil.typeName}`);
+    });
+    this.viewer.addEventListener('connectorpointerenter', (ev) => {
+      console.log(`connector pointer enter ${(<ConnectorEventData>ev.detail).connector.typeName}`);
+    });
+    this.viewer.addEventListener('connectorpointerleave', (ev) => {
+      console.log(`connector pointer leave ${(<ConnectorEventData>ev.detail).connector.typeName}`);
+    });
+    this.viewer.addEventListener('connectorclick', (ev) => {
+      console.log(`connector click ${(<ConnectorEventData>ev.detail).connector.typeName}`);
+    });
+
     this.viewer.stencilSet = flowchartStencilSet;
 
     const manualState: DiagramState = {
