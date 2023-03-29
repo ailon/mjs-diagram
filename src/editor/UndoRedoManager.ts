@@ -39,7 +39,7 @@ export class UndoRedoManager<T> {
    * Adds a step to the undo stack.
    * @param stepData data representing a state.
    */
-  public addUndoStep(stepData: T): void {
+  public addUndoStep(stepData: T): boolean {
     if (
       this.undoStack.length === 0 ||
       JSON.stringify(this.undoStack[this.undoStack.length - 1]) !==
@@ -49,7 +49,9 @@ export class UndoRedoManager<T> {
         if (JSON.stringify(this.lastRedoStep) !== JSON.stringify(stepData)) {
           this.redoStack.splice(0, this.redoStack.length);
         }
+        return true;
     }
+    return false;
   }
 
   /**

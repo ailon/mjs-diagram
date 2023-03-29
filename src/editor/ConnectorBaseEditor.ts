@@ -66,6 +66,11 @@ export class ConnectorBaseEditor {
   public connector: ConnectorBase;
   public movingPort?: Port;
 
+  protected _container: SVGGElement;
+  public get container(): SVGGElement {
+    return this._container;
+  }
+
   protected overlayContainer: HTMLDivElement;
 
   private strokePanel: ColorPickerPanel;
@@ -80,7 +85,7 @@ export class ConnectorBaseEditor {
     this.connector =
       properties.connector ??
       new properties.connectorType(properties.iid, properties.container, properties.settings);
-    this.connector.container = properties.container;
+    this._container = properties.container;
     this.overlayContainer = properties.overlayContainer;
     this._settings = properties.settings;
     this.connector.textBlock.fontFamily = this.settings.getFontFamily(this.connector.typeName);

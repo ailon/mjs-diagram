@@ -14,6 +14,7 @@ import { mindMapStencilEditorSet } from '../../src/stencilsets/mindmap/MindMapSt
 import { ArrowConnector, DiagramState, DiagramViewer } from '../../src/viewer_index';
 import { ColorSet } from "../../src/editor/ColorSet";
 import { ConnectorEventData, DiagramViewerEventData, StencilEventData } from '../../src/DiagramViewer';
+import { ConnectorEditorEventData, DiagramEditorEventData, StencilEditorEventData } from '../../src/DiagramEditor';
 
 export * from './../../src/index';
 
@@ -130,6 +131,27 @@ export class Experiments {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public setup(): void {
     this.editor = <DiagramEditor>document.getElementById('mjsDia');
+
+    this.editor.addEventListener('editorinit', () => {
+      console.log('editor init');
+    });
+    this.editor.addEventListener('diagramload', (ev) => {
+      console.log(`editor diagram load ${(<DiagramEditorEventData>ev.detail).editor.zoomSteps}`);
+    });
+    this.editor.addEventListener('statechange', (ev) => {
+      console.log(`editor state changed ${JSON.stringify((<DiagramEditorEventData>ev.detail).editor.getState())}`);
+    });
+
+    this.editor.addEventListener('stencilclick', (ev) => {
+      console.log(`editor stencil click ${(<StencilEditorEventData>ev.detail).stencilEditor.isSelected}`);
+    });
+    
+    this.editor.addEventListener('connectorclick', (ev) => {
+      console.log(`editor connector click ${(<ConnectorEditorEventData>ev.detail).connectorEditor.isSelected}`);
+    });
+    this.editor.addEventListener('connectorpointerenter', (ev) => {
+      console.log(`editor connector enter ${(<ConnectorEditorEventData>ev.detail).connectorEditor.isSelected}`);
+    });
     
     // this.editor.stencilEditorSet = basicStencilEditorSet;
     this.editor.stencilEditorSet = flowchartStencilEditorSet;

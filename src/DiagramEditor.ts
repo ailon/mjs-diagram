@@ -33,10 +33,32 @@ export type DiagramEditorMode = 'select' | 'connect';
 
 export interface DiagramEditorEventMap {
   saveclick: CustomEvent<RenderEventData>;
+  editorinit: CustomEvent<DiagramEditorEventData>;
+  diagramload: CustomEvent<DiagramEditorEventData>;
+  statechange: CustomEvent<DiagramEditorEventData>;
+  stencilpointerenter: CustomEvent<StencilEditorEventData>;
+  stencilpointerleave: CustomEvent<StencilEditorEventData>;
+  stencilclick: CustomEvent<StencilEditorEventData>;
+  connectorpointerenter: CustomEvent<ConnectorEditorEventData>;
+  connectorpointerleave: CustomEvent<ConnectorEditorEventData>;
+  connectorclick: CustomEvent<ConnectorEditorEventData>;
 }
 
 export interface RenderEventData {
   state: DiagramState;
+}
+
+export interface DiagramEditorEventData {
+  editor: DiagramEditor;
+}
+
+export interface StencilEditorEventData {
+  diagramEditor: DiagramEditor;
+  stencilEditor: StencilBaseEditor;
+}
+export interface ConnectorEditorEventData {
+  diagramEditor: DiagramEditor;
+  connectorEditor: ConnectorBaseEditor;
 }
 
 export class DiagramEditor extends HTMLElement {
@@ -128,6 +150,11 @@ export class DiagramEditor extends HTMLElement {
     this._stencilEditorSet = value;
     this._currentConnectorType = value.defaultConnectorType ?? ConnectorBase;
     this.applyStencilSet();
+    this.dispatchEvent(
+      new CustomEvent<DiagramEditorEventData>('editorinit', {
+        detail: { editor: this },
+      })
+    );
   }
 
   private _toolboxPanel!: HTMLDivElement;
@@ -1086,6 +1113,11 @@ export class DiagramEditor extends HTMLElement {
     const hitConnector = this.getHitConnector(target);
     if (hitConnector !== undefined) {
       this.selectConnector(hitConnector);
+      this.dispatchEvent(
+        new CustomEvent<ConnectorEditorEventData>('connectorclick', {
+          detail: { diagramEditor: this, connectorEditor: hitConnector },
+        })
+      );
     } else {
       this.deselectCurrentConnector();
     }
@@ -1694,13 +1726,39 @@ export class DiagramEditor extends HTMLElement {
 
     const editor = this._stencilEditorSet.getStencilEditor(stencilType);
 
-    return new editor({
+    const stencilEditor = new editor({
       iid: this.getNewIId(),
       container: g,
       overlayContainer: this._overlayContentContainer,
       settings: this.settings,
       stencilType: stencilType,
     });
+
+    stencilEditor.container.addEventListener('pointerenter', () => {
+      this.dispatchEvent(
+        new CustomEvent<StencilEditorEventData>('stencilpointerenter', {
+          detail: { diagramEditor: this, stencilEditor: stencilEditor },
+        })
+      );
+    });
+
+    stencilEditor.container.addEventListener('pointerleave', () => {
+      this.dispatchEvent(
+        new CustomEvent<StencilEditorEventData>('stencilpointerleave', {
+          detail: { diagramEditor: this, stencilEditor: stencilEditor },
+        })
+      );
+    });
+
+    stencilEditor.container.addEventListener('click', () => {
+      this.dispatchEvent(
+        new CustomEvent<StencilEditorEventData>('stencilclick', {
+          detail: { diagramEditor: this, stencilEditor: stencilEditor },
+        })
+      );
+    });
+
+    return stencilEditor;
   }
 
   private addNewConnector(
@@ -1712,13 +1770,39 @@ export class DiagramEditor extends HTMLElement {
 
     const connectorEditorType =
       this._stencilEditorSet.getConnectorEditor(connectorType);
-    return new connectorEditorType({
+    const connectorEditor = new connectorEditorType({
       iid: this.getNewIId(),
       container: g,
       overlayContainer: this._overlayContentContainer,
       settings: this.settings,
       connectorType: connectorType,
     });
+
+    connectorEditor.container.addEventListener('pointerenter', () => {
+      this.dispatchEvent(
+        new CustomEvent<ConnectorEditorEventData>('connectorpointerenter', {
+          detail: { diagramEditor: this, connectorEditor: connectorEditor },
+        })
+      );
+    });
+
+    connectorEditor.container.addEventListener('pointerleave', () => {
+      this.dispatchEvent(
+        new CustomEvent<ConnectorEditorEventData>('connectorpointerleave', {
+          detail: { diagramEditor: this, connectorEditor: connectorEditor },
+        })
+      );
+    });
+
+    connectorEditor.container.addEventListener('click', () => {
+      this.dispatchEvent(
+        new CustomEvent<ConnectorEditorEventData>('connectorclick', {
+          detail: { diagramEditor: this, connectorEditor: connectorEditor },
+        })
+      );
+    });
+
+    return connectorEditor;
   }
 
   private changeConnectorType(newType: typeof ConnectorBase) {
@@ -1761,7 +1845,7 @@ export class DiagramEditor extends HTMLElement {
     type: T,
 
     // the listener, using a value of DiagramEditorEventMap
-    listener: (this: Button, ev: DiagramEditorEventMap[T]) => void,
+    listener: (this: DiagramEditor, ev: DiagramEditorEventMap[T]) => void,
 
     // any options
     options?: boolean | AddEventListenerOptions
@@ -1890,6 +1974,12 @@ export class DiagramEditor extends HTMLElement {
         this.restoreConnector(conState);
       });
     }
+
+    this.dispatchEvent(
+      new CustomEvent<DiagramEditorEventData>('diagramload', {
+        detail: { editor: this },
+      })
+    );
   }
 
   public zoom(factor: number): void {
@@ -1964,8 +2054,20 @@ export class DiagramEditor extends HTMLElement {
       ) {
         // if the size changed just replace the last step with a resized one
         this.undoRedoManager.replaceLastUndoStep(currentState);
+        this.dispatchEvent(
+          new CustomEvent<DiagramEditorEventData>('statechange', {
+            detail: { editor: this },
+          })
+        );
       } else {
-        this.undoRedoManager.addUndoStep(currentState);
+        const stepAdded = this.undoRedoManager.addUndoStep(currentState);
+        if (stepAdded) {
+          this.dispatchEvent(
+            new CustomEvent<DiagramEditorEventData>('statechange', {
+              detail: { editor: this },
+            })
+          );
+        }
       }
     }
   }
@@ -1996,6 +2098,11 @@ export class DiagramEditor extends HTMLElement {
     const stepData = this.undoRedoManager.redo();
     if (stepData !== undefined) {
       this.restoreState(stepData);
+      this.dispatchEvent(
+        new CustomEvent<DiagramEditorEventData>('statechange', {
+          detail: { editor: this },
+        })
+      );
     }
   }
 
