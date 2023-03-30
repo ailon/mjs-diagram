@@ -1,6 +1,7 @@
 import { ColorSet } from "../ColorSet";
 import { Color } from "../Color";
 import { PropertyPanelBase } from './PropertyPanelBase';
+import { Language } from "../Language";
 
 export type ColorChangeHandler = (newColor: string) => void;
 
@@ -11,8 +12,8 @@ export class ColorPickerPanel extends PropertyPanelBase {
 
   public onColorChanged?: ColorChangeHandler;
 
-  constructor(title: string, colors: ColorSet, currentColor?: string) {
-    super(title);
+  constructor(title: string, language: Language, colors: ColorSet, currentColor?: string) {
+    super(title, language);
     this.colors = colors;
     this.currentColor = currentColor;
 

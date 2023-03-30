@@ -1,4 +1,5 @@
 import { SvgHelper } from '../../viewer_index';
+import { Language } from '../Language';
 import { ToolboxPanelItem } from '../ToolboxPanelItem';
 import { PropertyPanelBase } from './PropertyPanelBase';
 
@@ -14,8 +15,8 @@ export class LineStylePanel extends PropertyPanelBase {
 
   public onLineStyleChanged?: LineStyleChangeHandler;
 
-  constructor(title: string, lineStyleAttribute: string, lineStyles: string[], currentStyle?: string) {
-    super(title);
+  constructor(title: string, language: Language, lineStyleAttribute: string, lineStyles: string[], currentStyle?: string) {
+    super(title, language);
     this.lineStyleAttribute = lineStyleAttribute;
     this.lineStyles = lineStyles;
     this.currentStyle = currentStyle;

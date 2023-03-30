@@ -4,6 +4,7 @@ import { ColorSet } from "../ColorSet";
 import { ColorChangeHandler, ColorPickerPanel } from "./ColorPickerPanel";
 import { FontFamilyChangeHandler, FontPanel, FontSizeChangeHandler } from "./FontPanel";
 import { PropertyPanelBase } from "./PropertyPanelBase";
+import { Language } from "../Language";
 
 export interface TextPropertiesPanelProperties {
   textColors: ColorSet,
@@ -25,8 +26,8 @@ export class TextPropertiesPanel extends PropertyPanelBase {
   public fontFamily?: string;
   public fontSize?: FontSize;
 
-  constructor(title: string, properties: TextPropertiesPanelProperties) {
-    super(title);
+  constructor(title: string, language: Language, properties: TextPropertiesPanelProperties) {
+    super(title, language);
 
     this.colorChanged = this.colorChanged.bind(this);
     this.fontFamilyChanged = this.fontFamilyChanged.bind(this);
@@ -35,6 +36,7 @@ export class TextPropertiesPanel extends PropertyPanelBase {
     this.textColor = properties.textColor;
     this.colorPanel = new ColorPickerPanel(
       'Color',
+      this.language,
       properties.textColors,
       this.textColor
     );
@@ -43,6 +45,7 @@ export class TextPropertiesPanel extends PropertyPanelBase {
     this.fontFamily = properties.fontFamily;
     this.fontPanel = new FontPanel(
       'Font',
+      this.language,
       properties.fontFamilies,
       this.fontFamily,
       this.fontSize
@@ -62,11 +65,11 @@ export class TextPropertiesPanel extends PropertyPanelBase {
 
     const panelDiv = document.createElement('div');
 
-    panelDiv.appendChild(addTitle('Text color'));
+    panelDiv.appendChild(addTitle(this.language.getString('toolbox-textcolor-title') ?? 'Text color'));
     this.colorPanel.currentColor = this.textColor;
     panelDiv.appendChild(this.colorPanel.getUi());
 
-    panelDiv.appendChild(addTitle('Font'));
+    panelDiv.appendChild(addTitle(this.language.getString('toolbox-font-title') ?? 'Font'));
     this.fontPanel.currentFontFamily = this.fontFamily;
     if (this.fontSize !== undefined) {
       this.fontPanel.currentFontSize = this.fontSize;

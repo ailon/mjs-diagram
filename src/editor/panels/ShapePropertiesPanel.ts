@@ -1,4 +1,5 @@
 import { ColorSet } from "../ColorSet";
+import { Language } from "../Language";
 import { ColorChangeHandler, ColorPickerPanel } from "./ColorPickerPanel";
 import { LineStyleChangeHandler, LineStylePanel } from "./LineStylePanel";
 import { PropertyPanelBase } from "./PropertyPanelBase";
@@ -30,8 +31,8 @@ export class ShapePropertiesPanel extends PropertyPanelBase {
   public lineStyle?: string;
   public lineWidth?: string;
 
-  constructor(title: string, properties: ShapePropertiesPanelProperties) {
-    super(title);
+  constructor(title: string, language: Language, properties: ShapePropertiesPanelProperties) {
+    super(title, language);
 
     this.strokeColorChanged = this.strokeColorChanged.bind(this);
     this.fillColorChanged = this.fillColorChanged.bind(this);
@@ -41,6 +42,7 @@ export class ShapePropertiesPanel extends PropertyPanelBase {
     this.strokeColor = properties.strokeColor;
     this.strokePanel = new ColorPickerPanel(
       'Line color',
+      this.language,
       properties.strokeColors,
       this.strokeColor
     );
@@ -49,6 +51,7 @@ export class ShapePropertiesPanel extends PropertyPanelBase {
     this.fillColor = properties.fillColor;
     this.fillPanel = new ColorPickerPanel(
       'Fill color',
+      this.language,
       properties.fillColors,
       this.fillColor
     );
@@ -57,6 +60,7 @@ export class ShapePropertiesPanel extends PropertyPanelBase {
     this.lineStyle = properties.lineStyle;
     this.lineStylePanel = new LineStylePanel(
       'Line style',
+      this.language,
       'stroke-dasharray',
       properties.lineStyles,
       this.lineStyle
@@ -67,6 +71,7 @@ export class ShapePropertiesPanel extends PropertyPanelBase {
     this.lineWidth = properties.lineWidth;
     this.lineWidthPanel = new LineStylePanel(
       'Line width',
+      this.language,
       'stroke-width',
       properties.lineWidths,
       this.lineWidth
@@ -84,19 +89,19 @@ export class ShapePropertiesPanel extends PropertyPanelBase {
 
     const panelDiv = document.createElement('div');
 
-    panelDiv.appendChild(addTitle('Line color'));
+    panelDiv.appendChild(addTitle(this.language.getString('toolbox-linecolor-title') ?? 'Line color'));
     this.strokePanel.currentColor = this.strokeColor;
     panelDiv.appendChild(this.strokePanel.getUi());
 
-    panelDiv.appendChild(addTitle('Fill color'));
+    panelDiv.appendChild(addTitle(this.language.getString('toolbox-fillcolor-title') ?? 'Fill color'));
     this.fillPanel.currentColor = this.fillColor;
     panelDiv.appendChild(this.fillPanel.getUi());
 
-    panelDiv.appendChild(addTitle('Line width'));
+    panelDiv.appendChild(addTitle(this.language.getString('toolbox-linewidth-title') ?? 'Line width'));
     this.lineWidthPanel.currentStyle = this.lineWidth;
     panelDiv.appendChild(this.lineWidthPanel.getUi());
 
-    panelDiv.appendChild(addTitle('Line style'));
+    panelDiv.appendChild(addTitle(this.language.getString('toolbox-linestyle-title') ?? 'Line style'));
     this.lineStylePanel.currentStyle = this.lineStyle;
     panelDiv.appendChild(this.lineStylePanel.getUi());
 

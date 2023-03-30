@@ -1,3 +1,4 @@
+import { Language } from '../Language';
 import { PropertyPanelBase } from './PropertyPanelBase';
 
 export type DimensionsChangeHandler = (newWidth: number, newHeight: number) => void;
@@ -11,8 +12,8 @@ export class DimensionsPanel extends PropertyPanelBase {
 
   public onDimensionsChanged?: DimensionsChangeHandler;
 
-  constructor(title: string, currentWidth: number, currentHeight: number) {
-    super(title);
+  constructor(title: string, language: Language, currentWidth: number, currentHeight: number) {
+    super(title, language);
     this.currentWidth = currentWidth;
     this.currentHeight = currentHeight;
 
@@ -26,7 +27,7 @@ export class DimensionsPanel extends PropertyPanelBase {
     panelDiv.style.alignItems = 'center';
 
     const widthLabel = document.createElement('span');
-    widthLabel.innerText = 'W:';
+    widthLabel.innerText = this.language.getString('toolbox-widthshort-label') ?? 'W:';
     panelDiv.appendChild(widthLabel);
 
     this.widthInput = document.createElement('input');
@@ -42,7 +43,7 @@ export class DimensionsPanel extends PropertyPanelBase {
     panelDiv.appendChild(this.widthInput);
 
     const heightLabel = document.createElement('span');
-    heightLabel.innerText = 'H:';
+    heightLabel.innerText = this.language.getString('toolbox-heightshort-label') ?? 'H:';
     panelDiv.appendChild(heightLabel);
 
     this.heightInput = document.createElement('input');

@@ -1,4 +1,5 @@
 import { ConnectorBase } from '../../core/ConnectorBase';
+import { Language } from '../Language';
 import { ToolboxPanelItem } from '../ToolboxPanelItem';
 import { PropertyPanelBase } from './PropertyPanelBase';
 
@@ -11,8 +12,8 @@ export class ConnectorTypePanel extends PropertyPanelBase {
 
   public onConnectorTypeChanged?: ConnectorTypeChangeHandler;
 
-  constructor(title: string, connectorTypes: typeof ConnectorBase[], currentType?: typeof ConnectorBase) {
-    super(title);
+  constructor(title: string, language: Language, connectorTypes: typeof ConnectorBase[], currentType?: typeof ConnectorBase) {
+    super(title, language);
     this.connectorTypes = connectorTypes;
     this.currentType = currentType;
 

@@ -13,6 +13,7 @@ import { ArrowTypePanel } from './panels/ArrowTypePanel';
 import { TextBlockEditor } from './TextBlockEditor';
 import { EditorSettings } from './EditorSettings';
 import { ConnectorEditorProperties } from './ConnectorEditorProperties';
+import { Language } from './Language';
 
 export type ConnectorState =
   | 'new'
@@ -81,6 +82,8 @@ export class ConnectorBaseEditor {
     return this._settings;
   }
 
+  protected _language: Language;
+
   constructor(properties: ConnectorEditorProperties) {
     this.connector =
       properties.connector ??
@@ -88,6 +91,7 @@ export class ConnectorBaseEditor {
     this._container = properties.container;
     this.overlayContainer = properties.overlayContainer;
     this._settings = properties.settings;
+    this._language = properties.language;
     this.connector.textBlock.fontFamily = this.settings.getFontFamily(this.connector.typeName);
 
     this.connector.strokeColor = this.settings.getColor(
@@ -98,14 +102,16 @@ export class ConnectorBaseEditor {
     this.textBlockEditor = new TextBlockEditor();
 
     this.strokePanel = new ColorPickerPanel(
-      'Line color',
+      this._language.getString('toolbox-linecolor-title') ?? 'Line color',
+      this._language,
       this.settings.getColorSet(this.connector.typeName, 'stroke'),
       this.connector.strokeColor
     );
     this.strokePanel.onColorChanged = this.connector.setStrokeColor;
 
     this.arrowTypePanel = new ArrowTypePanel(
-      'Arrow type',
+      this._language.getString('toolbox-arrowtype-title') ?? 'Arrow type',
+      this._language,
       this.connector.arrowType
     );
     this.arrowTypePanel.onArrowTypeChanged = this.connector.setArrowType;

@@ -9,6 +9,7 @@ import { SvgHelper } from '../core/SvgHelper';
 import { EditorSettings } from './EditorSettings';
 import { StencilEditorProperties } from './StencilEditorProperties';
 import { ShapePropertiesPanel } from './panels/ShapePropertiesPanel';
+import { Language } from './Language';
 
 export type StencilEditorState =
   | 'new'
@@ -77,25 +78,39 @@ export class StencilBaseEditor {
   // private fillPanel: ColorPickerPanel;
   private shapePanel: ShapePropertiesPanel;
 
+  protected _language: Language;
+
   constructor(properties: StencilEditorProperties) {
     this._container = properties.container;
     this._overlayContainer = properties.overlayContainer;
     this._stencilType = properties.stencilType;
     this._settings = properties.settings;
+    this._language = properties.language;
     this._stencil =
       properties.stencil ??
-      new properties.stencilType(properties.iid, properties.container, this.settings);
+      new properties.stencilType(
+        properties.iid,
+        properties.container,
+        this.settings
+      );
 
-    this.shapePanel = new ShapePropertiesPanel('Shape', {
-      strokeColors: this.settings.getColorSet(this.stencil.typeName, 'stroke'),
-      strokeColor: this.settings.getColor(this.stencil.typeName, 'stroke'),
-      fillColors: this.settings.getColorSet(this.stencil.typeName, 'fill'),
-      fillColor: this.settings.getColor(this.stencil.typeName, 'fill'),
-      lineStyles: this.settings.getDashArrays(this.stencil.typeName),
-      lineStyle: this.settings.getDashArray(this.stencil.typeName),
-      lineWidths: this.settings.getStrokeWidths(this.stencil.typeName),
-      lineWidth: this.settings.getStrokeWidth(this.stencil.typeName),
-    });
+    this.shapePanel = new ShapePropertiesPanel(
+      this._language.getString('toolbox-shape-title') ?? 'Shape',
+      this._language,
+      {
+        strokeColors: this.settings.getColorSet(
+          this.stencil.typeName,
+          'stroke'
+        ),
+        strokeColor: this.settings.getColor(this.stencil.typeName, 'stroke'),
+        fillColors: this.settings.getColorSet(this.stencil.typeName, 'fill'),
+        fillColor: this.settings.getColor(this.stencil.typeName, 'fill'),
+        lineStyles: this.settings.getDashArrays(this.stencil.typeName),
+        lineStyle: this.settings.getDashArray(this.stencil.typeName),
+        lineWidths: this.settings.getStrokeWidths(this.stencil.typeName),
+        lineWidth: this.settings.getStrokeWidth(this.stencil.typeName),
+      }
+    );
     this.shapePanel.onStrokeColorChanged = this._stencil.setStrokeColor;
     this.shapePanel.onFillColorChanged = this._stencil.setFillColor;
     this.shapePanel.onLineStyleChanged = this._stencil.setStrokeDasharray;

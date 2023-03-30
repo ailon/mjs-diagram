@@ -28,6 +28,8 @@ import { Activator } from './core/Activator';
 import { ColorPickerPanel } from './editor/panels/ColorPickerPanel';
 import { DimensionsPanel } from './editor/panels/DimensionsPanel';
 import { EditorSettings } from './editor/EditorSettings';
+import { Language } from './editor/Language';
+import en_core_strings from './editor/lang/en';
 
 export type DiagramEditorMode = 'select' | 'connect';
 
@@ -167,6 +169,8 @@ export class DiagramEditor extends HTMLElement {
 
   public readonly settings: EditorSettings = new EditorSettings();
 
+  public readonly language = new Language();
+
   constructor() {
     super();
 
@@ -248,27 +252,31 @@ export class DiagramEditor extends HTMLElement {
 
   private setupPanels() {
     this._connectorTypePanel = new ConnectorTypePanel(
-      'Connector type',
+      this.language.getString('toolbox-connectortype-title') ?? 'Connector type',
+      this.language,
       this._stencilEditorSet.availableConnectorTypes,
       this._currentConnectorType
     );
     this._connectorTypePanel.onConnectorTypeChanged = this.changeConnectorType;
 
     this._newStencilPanel = new NewStencilPanel(
-      'Create new',
+      this.language.getString('toolbox-newstencil-title') ?? 'Create new',
+      this.language,
       this._stencilEditorSet.stencilSet.stencilTypes
     );
     this._newStencilPanel.onCreateNewStencil = this.createNewStencil;
 
     this._documentBackgroundPanel = new ColorPickerPanel(
-      'Background color',
+      this.language.getString('toolbox-bgcolor-title') ?? 'Background color',
+      this.language,
       this.settings.defaultBackgroundColorSet,
       this.settings.defaultBackgroundColor
     );
     this._documentBackgroundPanel.onColorChanged = this.setDocumentBgColor;
 
     this._documentDimensionsPanel = new DimensionsPanel(
-      'Document size',
+      this.language.getString('toolbox-docsize-title') ?? 'Document size',
+      this.language,
       this.documentWidth,
       this.documentHeight
     );
@@ -523,8 +531,8 @@ export class DiagramEditor extends HTMLElement {
       icon: `<svg viewBox="0 0 24 24">
     <path fill="currentColor" d="M10.07,14.27C10.57,14.03 11.16,14.25 11.4,14.75L13.7,19.74L15.5,18.89L13.19,13.91C12.95,13.41 13.17,12.81 13.67,12.58L13.95,12.5L16.25,12.05L8,5.12V15.9L9.82,14.43L10.07,14.27M13.64,21.97C13.14,22.21 12.54,22 12.31,21.5L10.13,16.76L7.62,18.78C7.45,18.92 7.24,19 7,19A1,1 0 0,1 6,18V3A1,1 0 0,1 7,2C7.24,2 7.47,2.09 7.64,2.23L7.65,2.22L19.14,11.86C19.57,12.22 19.62,12.85 19.27,13.27C19.12,13.45 18.91,13.57 18.7,13.61L15.54,14.23L17.74,18.96C18,19.46 17.76,20.05 17.26,20.28L13.64,21.97Z" />
 </svg>`,
-      text: 'select',
-      command: 'run',
+      text: this.language.getString('toolbar-select') ?? 'select',
+      command: 'select',
     });
     actionBlock.appendButton(selectButton);
 
@@ -532,7 +540,7 @@ export class DiagramEditor extends HTMLElement {
       icon: `<svg viewBox="0 0 24 24">
     <path fill="currentColor" d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z" />
 </svg>`,
-      text: 'delete',
+      text: this.language.getString('toolbar-delete') ?? 'delete',
       command: 'delete',
     });
     actionBlock.appendButton(deleteButton);
@@ -541,7 +549,7 @@ export class DiagramEditor extends HTMLElement {
       icon: `<svg viewBox="0 0 24 24">
     <path fill="currentColor" d="M17 3H5C3.89 3 3 3.9 3 5V19C3 20.1 3.89 21 5 21H19C20.1 21 21 20.1 21 19V7L17 3M19 19H5V5H16.17L19 7.83V19M12 12C10.34 12 9 13.34 9 15S10.34 18 12 18 15 16.66 15 15 13.66 12 12 12M6 6H15V10H6V6Z" />
 </svg>`,
-      text: 'save',
+      text: this.language.getString('toolbar-save') ?? 'save',
       command: 'save',
     });
     actionBlock.appendButton(saveButton);
@@ -550,7 +558,7 @@ export class DiagramEditor extends HTMLElement {
       icon: `<svg viewBox="0 0 24 24">
     <path fill="currentColor" d="M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z" />
 </svg>`,
-      text: 'undo',
+      text: this.language.getString('toolbar-undo') ?? 'undo',
       command: 'undo',
     });
     actionBlock.appendButton(undoButton);
@@ -559,7 +567,7 @@ export class DiagramEditor extends HTMLElement {
       icon: `<svg viewBox="0 0 24 24">
     <path fill="currentColor" d="M18.4,10.6C16.55,9 14.15,8 11.5,8C6.85,8 2.92,11.03 1.54,15.22L3.9,16C4.95,12.81 7.95,10.5 11.5,10.5C13.45,10.5 15.23,11.22 16.62,12.38L13,16H22V7L18.4,10.6Z" />
 </svg>`,
-      text: 'redo',
+      text: this.language.getString('toolbar-redo') ?? 'redo',
       command: 'redo',
     });
     actionBlock.appendButton(redoButton);
@@ -568,7 +576,7 @@ export class DiagramEditor extends HTMLElement {
       icon: `<svg viewBox="0 0 24 24">
     <path fill="currentColor" d="M19,6H22V8H19V11H17V8H14V6H17V3H19V6M17,17V14H19V19H3V6H11V8H5V17H17Z" />
 </svg>`,
-      text: 'add a stencil',
+      text: this.language.getString('toolbar-add') ?? 'add',
       command: 'add',
     });
     createBlock.appendButton(addButton);
@@ -577,7 +585,7 @@ export class DiagramEditor extends HTMLElement {
       icon: `<svg viewBox="0 0 24 24">
     <path fill="currentColor" d="M18,11H14.82C14.4,9.84 13.3,9 12,9C10.7,9 9.6,9.84 9.18,11H6C5.67,11 4,10.9 4,9V8C4,6.17 5.54,6 6,6H16.18C16.6,7.16 17.7,8 19,8A3,3 0 0,0 22,5A3,3 0 0,0 19,2C17.7,2 16.6,2.84 16.18,4H6C4.39,4 2,5.06 2,8V9C2,11.94 4.39,13 6,13H9.18C9.6,14.16 10.7,15 12,15C13.3,15 14.4,14.16 14.82,13H18C18.33,13 20,13.1 20,15V16C20,17.83 18.46,18 18,18H7.82C7.4,16.84 6.3,16 5,16A3,3 0 0,0 2,19A3,3 0 0,0 5,22C6.3,22 7.4,21.16 7.82,20H18C19.61,20 22,18.93 22,16V15C22,12.07 19.61,11 18,11M19,4A1,1 0 0,1 20,5A1,1 0 0,1 19,6A1,1 0 0,1 18,5A1,1 0 0,1 19,4M5,20A1,1 0 0,1 4,19A1,1 0 0,1 5,18A1,1 0 0,1 6,19A1,1 0 0,1 5,20Z" />
 </svg>`,
-      text: 'connect',
+      text: this.language.getString('toolbar-connect') ?? 'connect',
       command: 'connect',
     });
     createBlock.appendButton(connectButton);
@@ -586,7 +594,7 @@ export class DiagramEditor extends HTMLElement {
       icon: `<svg viewBox="0 0 24 24">
         <path fill="currentColor" d="M6 2C4.89 2 4 2.9 4 4V20C4 21.11 4.89 22 6 22H12V20H6V4H13V9H18V12H20V8L14 2M18 14C17.87 14 17.76 14.09 17.74 14.21L17.55 15.53C17.25 15.66 16.96 15.82 16.7 16L15.46 15.5C15.35 15.5 15.22 15.5 15.15 15.63L14.15 17.36C14.09 17.47 14.11 17.6 14.21 17.68L15.27 18.5C15.25 18.67 15.24 18.83 15.24 19C15.24 19.17 15.25 19.33 15.27 19.5L14.21 20.32C14.12 20.4 14.09 20.53 14.15 20.64L15.15 22.37C15.21 22.5 15.34 22.5 15.46 22.5L16.7 22C16.96 22.18 17.24 22.35 17.55 22.47L17.74 23.79C17.76 23.91 17.86 24 18 24H20C20.11 24 20.22 23.91 20.24 23.79L20.43 22.47C20.73 22.34 21 22.18 21.27 22L22.5 22.5C22.63 22.5 22.76 22.5 22.83 22.37L23.83 20.64C23.89 20.53 23.86 20.4 23.77 20.32L22.7 19.5C22.72 19.33 22.74 19.17 22.74 19C22.74 18.83 22.73 18.67 22.7 18.5L23.76 17.68C23.85 17.6 23.88 17.47 23.82 17.36L22.82 15.63C22.76 15.5 22.63 15.5 22.5 15.5L21.27 16C21 15.82 20.73 15.65 20.42 15.53L20.23 14.21C20.22 14.09 20.11 14 20 14M19 17.5C19.83 17.5 20.5 18.17 20.5 19C20.5 19.83 19.83 20.5 19 20.5C18.16 20.5 17.5 19.83 17.5 19C17.5 18.17 18.17 17.5 19 17.5Z" />
   </svg>`,
-      text: 'document setup',
+      text: this.language.getString('toolbar-document-setup') ?? 'document setup',
       command: 'document-setup',
     });
     createBlock.appendButton(documentSetupButton);
@@ -595,7 +603,7 @@ export class DiagramEditor extends HTMLElement {
       icon: `<svg viewBox="0 0 24 24">
     <path fill="currentColor" d="M15.5,14L20.5,19L19,20.5L14,15.5V14.71L13.73,14.43C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.43,13.73L14.71,14H15.5M9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14M12,10H10V12H9V10H7V9H9V7H10V9H12V10Z" />
 </svg>`,
-      text: 'zoom in',
+      text: this.language.getString('toolbar-zoom-in') ?? 'zoom in',
       command: 'zoomin',
     });
     zoomBlock.appendButton(zoomInButton);
@@ -604,7 +612,7 @@ export class DiagramEditor extends HTMLElement {
       icon: `<svg viewBox="0 0 24 24">
     <path fill="currentColor" d="M12 5.5L10 8H14L12 5.5M18 10V14L20.5 12L18 10M6 10L3.5 12L6 14V10M14 16H10L12 18.5L14 16M21 3H3C1.9 3 1 3.9 1 5V19C1 20.1 1.9 21 3 21H21C22.1 21 23 20.1 23 19V5C23 3.9 22.1 3 21 3M21 19H3V5H21V19Z" />
 </svg>`,
-      text: 'fit',
+      text: this.language.getString('toolbar-zoomreset') ?? 'fit',
       command: 'zoomreset',
     });
     zoomBlock.appendButton(zoomResetButton);
@@ -613,7 +621,7 @@ export class DiagramEditor extends HTMLElement {
       icon: `<svg viewBox="0 0 24 24">
     <path fill="currentColor" d="M15.5,14L20.5,19L19,20.5L14,15.5V14.71L13.73,14.43C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.43,13.73L14.71,14H15.5M9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14M12,10H10V12H9V10H7V9H9V7H10V9H12V10Z" />
 </svg>`,
-      text: 'zoom out',
+      text: this.language.getString('toolbar-zoomout') ?? 'zoom out',
       command: 'zoomout',
     });
     zoomBlock.appendButton(zoomOutButton);
@@ -622,7 +630,7 @@ export class DiagramEditor extends HTMLElement {
       icon: `<svg viewBox="0 0 24 24">
     <path fill="currentColor" d="M8 13C6.14 13 4.59 14.28 4.14 16H2V18H4.14C4.59 19.72 6.14 21 8 21S11.41 19.72 11.86 18H22V16H11.86C11.41 14.28 9.86 13 8 13M8 19C6.9 19 6 18.1 6 17C6 15.9 6.9 15 8 15S10 15.9 10 17C10 18.1 9.1 19 8 19M19.86 6C19.41 4.28 17.86 3 16 3S12.59 4.28 12.14 6H2V8H12.14C12.59 9.72 14.14 11 16 11S19.41 9.72 19.86 8H22V6H19.86M16 9C14.9 9 14 8.1 14 7C14 5.9 14.9 5 16 5S18 5.9 18 7C18 8.1 17.1 9 16 9Z" />
 </svg>`,
-      text: 'toggle properties',
+      text: this.language.getString('toolbar-properties') ?? 'toggle properties',
       command: 'properties',
     });
     settingsBlock.appendButton(toolboxToggleButton);
@@ -960,6 +968,7 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private connectedCallback() {
+    this.language.addStrings('core', 'en', en_core_strings);
     this.createLayout();
     this.addToolbar();
     this.addToolbox();
@@ -1732,6 +1741,7 @@ export class DiagramEditor extends HTMLElement {
       overlayContainer: this._overlayContentContainer,
       settings: this.settings,
       stencilType: stencilType,
+      language: this.language
     });
 
     stencilEditor.container.addEventListener('pointerenter', () => {
@@ -1775,6 +1785,7 @@ export class DiagramEditor extends HTMLElement {
       container: g,
       overlayContainer: this._overlayContentContainer,
       settings: this.settings,
+      language: this.language,
       connectorType: connectorType,
     });
 

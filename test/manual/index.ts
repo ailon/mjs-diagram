@@ -15,6 +15,7 @@ import { ArrowConnector, DiagramState, DiagramViewer } from '../../src/viewer_in
 import { ColorSet } from "../../src/editor/ColorSet";
 import { ConnectorEventData, DiagramViewerEventData, StencilEventData } from '../../src/DiagramViewer';
 import { ConnectorEditorEventData, DiagramEditorEventData, StencilEditorEventData } from '../../src/DiagramEditor';
+import lt_core_strings from '../../src/editor/lang/lt';
 
 export * from './../../src/index';
 
@@ -131,6 +132,10 @@ export class Experiments {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public setup(): void {
     this.editor = <DiagramEditor>document.getElementById('mjsDia');
+
+    this.editor.language.addStrings('core', 'lt', lt_core_strings);
+    this.editor.language.addStrings('core', 'ua', [['toolbox-shape-title','Властивості фігури']]);
+    this.editor.language.defaultLang = 'en';
 
     this.editor.addEventListener('editorinit', () => {
       console.log('editor init');

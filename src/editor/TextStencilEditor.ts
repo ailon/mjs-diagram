@@ -32,7 +32,7 @@ export class TextStencilEditor extends StencilBaseEditor {
     this.setSize = this.setSize.bind(this);
     this.positionTextEditor = this.positionTextEditor.bind(this);
 
-    this.textPanel = new TextPropertiesPanel('Text', {
+    this.textPanel = new TextPropertiesPanel(this._language.getString('toolbox-text-title') ?? 'Text', this._language, {
       textColors: this.settings.getColorSet(this.stencil.typeName, 'text'),
       textColor: this.settings.getColor(this.stencil.typeName, 'text'),
       fontFamilies: this.settings.getFontFamilies(this.stencil.typeName),

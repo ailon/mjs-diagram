@@ -1,4 +1,5 @@
 import { ArrowType } from '../../core/ConnectorBase';
+import { Language } from '../Language';
 import { PropertyPanelBase } from './PropertyPanelBase';
 
 export type ArrowTypeChangeHandler = (newType: ArrowType) => void;
@@ -10,8 +11,8 @@ export class ArrowTypePanel extends PropertyPanelBase {
 
   public onArrowTypeChanged?: ArrowTypeChangeHandler;
 
-  constructor(title: string, currentType?: ArrowType) {
-    super(title);
+  constructor(title: string, language: Language, currentType?: ArrowType) {
+    super(title, language);
     this.currentType = currentType;
 
     this.setCurrentType = this.setCurrentType.bind(this);

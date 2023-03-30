@@ -1,5 +1,6 @@
 import { StencilBase } from '../../core/StencilBase';
 import { IStencilProperties } from '../../core/StencilSet';
+import { Language } from '../Language';
 import { PropertyPanelBase } from './PropertyPanelBase';
 
 export type CreateNewStencilHandler = (stencilType?: typeof StencilBase) => void;
@@ -11,8 +12,8 @@ export class NewStencilPanel extends PropertyPanelBase {
 
   public onCreateNewStencil?: CreateNewStencilHandler;
 
-  constructor(title: string, stencilTypes: IStencilProperties[], currentType?: typeof StencilBase) {
-    super(title);
+  constructor(title: string, language: Language, stencilTypes: IStencilProperties[], currentType?: typeof StencilBase) {
+    super(title, language);
     this.stencilTypes = stencilTypes;
     this.currentType = currentType;
 
