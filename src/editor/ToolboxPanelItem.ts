@@ -13,7 +13,7 @@ export class ToolboxPanelItem<T> {
     this._isSelected = value;
     if (this.itemUi !== undefined) {
       this.itemUi.style.borderColor =
-        this.isSelected ? 'var(--i-mjstb-accent-color)' : '#444';
+        this.isSelected ? 'var(--i-mjstb-accent-color)' : 'var(--i-mjstb-border-color)';
     }
   }
   public dataItem?: T;
@@ -53,7 +53,7 @@ export class ToolboxPanelItem<T> {
       this.itemUi.style.overflow = `hidden`;
       this.itemUi.style.height = `${this.height}px`;
       this.itemUi.style.borderColor =
-        this.isSelected ? 'var(--i-mjstb-accent-color)' : '#444';
+        this.isSelected ? 'var(--i-mjstb-accent-color)' : 'var(--i-mjstb-border-color)';
       this.itemUi.style.stroke = 'var(--i-mjstb-accent-color)';
     }
 

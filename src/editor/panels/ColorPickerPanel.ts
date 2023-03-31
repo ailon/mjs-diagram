@@ -48,7 +48,7 @@ export class ColorPickerPanel extends PropertyPanelBase {
     colorBox.style.borderWidth = '2px';
     colorBox.style.borderStyle = 'solid';
     colorBox.style.borderColor =
-      color.value === this.currentColor ? 'var(--i-mjstb-accent-color)' : '#444';
+      color.value === this.currentColor ? 'var(--i-mjstb-accent-color)' : 'var(--i-mjstb-border-color)';
     colorBox.style.borderRadius = '3px';
     if (color.value === 'transparent') {
       colorBox.style.color = 'var(--i-mjstb-accent-color)';
@@ -67,7 +67,7 @@ export class ColorPickerPanel extends PropertyPanelBase {
     this.currentColor = color;
 
     this.colorBoxes.forEach((box) => {
-      box.style.borderColor = box === target ? 'var(--i-mjstb-accent-color)' : '#444';
+      box.style.borderColor = box === target ? 'var(--i-mjstb-accent-color)' : 'var(--i-mjstb-border-color)';
     });
 
     if (this.onColorChanged) {

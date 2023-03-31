@@ -24,12 +24,15 @@ export class CurvedConnector extends ConnectorBase {
     const yPadding = Math.max(Math.floor(height * 0.05), 2);
 
     const line = SvgHelper.createPath(
-      `M ${xPadding} ${yPadding} C ${(width - xPadding * 2) * 0.75} ${
-        yPadding
-      }, ${(width - xPadding * 2) * 0.25} ${height - yPadding}, ${
+      `M ${xPadding} ${yPadding} C ${
+        (width - xPadding * 2) * 0.75
+      } ${yPadding}, ${(width - xPadding * 2) * 0.25} ${height - yPadding}, ${
         width - xPadding
       } ${height - yPadding}`,
-      [['stroke-width', Math.max(Math.round(width / 20), 2).toString()]]
+      [
+        ['stroke-width', Math.max(Math.round(width / 20), 2).toString()],
+        ['fill', 'transparent'],
+      ]
     );
 
     result.appendChild(line);
@@ -214,11 +217,19 @@ export class CurvedConnector extends ConnectorBase {
     super.rotateArrows();
 
     const a1transform = this.arrow1.transform.baseVal.getItem(0);
-    a1transform.setRotate(getAngle(this.startPort, this.andgledCorners), this.x1, this.y1);
+    a1transform.setRotate(
+      getAngle(this.startPort, this.andgledCorners),
+      this.x1,
+      this.y1
+    );
     this.arrow1.transform.baseVal.replaceItem(a1transform, 0);
 
     const a2transform = this.arrow2.transform.baseVal.getItem(0);
-    a2transform.setRotate(getAngle(this.endPort, this.andgledCorners), this.x2, this.y2);
+    a2transform.setRotate(
+      getAngle(this.endPort, this.andgledCorners),
+      this.x2,
+      this.y2
+    );
     this.arrow2.transform.baseVal.replaceItem(a2transform, 0);
   }
 
