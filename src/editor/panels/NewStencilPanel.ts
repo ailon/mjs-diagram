@@ -50,6 +50,7 @@ export class NewStencilPanel extends PropertyPanelBase {
     const title = document.createElement('p');
     title.className = 'new-stencil-block-title';
     title.innerText = st.displayName ?? st.stencilType.title;
+    title.title = title.innerText;
     listItem.appendChild(title);
     listItem.addEventListener('pointerdown', () => {
       this.setCurrentType(st.stencilType, listItem);

@@ -9,7 +9,7 @@ import { EllipseStencil } from '../core/EllipseStencil';
 import { DiamondStencil } from '../core/DiamondStencil';
 import { TextStencilState } from '../core/TextStencilState';
 
-const basicStencilEditorSet = new StencilEditorSet(basicStencilSet);
+const basicStencilEditorSet = new StencilEditorSet('core', basicStencilSet);
 basicStencilEditorSet.stencilEditorTypes.set(RectangleTextStencil, TextStencilEditor);
 basicStencilEditorSet.stencilEditorTypes.set(EllipseStencil, TextStencilEditor);
 basicStencilEditorSet.stencilEditorTypes.set(DiamondStencil, TextStencilEditor);

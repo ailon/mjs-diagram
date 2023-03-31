@@ -4,9 +4,13 @@ import { StencilBase } from '../core/StencilBase';
 import { StencilBaseEditor } from './StencilBaseEditor';
 import { IStencilSet, StencilSet } from '../core/StencilSet';
 import { DiagramState } from '../core/DiagramState';
+import { StringSet } from './Language';
 
 export interface IStencilEditorSet {
+  id: string;
   stencilSet: StencilSet;
+  displayName?: string;
+  defaultStringSet?: StringSet;
   stencilEditorTypes: Map<typeof StencilBase, typeof StencilBaseEditor>;
   connectorEditorTypes: Map<typeof ConnectorBase, typeof ConnectorBaseEditor>;
 
@@ -17,8 +21,12 @@ export interface IStencilEditorSet {
   getConnectorEditor(connectorType: typeof ConnectorBase): typeof ConnectorBaseEditor;
 }
 
-export class StencilEditorSet implements StencilEditorSet {
+export class StencilEditorSet implements IStencilEditorSet {
+  public id: string;
   public stencilSet: IStencilSet;
+  public displayName?: string;
+  public defaultStringSet?: StringSet;
+
   public stencilEditorTypes: Map<typeof StencilBase, typeof StencilBaseEditor>;
   public connectorEditorTypes: Map<typeof ConnectorBase, typeof ConnectorBaseEditor>;
 
@@ -27,7 +35,8 @@ export class StencilEditorSet implements StencilEditorSet {
 
   public newDocumentTemplate?: DiagramState;
 
-  constructor(stencilSet: IStencilSet) {
+  constructor(id: string, stencilSet: IStencilSet) {
+    this.id = id;
     this.stencilSet = stencilSet;
 
     this.getStencilEditor = this.getStencilEditor.bind(this);

@@ -9,8 +9,12 @@ import { ArrowConnector } from '../../core/ArrowConnector';
 import { ConnectorBaseEditor } from '../../editor/ConnectorBaseEditor';
 import { CurvedArrowConnector } from '../../core/CurvedArrowConnector';
 import { TextStencilState } from '../../core/TextStencilState';
+import en_flowchart_strings from './lang/en';
+import { StringSet } from '../../editor/Language';
 
-const flowchartStencilEditorSet = new StencilEditorSet(flowchartStencilSet);
+const flowchartStencilEditorSet = new StencilEditorSet('flowchart', flowchartStencilSet);
+flowchartStencilEditorSet.displayName = 'Flowchart';
+flowchartStencilEditorSet.defaultStringSet = new StringSet(en_flowchart_strings);
 flowchartStencilEditorSet.stencilEditorTypes.set(ProcessStencil, TextStencilEditor);
 flowchartStencilEditorSet.stencilEditorTypes.set(DecisionStencil, TextStencilEditor);
 flowchartStencilEditorSet.stencilEditorTypes.set(IOStencil, TextStencilEditor);

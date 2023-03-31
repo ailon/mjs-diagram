@@ -16,6 +16,7 @@ import { ColorSet } from "../../src/editor/ColorSet";
 import { ConnectorEventData, DiagramViewerEventData, StencilEventData } from '../../src/DiagramViewer';
 import { ConnectorEditorEventData, DiagramEditorEventData, StencilEditorEventData } from '../../src/DiagramEditor';
 import lt_core_strings from '../../src/editor/lang/lt';
+import lt_flowchart_strings from '../../src/stencilsets/flowchart/lang/lt';
 
 export * from './../../src/index';
 
@@ -135,7 +136,9 @@ export class Experiments {
 
     this.editor.language.addStrings('core', 'lt', lt_core_strings);
     this.editor.language.addStrings('core', 'ua', [['toolbox-shape-title','Властивості фігури']]);
-    this.editor.language.defaultLang = 'en';
+
+    this.editor.language.addStrings(flowchartStencilEditorSet.id, 'lt', lt_flowchart_strings);
+    this.editor.language.defaultLang = 'lt';
 
     this.editor.addEventListener('editorinit', () => {
       console.log('editor init');

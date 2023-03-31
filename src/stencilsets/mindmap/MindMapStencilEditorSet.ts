@@ -8,7 +8,7 @@ import { TextStencilEditor } from '../../editor/TextStencilEditor';
 import { ConnectorBaseEditor } from '../../editor/ConnectorBaseEditor';
 import { TextStencilState } from '../../core/TextStencilState';
 
-const mindMapStencilEditorSet = new StencilEditorSet(mindMapStencilSet);
+const mindMapStencilEditorSet = new StencilEditorSet('mindmap', mindMapStencilSet);
 mindMapStencilEditorSet.stencilEditorTypes.set(CentralTopicStencil, TextStencilEditor);
 mindMapStencilEditorSet.stencilEditorTypes.set(SubTopicStencil, TextStencilEditor);
 mindMapStencilEditorSet.stencilEditorTypes.set(ItemStencil, TextStencilEditor);
