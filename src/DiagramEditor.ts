@@ -302,9 +302,9 @@ export class DiagramEditor extends HTMLElement {
         --i-mjstb-accent-color: var(--mjstb-accent-color, #cceeff);
         --i-mjstb-accent-color2: var(--mjstb-accent-color2, #335577);
         --i-mjstb-background-color: var(--mjstb-background-color, #333);
-        --i-mjstb-hover-background-color: var(--mjstb-hover-background-color, #383838);
+        --i-mjstb-background-color-hover: var(--mjstb-background-color-hover, #383838);
         --i-mjstb-border-color: var(--mjstb-border-color, --i-mjstb-background-color);
-        --i-mjstb-hover-border-color: var(--mjstb-hover-border-color, #222);
+        --i-mjstb-border-color-hover: var(--mjstb-border-color-hover, #222);
         --i-mjstb-panel-border-color: var(--mjstb-panel-border-color, #383838);
         --i-mjstb-panel-separator-color: var(--mjstb-panel-separator-color, #444);
         --i-mjstb-input-background-color: var(--mjstb-input-background-color, #222);
@@ -353,8 +353,8 @@ export class DiagramEditor extends HTMLElement {
         border: 2px solid var(--i-mjstb-border-color);
       }
       mjstb-panel.toolbar-panel::part(button):hover {
-        background-color: var(--i-mjstb-hover-background-color);
-        border-color: var(--i-mjstb-hover-border-color);
+        background-color: var(--i-mjstb-background-color-hover);
+        border-color: var(--i-mjstb-border-color-hover);
       }
 
       .toolbox-panel {
