@@ -13,7 +13,7 @@ export class ToolboxPanelItem<T> {
     this._isSelected = value;
     if (this.itemUi !== undefined) {
       this.itemUi.style.borderColor =
-        this.isSelected ? 'var(--i-mjstb-accent-color)' : 'var(--i-mjstb-background-color)';
+        this.isSelected ? 'var(--i-mjsdiae-accent-color)' : 'var(--i-mjsdiae-background-color)';
     }
   }
   public dataItem?: T;
@@ -53,8 +53,8 @@ export class ToolboxPanelItem<T> {
       this.itemUi.style.overflow = `hidden`;
       this.itemUi.style.height = `${this.height}px`;
       this.itemUi.style.borderColor =
-        this.isSelected ? 'var(--i-mjstb-accent-color)' : 'var(--i-mjstb-background-color)';
-      this.itemUi.style.stroke = 'var(--i-mjstb-accent-color)';
+        this.isSelected ? 'var(--i-mjsdiae-accent-color)' : 'var(--i-mjsdiae-background-color)';
+      this.itemUi.style.stroke = 'var(--i-mjsdiae-accent-color)';
     }
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

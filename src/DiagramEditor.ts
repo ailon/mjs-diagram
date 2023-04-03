@@ -298,27 +298,27 @@ export class DiagramEditor extends HTMLElement {
     const styleSheet = document.createElement('style');
     styleSheet.innerHTML = `
       * {
-        --i-mjstb-fore-color: var(--mjstb-fore-color, #eee);
-        --i-mjstb-accent-color: var(--mjstb-accent-color, #cceeff);
-        --i-mjstb-accent-color2: var(--mjstb-accent-color2, #335577);
-        --i-mjstb-background-color: var(--mjstb-background-color, #333);
-        --i-mjstb-background-color-hover: var(--mjstb-background-color-hover, #383838);
-        --i-mjstb-border-color: var(--mjstb-border-color, --i-mjstb-background-color);
-        --i-mjstb-border-color-hover: var(--mjstb-border-color-hover, #222);
-        --i-mjstb-panel-border-color: var(--mjstb-panel-border-color, #383838);
-        --i-mjstb-panel-separator-color: var(--mjstb-panel-separator-color, #444);
-        --i-mjstb-input-background-color: var(--mjstb-input-background-color, #222);
-        --i-mjstb-input-background-color-focus: var(--mjstb-input-background-color-focus, #444);
-        --i-mjstb-input-fore-color: var(--mjstb-input-fore-color, --i-mjstb-fore-color);
+        --i-mjsdiae-fore-color: var(--mjsdiae-fore-color, #eee);
+        --i-mjsdiae-accent-color: var(--mjsdiae-accent-color, #cceeff);
+        --i-mjsdiae-accent-color2: var(--mjsdiae-accent-color2, #335577);
+        --i-mjsdiae-background-color: var(--mjsdiae-background-color, #333);
+        --i-mjsdiae-background-color-hover: var(--mjsdiae-background-color-hover, #383838);
+        --i-mjsdiae-border-color: var(--mjsdiae-border-color, --i-mjsdiae-background-color);
+        --i-mjsdiae-border-color-hover: var(--mjsdiae-border-color-hover, #222);
+        --i-mjsdiae-panel-border-color: var(--mjsdiae-panel-border-color, #383838);
+        --i-mjsdiae-panel-separator-color: var(--mjsdiae-panel-separator-color, #444);
+        --i-mjsdiae-input-background-color: var(--mjsdiae-input-background-color, #222);
+        --i-mjsdiae-input-background-color-focus: var(--mjsdiae-input-background-color-focus, #444);
+        --i-mjsdiae-input-fore-color: var(--mjsdiae-input-fore-color, --i-mjsdiae-fore-color);
 
-        --i-mjstb-newstencil-background-color: var(--mjstb-newstencil-background-color, #444);
-        --i-mjstb-newstencil-background-color-hover: var(--mjstb-newstencil-background-color-hover, #888);
+        --i-mjsdiae-newstencil-background-color: var(--mjsdiae-newstencil-background-color, #444);
+        --i-mjsdiae-newstencil-background-color-hover: var(--mjsdiae-newstencil-background-color-hover, #888);
         
-        --i-mjstb-canvas-background-color: var(--mjstb-canvas-background-color, #aaa);
+        --i-mjsdiae-canvas-background-color: var(--mjsdiae-canvas-background-color, #aaa);
       }
 
       .canvas-container {
-        background-color: var(--i-mjstb-canvas-background-color);
+        background-color: var(--i-mjsdiae-canvas-background-color);
         scrollbar-width: thin;
       }
       .canvas-container::-webkit-scrollbar {
@@ -335,8 +335,8 @@ export class DiagramEditor extends HTMLElement {
       }      
 
       mjstb-panel.toolbar-panel::part(panel) {
-        background-color: var(--i-mjstb-background-color);
-        border-bottom: 2px solid var(--i-mjstb-panel-border-color);
+        background-color: var(--i-mjsdiae-background-color);
+        border-bottom: 2px solid var(--i-mjsdiae-panel-border-color);
       }
       mjstb-panel.toolbar-panel::part(toolbar) {
         padding: 5px;
@@ -345,23 +345,23 @@ export class DiagramEditor extends HTMLElement {
       mjstb-panel.toolbar-panel::part(toolbar-block) {
       }
       mjstb-panel.toolbar-panel::part(button) {
-        color: var(--i-mjstb-fore-color);
-        background-color: var(--i-mjstb-background-color);
+        color: var(--i-mjsdiae-fore-color);
+        background-color: var(--i-mjsdiae-background-color);
         width: 36px;
         height: 36px;
         border-radius: 3px;
-        border: 2px solid var(--i-mjstb-border-color);
+        border: 2px solid var(--i-mjsdiae-border-color);
       }
       mjstb-panel.toolbar-panel::part(button):hover {
-        background-color: var(--i-mjstb-background-color-hover);
-        border-color: var(--i-mjstb-border-color-hover);
+        background-color: var(--i-mjsdiae-background-color-hover);
+        border-color: var(--i-mjsdiae-border-color-hover);
       }
 
       .toolbox-panel {
         width: 100%;
-        background-color: var(--i-mjstb-background-color);
-        border-left: 2px solid var(--i-mjstb-panel-border-color);
-        filter: drop-shadow(-2px 0px 4px var(--i-mjstb-background-color));
+        background-color: var(--i-mjsdiae-background-color);
+        border-left: 2px solid var(--i-mjsdiae-panel-border-color);
+        filter: drop-shadow(-2px 0px 4px var(--i-mjsdiae-background-color));
         padding: 2px;
         scrollbar-width: thin;
         overflow-y: auto;
@@ -371,7 +371,7 @@ export class DiagramEditor extends HTMLElement {
         width: 12px;
       }
       .toolbox-panel::-webkit-scrollbar-track {
-        background: var(--i-mjstb-background-color);
+        background: var(--i-mjsdiae-background-color);
       }
       
       .toolbox-panel::-webkit-scrollbar-thumb {
@@ -381,52 +381,52 @@ export class DiagramEditor extends HTMLElement {
       }
 
       .toolbox-panel .content-block {
-        background-color: var(--i-mjstb-background-color);
-        color: var(--i-mjstb-fore-color);
+        background-color: var(--i-mjsdiae-background-color);
+        color: var(--i-mjsdiae-fore-color);
         font-size: 0.8rem;
         padding: 5px;
-        border-bottom: 2px solid var(--i-mjstb-panel-separator-color);
+        border-bottom: 2px solid var(--i-mjsdiae-panel-separator-color);
         border-radius: 3px;
         overflow: hidden;
       }
       .toolbox-panel .content-block input[type=text] {
-        background-color: var(--i-mjstb-input-background-color);
-        color: var(--i-mjstb-input-fore-color);
+        background-color: var(--i-mjsdiae-input-background-color);
+        color: var(--i-mjsdiae-input-fore-color);
         font-size: 0.8rem;
         padding: 3px;
-        border: 1px solid var(--i-mjstb-input-background-color);
-        outline-color: var(--i-mjstb-input-background-color-focus);
+        border: 1px solid var(--i-mjsdiae-input-background-color);
+        outline-color: var(--i-mjsdiae-input-background-color-focus);
         outline-style: solid;
         outline-width: 1px;
       }
       .toolbox-panel .content-block input[type=text]:focus {
-        background-color: var(--i-mjstb-input-background-color-focus);
+        background-color: var(--i-mjsdiae-input-background-color-focus);
       }
       .toolbox-panel .content-block select {
-        background-color: var(--i-mjstb-input-background-color);
-        color: var(--i-mjstb-input-fore-color);
+        background-color: var(--i-mjsdiae-input-background-color);
+        color: var(--i-mjsdiae-input-fore-color);
         font-size: 0.8rem;
         padding: 3px;
-        border: 1px solid var(--i-mjstb-input-background-color);
-        outline-color: var(--i-mjstb-input-background-color-focus);
+        border: 1px solid var(--i-mjsdiae-input-background-color);
+        outline-color: var(--i-mjsdiae-input-background-color-focus);
         outline-style: solid;
         outline-width: 1px;
       }
       .toolbox-panel .content-block select:focus {
-        background-color: var(--i-mjstb-input-background-color-focus);
+        background-color: var(--i-mjsdiae-input-background-color-focus);
       }
       .toolbox-panel .content-block button {
-        background-color: var(--i-mjstb-input-background-color-focus);
-        color: var(--i-mjstb-input-fore-color);
+        background-color: var(--i-mjsdiae-input-background-color-focus);
+        color: var(--i-mjsdiae-input-fore-color);
         font-size: 0.8rem;
         padding: 3px;
-        border: 1px solid var(--i-mjstb-input-background-color);
-        outline-color: var(--i-mjstb-input-background-color);
+        border: 1px solid var(--i-mjsdiae-input-background-color);
+        outline-color: var(--i-mjsdiae-input-background-color);
         outline-style: solid;
         outline-width: 1px;
       }
       .toolbox-panel .content-block button:hover {
-        background-color: var(--i-mjstb-input-background-color);
+        background-color: var(--i-mjsdiae-input-background-color);
       }      
 
       .toolbox-panel .content-block h3 {
@@ -438,14 +438,14 @@ export class DiagramEditor extends HTMLElement {
         margin: -5px;
         margin-bottom: 5px;
         padding: 5px;
-        border-bottom: 1px solid var(--i-mjstb-panel-separator-color);
-        color: var(--i-mjstb-fore-color);
+        border-bottom: 1px solid var(--i-mjsdiae-panel-separator-color);
+        color: var(--i-mjsdiae-fore-color);
         font-family: Helvetica, Arial, Sans-Serif;
         font-size: 0.8rem;
       }
       .toolbox-panel .new-stencil-block {
         padding: 0;
-        background-color: var(--i-mjstb-newstencil-background-color);
+        background-color: var(--i-mjsdiae-newstencil-background-color);
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
@@ -459,12 +459,12 @@ export class DiagramEditor extends HTMLElement {
         cursor: pointer;
       }
       .toolbox-panel .new-stencil-block:hover {
-        background-color: var(--i-mjstb-newstencil-background-color-hover);
+        background-color: var(--i-mjsdiae-newstencil-background-color-hover);
       }
       .toolbox-panel .new-stencil-block .new-stencil-block-thumbnail {
         stroke-width: 0.5px;
-        fill: var(--i-mjstb-accent-color2);
-        stroke: var(--i-mjstb-border-color);
+        fill: var(--i-mjsdiae-accent-color2);
+        stroke: var(--i-mjsdiae-border-color);
         color: #000;
         margin: 10px;
       }
@@ -476,8 +476,8 @@ export class DiagramEditor extends HTMLElement {
         text-align: center;
         margin: 5px 0 0 0;
         padding: 3px;
-        background-color: var(--i-mjstb-accent-color2);
-        color: var(--i-mjstb-fore-color);
+        background-color: var(--i-mjsdiae-accent-color2);
+        color: var(--i-mjsdiae-fore-color);
       }
       
       

@@ -43,7 +43,7 @@ export class NewStencilPanel extends PropertyPanelBase {
     const listItem = document.createElement('div');
     listItem.className = 'new-stencil-block';
     listItem.style.borderColor =
-      st.stencilType === this.currentType ? 'var(--i-mjstb-accent-color)' : 'var(--i-mjstb-panel-separator-color)';
+      st.stencilType === this.currentType ? 'var(--i-mjsdiae-accent-color)' : 'var(--i-mjsdiae-panel-separator-color)';
     const thumbnail = st.stencilType.getThumbnail(80, 60);
     thumbnail.setAttribute('class', 'new-stencil-block-thumbnail');
     listItem.appendChild(thumbnail);
@@ -63,7 +63,7 @@ export class NewStencilPanel extends PropertyPanelBase {
     this.currentType = stencilType;
 
     this.typeBoxes.forEach((box) => {
-      box.style.borderColor = box === target ? 'var(--i-mjstb-accent-color)' : 'var(--i-mjstb-panel-separator-color)';
+      box.style.borderColor = box === target ? 'var(--i-mjsdiae-accent-color)' : 'var(--i-mjsdiae-panel-separator-color)';
     });
 
     if (this.onCreateNewStencil) {
@@ -74,7 +74,7 @@ export class NewStencilPanel extends PropertyPanelBase {
   public deselectType() {
     this.currentType = undefined;
     this.typeBoxes.forEach((t) => {
-      t.style.borderColor = 'var(--i-mjstb-panel-separator-color)';
+      t.style.borderColor = 'var(--i-mjsdiae-panel-separator-color)';
     })
   }
 

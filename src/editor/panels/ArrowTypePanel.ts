@@ -50,7 +50,7 @@ export class ArrowTypePanel extends PropertyPanelBase {
       typeBoxContainer.style.borderStyle = 'solid';
       typeBoxContainer.style.borderColor =
         arrowType === this.currentType
-          ? 'var(--i-mjstb-accent-color)'
+          ? 'var(--i-mjsdiae-accent-color)'
           : 'transparent';
 
       typeBoxContainer.addEventListener('click', () => {
@@ -64,7 +64,7 @@ export class ArrowTypePanel extends PropertyPanelBase {
         leftTip.style.alignItems = 'center';
         leftTip.style.minHeight = '20px';
         leftTip.innerHTML = `<svg viewBox="0 0 10 10" width="10" height="10" xmlns="http://www.w3.org/2000/svg">
-          <polygon points="0,5 10,0 10,10" style="fill: var(--i-mjstb-accent-color);" />
+          <polygon points="0,5 10,0 10,10" style="fill: var(--i-mjsdiae-accent-color);" />
         </svg>`;
         leftTip.style.marginLeft = '5px';
         typeBoxContainer.appendChild(leftTip);
@@ -79,7 +79,7 @@ export class ArrowTypePanel extends PropertyPanelBase {
       const hr = document.createElement('hr');
       hr.style.minWidth = '20px';
       hr.style.border = '0px';
-      hr.style.borderTop = '3px solid var(--i-mjstb-accent-color)';
+      hr.style.borderTop = '3px solid var(--i-mjsdiae-accent-color)';
       hr.style.flexGrow = '2';
       lineBox.appendChild(hr);
 
@@ -91,7 +91,7 @@ export class ArrowTypePanel extends PropertyPanelBase {
         rightTip.style.alignItems = 'center';
         rightTip.style.minHeight = '20px';
         rightTip.innerHTML = `<svg viewBox="0 0 10 10" width="10" height="10" xmlns="http://www.w3.org/2000/svg">
-          <polygon points="0,0 10,5 0,10" style="fill: var(--i-mjstb-accent-color);" />
+          <polygon points="0,0 10,5 0,10" style="fill: var(--i-mjsdiae-accent-color);" />
         </svg>`;
         rightTip.style.marginRight = '5px';
         typeBoxContainer.appendChild(rightTip);
@@ -107,7 +107,7 @@ export class ArrowTypePanel extends PropertyPanelBase {
 
     this.typeBoxes.forEach((box) => {
       box.style.borderColor =
-        box === target ? 'var(--i-mjstb-accent-color)' : 'transparent';
+        box === target ? 'var(--i-mjsdiae-accent-color)' : 'transparent';
     });
 
     if (this.onArrowTypeChanged) {
