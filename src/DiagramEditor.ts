@@ -361,7 +361,7 @@ export class DiagramEditor extends HTMLElement {
         width: 100%;
         background-color: var(--i-mjsdiae-background-color);
         border-left: 2px solid var(--i-mjsdiae-panel-border-color);
-        filter: drop-shadow(-2px 0px 4px var(--i-mjsdiae-background-color));
+        filter: drop-shadow(-2px 0px 4px var(--i-mjsdiae-panel-border-color));
         padding: 2px;
         scrollbar-width: thin;
         overflow-y: auto;
@@ -931,7 +931,7 @@ export class DiagramEditor extends HTMLElement {
     this._mainCanvas.style.gridRowStart = '1';
     this._mainCanvas.style.pointerEvents = 'auto';
     this._mainCanvas.style.backgroundColor = this.documentBgColor;
-    this._mainCanvas.style.filter = 'drop-shadow(2px 2px 8px #333)';
+    this._mainCanvas.style.filter = 'drop-shadow(2px 2px 8px var(--i-mjsdiae-panel-border-color))';
     this._mainCanvas.style.margin = '10px';
     //this._mainCanvas.style.transform = `scale(${this._zoomLevel})`;
 
