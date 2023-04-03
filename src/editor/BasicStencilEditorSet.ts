@@ -8,6 +8,7 @@ import { ConnectorBase } from '../core/ConnectorBase';
 import { EllipseStencil } from '../core/EllipseStencil';
 import { DiamondStencil } from '../core/DiamondStencil';
 import { TextStencilState } from '../core/TextStencilState';
+import { AngledConnector } from '../core/AngledConnector';
 
 const basicStencilEditorSet = new StencilEditorSet('core', basicStencilSet);
 basicStencilEditorSet.stencilEditorTypes.set(RectangleTextStencil, TextStencilEditor);
@@ -18,23 +19,28 @@ basicStencilEditorSet.connectorEditorTypes.set(
   CurvedConnector,
   ConnectorBaseEditor
 );
+basicStencilEditorSet.connectorEditorTypes.set(
+  AngledConnector,
+  ConnectorBaseEditor
+);
 
 basicStencilEditorSet.availableConnectorTypes = [
   ConnectorBase,
   CurvedConnector,
+  AngledConnector
 ];
-basicStencilEditorSet.defaultConnectorType = ConnectorBase;
+basicStencilEditorSet.defaultConnectorType = AngledConnector;
 
 basicStencilEditorSet.newDocumentTemplate = {
-  width: 872,
-  height: 752,
+  width: 640,
+  height: 360,
   stencils: [
     <TextStencilState>{
       color: '#000000',
       fontFamily: 'Helvetica, Arial, sans-serif',
       padding: 5,
       text: 'Welcome!',
-      typeName: 'TextStencil',
+      typeName: 'RectangleTextStencil',
       iid: 1,
       left: 234.53121948242188,
       top: 137.66664123535156,
