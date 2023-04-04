@@ -68,7 +68,12 @@ export class AngledConnector extends ConnectorBase {
 
     const point2: IPoint = { x: firstPoint.x, y: lastPoint.y };
     stepPoints.push(point2);
-    if (this.startStencil !== undefined && this.endStencil !== undefined) {
+    if (
+      this.startStencil !== undefined &&
+      this.endStencil !== undefined &&
+      this.startPort !== undefined &&
+      this.endPort !== undefined
+    ) {
       // check if need to go around stencils
       let pointAdjusted = false;
       if (
@@ -77,6 +82,7 @@ export class AngledConnector extends ConnectorBase {
         (firstPoint.y < this.startStencil.top &&
           point2.y > this.startStencil.top)
       ) {
+        // crosses start stencil vertically
         point2.y = firstPoint.y;
         if (
           lastPoint.x < this.startStencil.left - MIN_SEGMENT_LENGTH ||
@@ -91,9 +97,65 @@ export class AngledConnector extends ConnectorBase {
         pointAdjusted = true;
       }
 
-      if (pointAdjusted) {
-        const point3: IPoint = { x: point2.x, y: lastPoint.y };
-        stepPoints.push(point3);
+      const point3: IPoint = { x: point2.x, y: lastPoint.y };
+
+      if (
+        point2.y > this.startStencil.top &&
+        point2.y < this.startStencil.bottom
+      ) {
+        if (
+          (point2.x < this.startStencil.left &&
+            lastPoint.x > this.startStencil.right) ||
+          (point2.x > this.startStencil.right &&
+            lastPoint.x < this.startStencil.left)
+        ) {
+          point2.y =
+            lastPoint.y - firstPoint.y > 0
+              ? this.startStencil.bottom + MIN_SEGMENT_LENGTH
+              : this.startStencil.top - MIN_SEGMENT_LENGTH;
+
+          point3.x = lastPoint.x;
+          point3.y = point2.y;
+
+          pointAdjusted = true;
+        }
+      }
+
+      if (
+        point2.x > this.endStencil.left &&
+        point2.x < this.endStencil.right &&
+        point2.y > this.endStencil.top &&
+        point2.y < this.endStencil.bottom
+      ) {
+        point2.y =
+          point2.y - firstPoint.y > 0
+            ? this.endStencil.top - MIN_SEGMENT_LENGTH
+            : this.endStencil.bottom + MIN_SEGMENT_LENGTH;
+
+        point3.x = lastPoint.x;
+        point3.y = point2.y;
+
+        pointAdjusted = true;
+      }
+
+      stepPoints.push(point3);
+
+      if (
+        lastPoint.y < this.endStencil.bottom &&
+        lastPoint.y > this.endStencil.top &&
+        ((lastPoint.x < this.endStencil.left &&
+          firstPoint.x > this.endStencil.right) ||
+          (firstPoint.x < this.endStencil.left &&
+            lastPoint.x > this.endStencil.right))
+      ) {
+        point2.y =
+          firstPoint.y < ending1.y
+            ? Math.min(this.endStencil.top - MIN_SEGMENT_LENGTH, firstPoint.y)
+            : Math.max(this.endStencil.bottom + MIN_SEGMENT_LENGTH, firstPoint.y);
+        
+        point2.x = firstPoint.x;
+        point3.y = point2.y;
+        point3.x = lastPoint.x;
       }
     }
 
