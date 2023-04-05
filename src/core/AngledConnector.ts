@@ -2,6 +2,7 @@ import { ConnectorBase } from './ConnectorBase';
 import { DiagramSettings } from './DiagramSettings';
 import { IPoint } from './IPoint';
 import { Port } from './Port';
+import { StencilBase } from './StencilBase';
 import { SvgHelper } from './SvgHelper';
 
 export class AngledConnector extends ConnectorBase {
@@ -44,7 +45,14 @@ export class AngledConnector extends ConnectorBase {
     super(iid, container, settings);
 
     this.getPathD = this.getPathD.bind(this);
+
+    this.container.appendChild(this.point2vis);
+    this.container.appendChild(this.point3vis);
   }
+
+  // temp
+  private point2vis = SvgHelper.createCircle(5, [['fill', 'red']]);
+  private point3vis = SvgHelper.createCircle(5, [['fill', 'green']]);
 
   private getPathD(): string {
     const [ending1, ending2] = this.getEndings();
@@ -100,25 +108,17 @@ export class AngledConnector extends ConnectorBase {
       const point3: IPoint = { x: point2.x, y: lastPoint.y };
 
       if (
-        point2.y > this.startStencil.top &&
-        point2.y < this.startStencil.bottom
+        lineCrossesStencilHorizontally(this.startStencil, point2, lastPoint)
       ) {
-        if (
-          (point2.x < this.startStencil.left &&
-            lastPoint.x > this.startStencil.right) ||
-          (point2.x > this.startStencil.right &&
-            lastPoint.x < this.startStencil.left)
-        ) {
-          point2.y =
-            lastPoint.y - firstPoint.y > 0
-              ? this.startStencil.bottom + MIN_SEGMENT_LENGTH
-              : this.startStencil.top - MIN_SEGMENT_LENGTH;
+        point2.y =
+          lastPoint.y - MIN_SEGMENT_LENGTH > this.startStencil.bottom + MIN_SEGMENT_LENGTH
+            ? this.startStencil.bottom + MIN_SEGMENT_LENGTH
+            : this.startStencil.top - MIN_SEGMENT_LENGTH;
 
-          point3.x = lastPoint.x;
-          point3.y = point2.y;
+        point3.x = lastPoint.x;
+        point3.y = point2.y;
 
-          pointAdjusted = true;
-        }
+        pointAdjusted = true;
       }
 
       if (
@@ -151,12 +151,44 @@ export class AngledConnector extends ConnectorBase {
         point2.y =
           firstPoint.y < ending1.y
             ? Math.min(this.endStencil.top - MIN_SEGMENT_LENGTH, firstPoint.y)
-            : Math.max(this.endStencil.bottom + MIN_SEGMENT_LENGTH, firstPoint.y);
-        
+            : Math.max(
+                this.endStencil.bottom + MIN_SEGMENT_LENGTH,
+                firstPoint.y
+              );
+
         point2.x = firstPoint.x;
         point3.y = point2.y;
         point3.x = lastPoint.x;
       }
+
+      if (lineCrossesStencilHorizontally(this.startStencil, point2, point3)) {
+        if (this.startStencil.top > this.endStencil.bottom) {
+          point2.y = this.startStencil.bottom + MIN_SEGMENT_LENGTH;
+        } else {
+          point2.y = this.endStencil.top - MIN_SEGMENT_LENGTH;
+        }
+        point3.y = point2.y;
+      }
+
+      if (lineCrossesStencilVertically(this.endStencil, firstPoint, point2)) {
+        point2.y = firstPoint.y;
+        if (ending1.x > firstPoint.x) {
+          point2.x = Math.min(this.startStencil.left, this.endStencil.left) - MIN_SEGMENT_LENGTH;
+        } else {
+          point2.x = Math.max(this.startStencil.right, this.endStencil.right) + MIN_SEGMENT_LENGTH;
+        }
+        point3.x = point2.x;
+      }
+
+      // temp
+      SvgHelper.setAttributes(this.point2vis, [
+        ['cx', point2.x.toString()],
+        ['cy', point2.y.toString()],
+      ]);
+      SvgHelper.setAttributes(this.point3vis, [
+        ['cx', point3.x.toString()],
+        ['cy', point3.y.toString()],
+      ]);
     }
 
     let result = `M ${ending1.x} ${ending1.y} L ${firstPoint.x} ${firstPoint.y} `;
@@ -230,6 +262,49 @@ export class AngledConnector extends ConnectorBase {
           break;
       }
       return direction;
+    }
+
+    function lineCrossesStencilHorizontally(
+      stencil: StencilBase,
+      point1: IPoint,
+      point2: IPoint
+    ): boolean {
+      const leftPoint = point1.x > point2.x ? point2 : point1;
+      const rightPoint = leftPoint === point1 ? point2 : point1;
+
+      return (
+        leftPoint.x <= stencil.right &&
+        rightPoint.x >= stencil.left &&
+        leftPoint.y >= stencil.top &&
+        leftPoint.y <= stencil.bottom
+      );
+    }
+
+    function lineCrossesStencilVertically(
+      stencil: StencilBase,
+      point1: IPoint,
+      point2: IPoint
+    ): boolean {
+      const topPoint = point1.y > point2.y ? point2 : point1;
+      const bottomPoint = topPoint === point1 ? point2 : point1;
+
+      return (
+        topPoint.y <= stencil.bottom &&
+        bottomPoint.y >= stencil.top &&
+        topPoint.x >= stencil.left &&
+        topPoint.x <= stencil.right
+      );
+    }
+
+    function lineCrossesStencil(
+      stencil: StencilBase,
+      point1: IPoint,
+      point2: IPoint
+    ): boolean {
+      return (
+        lineCrossesStencilHorizontally(stencil, point1, point2) ||
+        lineCrossesStencilVertically(stencil, point1, point2)
+      );
     }
   }
 
