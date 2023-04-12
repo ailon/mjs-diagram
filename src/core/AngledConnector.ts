@@ -5,6 +5,8 @@ import { Port } from './Port';
 import { StencilBase } from './StencilBase';
 import { SvgHelper } from './SvgHelper';
 
+type LineDirection = 'left' | 'up' | 'right' | 'down';
+
 export class AngledConnector extends ConnectorBase {
   public static typeName = 'AngledConnector';
 
@@ -47,32 +49,31 @@ export class AngledConnector extends ConnectorBase {
     this.getPathD = this.getPathD.bind(this);
   }
 
+  private startLineDir: LineDirection = 'left';
+  private endLineDir: LineDirection = 'left';
   private getPathD(): string {
     const [ending1, ending2] = this.getEndings();
     const MIN_SEGMENT_LENGTH = 10;
-    type LineDirection = 'left' | 'up' | 'right' | 'down';
 
-    let startLineDir: LineDirection = 'left';
     if (this.startPort !== undefined) {
-      startLineDir = getEdgeLineDirection(this.startPort);
+      this.startLineDir = getEdgeLineDirection(this.startPort);
     }
 
-    let endLineDir: LineDirection = 'left';
     if (this.endPort !== undefined) {
-      endLineDir = getEdgeLineDirection(this.endPort);
+      this.endLineDir = getEdgeLineDirection(this.endPort);
     }
 
-    const firstPoint = getEdgePoint(ending1, startLineDir);
-    const lastPoint = getEdgePoint(ending2, endLineDir);
+    const firstPoint = getEdgePoint(ending1, this.startLineDir);
+    const lastPoint = getEdgePoint(ending2, this.endLineDir);
 
     const stepPoints: IPoint[] = [
       {
         x:
-          startLineDir === 'left' || startLineDir === 'right'
+        this.startLineDir === 'left' || this.startLineDir === 'right'
             ? lastPoint.x
             : firstPoint.x,
         y:
-          startLineDir === 'left' || startLineDir === 'right'
+        this.startLineDir === 'left' || this.startLineDir === 'right'
             ? firstPoint.y
             : lastPoint.y,
       },
@@ -183,6 +184,7 @@ export class AngledConnector extends ConnectorBase {
       );
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     function lineCrossesStencil(
       stencil: StencilBase,
       point1: IPoint,
@@ -196,42 +198,24 @@ export class AngledConnector extends ConnectorBase {
   }
 
   protected rotateArrows(): void {
-    function getAngle(port?: Port, andgledCorners = true): number {
+    function getAngle(direction: LineDirection): number {
       let angle = 0;
-      if (port !== undefined) {
-        switch (port.location) {
-          case 'bottomcenter': {
-            angle = 0;
-            break;
-          }
-          case 'bottomleft': {
-            angle = andgledCorners ? 45 : 90;
-            break;
-          }
-          case 'bottomright': {
-            angle = andgledCorners ? -45 : 270;
-            break;
-          }
-          case 'leftcenter': {
-            angle = 90;
-            break;
-          }
-          case 'rightcenter': {
-            angle = 270;
-            break;
-          }
-          case 'topcenter': {
-            angle = 180;
-            break;
-          }
-          case 'topleft': {
-            angle = andgledCorners ? 135 : 90;
-            break;
-          }
-          case 'topright': {
-            angle = andgledCorners ? 225 : 270;
-            break;
-          }
+      switch (direction) {
+        case 'left': {
+          angle = 90;
+          break;
+        }
+        case 'right': {
+          angle = 270;
+          break;
+        }
+        case 'up': {
+          angle = 180;
+          break;
+        }
+        case 'down': {
+          angle = 0;
+          break;
         }
       }
 
@@ -241,11 +225,11 @@ export class AngledConnector extends ConnectorBase {
     super.rotateArrows();
 
     const a1transform = this.arrow1.transform.baseVal.getItem(0);
-    a1transform.setRotate(getAngle(this.startPort, false), this.x1, this.y1);
+    a1transform.setRotate(getAngle(this.startLineDir), this.x1, this.y1);
     this.arrow1.transform.baseVal.replaceItem(a1transform, 0);
 
     const a2transform = this.arrow2.transform.baseVal.getItem(0);
-    a2transform.setRotate(getAngle(this.endPort, false), this.x2, this.y2);
+    a2transform.setRotate(getAngle(this.endLineDir), this.x2, this.y2);
     this.arrow2.transform.baseVal.replaceItem(a2transform, 0);
   }
 

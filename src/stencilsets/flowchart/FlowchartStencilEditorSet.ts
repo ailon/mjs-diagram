@@ -11,6 +11,7 @@ import { CurvedArrowConnector } from '../../core/CurvedArrowConnector';
 import { TextStencilState } from '../../core/TextStencilState';
 import en_flowchart_strings from './lang/en';
 import { StringSet } from '../../editor/Language';
+import { AngledArrowConnector } from '../../core/AngledArrowConnector';
 
 const flowchartStencilEditorSet = new StencilEditorSet('flowchart', flowchartStencilSet);
 flowchartStencilEditorSet.displayName = 'Flowchart';
@@ -26,9 +27,9 @@ flowchartStencilEditorSet.connectorEditorTypes.set(
 );
 
 flowchartStencilEditorSet.availableConnectorTypes = [
-  ArrowConnector, CurvedArrowConnector
+  ArrowConnector, CurvedArrowConnector, AngledArrowConnector
 ];
-flowchartStencilEditorSet.defaultConnectorType = ArrowConnector;
+flowchartStencilEditorSet.defaultConnectorType = AngledArrowConnector;
 
 flowchartStencilEditorSet.newDocumentTemplate = {
   width: 640,

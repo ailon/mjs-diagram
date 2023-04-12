@@ -1,3 +1,4 @@
+import { AngledArrowConnector } from '../../core/AngledArrowConnector';
 import { ArrowConnector } from '../../core/ArrowConnector';
 import { CurvedArrowConnector } from '../../core/CurvedArrowConnector';
 import { StencilSet } from '../../core/StencilSet';
@@ -33,6 +34,10 @@ flowchartStencilSet.connectorTypes.push(
   {
     connectorType: CurvedArrowConnector,
     displayName: 'Flow curve',
+  },
+  {
+    connectorType: AngledArrowConnector,
+    displayName: 'Angles Flowline',
   }
 );
 
