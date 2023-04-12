@@ -65,152 +65,18 @@ export class AngledConnector extends ConnectorBase {
     const firstPoint = getEdgePoint(ending1, startLineDir);
     const lastPoint = getEdgePoint(ending2, endLineDir);
 
-    const stepPoints: IPoint[] = [];
-
-    let prevPoint = firstPoint;
-    let nextPoint: IPoint = { x: prevPoint.x, y: lastPoint.y };
-
-    if (this.startStencil !== undefined && this.endStencil !== undefined) {
-      while (
-        (lineCrossesStencil(this.startStencil, prevPoint, nextPoint) ||
-          lineCrossesStencil(this.startStencil, nextPoint, lastPoint) ||
-          lineCrossesStencil(this.endStencil, prevPoint, nextPoint) ||
-          lineCrossesStencil(this.endStencil, nextPoint, lastPoint)) &&
-        !(
-          lineCrossesStencil(this.startStencil, lastPoint, lastPoint) ||
-          lineCrossesStencil(this.endStencil, firstPoint, firstPoint)
-        )
-      ) {
-        if (stepPoints.length > 150) {
-          // @todo - remove this temp breaker
-          break;
-        }
-
-        if (
-          lineCrossesStencilHorizontally(
-            this.startStencil,
-            prevPoint,
-            nextPoint
-          )
-        ) {
-          if (
-            this.startStencil.bottom < lastPoint.y &&
-            this.startStencil.bottom < this.endStencil.top - MIN_SEGMENT_LENGTH
-          ) {
-            nextPoint.y = this.startStencil.bottom + MIN_SEGMENT_LENGTH;
-          } else {
-            nextPoint.y = this.startStencil.top - MIN_SEGMENT_LENGTH;
-          }
-          nextPoint.x = prevPoint.x;
-
-          stepPoints.push({ x: nextPoint.x, y: nextPoint.y });
-          nextPoint = { x: nextPoint.x, y: lastPoint.y };
-        } else if (
-          lineCrossesStencilVertically(this.startStencil, prevPoint, nextPoint)
-        ) {
-          if (
-            Math.abs(this.startStencil.right - lastPoint.x) <
-            Math.abs(this.startStencil.left - lastPoint.x)
-          ) {
-            nextPoint.x = this.startStencil.right + MIN_SEGMENT_LENGTH;
-          } else {
-            nextPoint.x = this.startStencil.left - MIN_SEGMENT_LENGTH;
-          }
-          nextPoint.y = prevPoint.y;
-
-          stepPoints.push({ x: nextPoint.x, y: nextPoint.y });
-          nextPoint = { x: nextPoint.x, y: lastPoint.y };
-        } else if (
-          lineCrossesStencilHorizontally(
-            this.startStencil,
-            nextPoint,
-            lastPoint
-          )
-        ) {
-          nextPoint.y =
-            lastPoint.y < this.startStencil.bottom
-              ? this.startStencil.top - MIN_SEGMENT_LENGTH
-              : this.startStencil.bottom + MIN_SEGMENT_LENGTH;
-          nextPoint.x = prevPoint.x;
-
-          stepPoints.push({ x: nextPoint.x, y: nextPoint.y });
-          nextPoint = { x: lastPoint.x, y: nextPoint.y };
-        } else if (
-          lineCrossesStencilVertically(this.startStencil, nextPoint, lastPoint)
-        ) {
-          nextPoint.x = this.startStencil.right + MIN_SEGMENT_LENGTH;
-          nextPoint.y = prevPoint.y;
-
-          stepPoints.push({ x: nextPoint.x, y: nextPoint.y });
-          nextPoint = { x: nextPoint.x, y: lastPoint.y };
-        } else if (
-          lineCrossesStencilHorizontally(this.endStencil, nextPoint, lastPoint)
-        ) {
-          nextPoint.y =
-            prevPoint.y > this.endStencil.top &&
-            this.startStencil.top >
-              this.endStencil.bottom + MIN_SEGMENT_LENGTH * 2
-              ? this.endStencil.bottom + MIN_SEGMENT_LENGTH
-              : this.endStencil.top - MIN_SEGMENT_LENGTH >
-                this.startStencil.bottom
-              ? this.endStencil.top - MIN_SEGMENT_LENGTH
-              : this.startStencil.top - MIN_SEGMENT_LENGTH;
-          nextPoint.x = prevPoint.x;
-
-          stepPoints.push({ x: nextPoint.x, y: nextPoint.y });
-          nextPoint = { x: lastPoint.x, y: nextPoint.y };
-        } else if (
-          lineCrossesStencilVertically(this.endStencil, nextPoint, lastPoint)
-        ) {
-          nextPoint.x = prevPoint.x;
-          nextPoint.y =
-            prevPoint.y > this.endStencil.bottom
-              ? this.endStencil.bottom + MIN_SEGMENT_LENGTH
-              : this.endStencil.top - MIN_SEGMENT_LENGTH;
-
-          stepPoints.push({ x: nextPoint.x, y: nextPoint.y });
-
-          nextPoint.x = this.endStencil.right + MIN_SEGMENT_LENGTH;
-          stepPoints.push({ x: nextPoint.x, y: nextPoint.y });
-
-          nextPoint = { x: nextPoint.x, y: lastPoint.y };
-        } else if (
-          lineCrossesStencilHorizontally(this.endStencil, prevPoint, nextPoint)
-        ) {
-          nextPoint.y =
-            prevPoint.y > this.endStencil.top &&
-            this.startStencil.top >
-              this.endStencil.bottom + MIN_SEGMENT_LENGTH * 2
-              ? this.endStencil.bottom + MIN_SEGMENT_LENGTH
-              : this.endStencil.top - MIN_SEGMENT_LENGTH >
-                this.startStencil.bottom
-              ? this.endStencil.top - MIN_SEGMENT_LENGTH
-              : this.startStencil.top - MIN_SEGMENT_LENGTH;
-          nextPoint.x = prevPoint.x;
-
-          stepPoints.push({ x: nextPoint.x, y: nextPoint.y });
-          nextPoint = { x: lastPoint.x, y: nextPoint.y };
-        } else if (
-          lineCrossesStencilVertically(this.endStencil, prevPoint, nextPoint)
-        ) {
-          nextPoint.x = prevPoint.x;
-          nextPoint.y =
-            prevPoint.y > this.endStencil.bottom
-              ? this.endStencil.bottom + MIN_SEGMENT_LENGTH
-              : this.endStencil.top - MIN_SEGMENT_LENGTH;
-
-          stepPoints.push({ x: nextPoint.x, y: nextPoint.y });
-          nextPoint = { x: lastPoint.x, y: nextPoint.y };
-        } else {
-          console.log('unhandled routing');
-          break;
-        }
-
-        prevPoint = stepPoints[stepPoints.length - 1];
-      }
-
-      stepPoints.push(nextPoint);
-    }
+    const stepPoints: IPoint[] = [
+      {
+        x:
+          startLineDir === 'left' || startLineDir === 'right'
+            ? lastPoint.x
+            : firstPoint.x,
+        y:
+          startLineDir === 'left' || startLineDir === 'right'
+            ? firstPoint.y
+            : lastPoint.y,
+      },
+    ];
 
     let result = `M ${ending1.x} ${ending1.y} L ${firstPoint.x} ${firstPoint.y} `;
     stepPoints.forEach((point) => {
