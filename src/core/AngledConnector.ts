@@ -27,11 +27,11 @@ export class AngledConnector extends ConnectorBase {
     const yPadding = Math.max(Math.floor(height * 0.05), 2);
 
     const line = SvgHelper.createPath(
-      `M ${xPadding} ${yPadding} C ${
-        (width - xPadding * 2) * 0.75
-      } ${yPadding}, ${(width - xPadding * 2) * 0.25} ${height - yPadding}, ${
+      `M ${xPadding} ${yPadding} H ${
+        width / 2
+      } V ${height - yPadding}, H ${
         width - xPadding
-      } ${height - yPadding}`,
+      }`,
       [
         ['stroke-width', Math.max(Math.round(width / 20), 2).toString()],
         ['fill', 'transparent'],
