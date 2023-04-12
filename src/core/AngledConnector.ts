@@ -51,6 +51,9 @@ export class AngledConnector extends ConnectorBase {
 
   private startLineDir: LineDirection = 'left';
   private endLineDir: LineDirection = 'left';
+
+  private stepPoints: IPoint[] = [];
+
   private getPathD(): string {
     const [ending1, ending2] = this.getEndings();
     const MIN_SEGMENT_LENGTH = 10;
@@ -66,7 +69,8 @@ export class AngledConnector extends ConnectorBase {
     const firstPoint = getEdgePoint(ending1, this.startLineDir);
     const lastPoint = getEdgePoint(ending2, this.endLineDir);
 
-    const stepPoints: IPoint[] = [
+    this.stepPoints = [
+      firstPoint,
       {
         x:
         this.startLineDir === 'left' || this.startLineDir === 'right'
@@ -77,13 +81,14 @@ export class AngledConnector extends ConnectorBase {
             ? firstPoint.y
             : lastPoint.y,
       },
+      lastPoint
     ];
 
-    let result = `M ${ending1.x} ${ending1.y} L ${firstPoint.x} ${firstPoint.y} `;
-    stepPoints.forEach((point) => {
+    let result = `M ${ending1.x} ${ending1.y} `;
+    this.stepPoints.forEach((point) => {
       result += `L ${point.x} ${point.y} `;
     });
-    result += `L ${lastPoint.x} ${lastPoint.y} L ${ending2.x} ${ending2.y}`;
+    result += `L ${ending2.x} ${ending2.y}`;
 
     return result;
 
