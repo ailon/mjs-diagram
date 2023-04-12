@@ -72,10 +72,14 @@ export class AngledConnector extends ConnectorBase {
 
     if (this.startStencil !== undefined && this.endStencil !== undefined) {
       while (
-        lineCrossesStencil(this.startStencil, prevPoint, nextPoint) ||
-        lineCrossesStencil(this.startStencil, nextPoint, lastPoint) ||
-        lineCrossesStencil(this.endStencil, prevPoint, nextPoint) ||
-        lineCrossesStencil(this.endStencil, nextPoint, lastPoint)
+        (lineCrossesStencil(this.startStencil, prevPoint, nextPoint) ||
+          lineCrossesStencil(this.startStencil, nextPoint, lastPoint) ||
+          lineCrossesStencil(this.endStencil, prevPoint, nextPoint) ||
+          lineCrossesStencil(this.endStencil, nextPoint, lastPoint)) &&
+        !(
+          lineCrossesStencil(this.startStencil, lastPoint, lastPoint) ||
+          lineCrossesStencil(this.endStencil, firstPoint, firstPoint)
+        )
       ) {
         if (stepPoints.length > 150) {
           // @todo - remove this temp breaker
@@ -89,7 +93,14 @@ export class AngledConnector extends ConnectorBase {
             nextPoint
           )
         ) {
-          nextPoint.y = this.startStencil.bottom + MIN_SEGMENT_LENGTH;
+          if (
+            this.startStencil.bottom < lastPoint.y &&
+            this.startStencil.bottom < this.endStencil.top - MIN_SEGMENT_LENGTH
+          ) {
+            nextPoint.y = this.startStencil.bottom + MIN_SEGMENT_LENGTH;
+          } else {
+            nextPoint.y = this.startStencil.top - MIN_SEGMENT_LENGTH;
+          }
           nextPoint.x = prevPoint.x;
 
           stepPoints.push({ x: nextPoint.x, y: nextPoint.y });
@@ -97,7 +108,14 @@ export class AngledConnector extends ConnectorBase {
         } else if (
           lineCrossesStencilVertically(this.startStencil, prevPoint, nextPoint)
         ) {
-          nextPoint.x = this.startStencil.right + MIN_SEGMENT_LENGTH;
+          if (
+            Math.abs(this.startStencil.right - lastPoint.x) <
+            Math.abs(this.startStencil.left - lastPoint.x)
+          ) {
+            nextPoint.x = this.startStencil.right + MIN_SEGMENT_LENGTH;
+          } else {
+            nextPoint.x = this.startStencil.left - MIN_SEGMENT_LENGTH;
+          }
           nextPoint.y = prevPoint.y;
 
           stepPoints.push({ x: nextPoint.x, y: nextPoint.y });
@@ -109,17 +127,16 @@ export class AngledConnector extends ConnectorBase {
             lastPoint
           )
         ) {
-          nextPoint.y = this.startStencil.bottom + MIN_SEGMENT_LENGTH;
+          nextPoint.y =
+            lastPoint.y < this.startStencil.bottom
+              ? this.startStencil.top - MIN_SEGMENT_LENGTH
+              : this.startStencil.bottom + MIN_SEGMENT_LENGTH;
           nextPoint.x = prevPoint.x;
 
           stepPoints.push({ x: nextPoint.x, y: nextPoint.y });
           nextPoint = { x: lastPoint.x, y: nextPoint.y };
         } else if (
-          lineCrossesStencilVertically(
-            this.startStencil,
-            nextPoint,
-            lastPoint
-          )
+          lineCrossesStencilVertically(this.startStencil, nextPoint, lastPoint)
         ) {
           nextPoint.x = this.startStencil.right + MIN_SEGMENT_LENGTH;
           nextPoint.y = prevPoint.y;
@@ -129,14 +146,19 @@ export class AngledConnector extends ConnectorBase {
         } else if (
           lineCrossesStencilHorizontally(this.endStencil, nextPoint, lastPoint)
         ) {
-          nextPoint.y = prevPoint.y;
-          nextPoint.x =
-            prevPoint.x > this.endStencil.right
-              ? this.endStencil.right + MIN_SEGMENT_LENGTH
-              : this.endStencil.left - MIN_SEGMENT_LENGTH;
+          nextPoint.y =
+            prevPoint.y > this.endStencil.top &&
+            this.startStencil.top >
+              this.endStencil.bottom + MIN_SEGMENT_LENGTH * 2
+              ? this.endStencil.bottom + MIN_SEGMENT_LENGTH
+              : this.endStencil.top - MIN_SEGMENT_LENGTH >
+                this.startStencil.bottom
+              ? this.endStencil.top - MIN_SEGMENT_LENGTH
+              : this.startStencil.top - MIN_SEGMENT_LENGTH;
+          nextPoint.x = prevPoint.x;
 
           stepPoints.push({ x: nextPoint.x, y: nextPoint.y });
-          nextPoint = { x: nextPoint.x, y: lastPoint.y };
+          nextPoint = { x: lastPoint.x, y: nextPoint.y };
         } else if (
           lineCrossesStencilVertically(this.endStencil, nextPoint, lastPoint)
         ) {
@@ -155,14 +177,19 @@ export class AngledConnector extends ConnectorBase {
         } else if (
           lineCrossesStencilHorizontally(this.endStencil, prevPoint, nextPoint)
         ) {
-          nextPoint.y = prevPoint.y;
-          nextPoint.x =
-            prevPoint.x > this.endStencil.right
-              ? this.endStencil.right + MIN_SEGMENT_LENGTH
-              : this.endStencil.left - MIN_SEGMENT_LENGTH;
+          nextPoint.y =
+            prevPoint.y > this.endStencil.top &&
+            this.startStencil.top >
+              this.endStencil.bottom + MIN_SEGMENT_LENGTH * 2
+              ? this.endStencil.bottom + MIN_SEGMENT_LENGTH
+              : this.endStencil.top - MIN_SEGMENT_LENGTH >
+                this.startStencil.bottom
+              ? this.endStencil.top - MIN_SEGMENT_LENGTH
+              : this.startStencil.top - MIN_SEGMENT_LENGTH;
+          nextPoint.x = prevPoint.x;
 
           stepPoints.push({ x: nextPoint.x, y: nextPoint.y });
-          nextPoint = { x: nextPoint.x, y: lastPoint.y };
+          nextPoint = { x: lastPoint.x, y: nextPoint.y };
         } else if (
           lineCrossesStencilVertically(this.endStencil, prevPoint, nextPoint)
         ) {
