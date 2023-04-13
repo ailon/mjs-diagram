@@ -27,9 +27,7 @@ export class AngledConnector extends ConnectorBase {
     const yPadding = Math.max(Math.floor(height * 0.05), 2);
 
     const line = SvgHelper.createPath(
-      `M ${xPadding} ${yPadding} H ${
-        width / 2
-      } V ${height - yPadding}, H ${
+      `M ${xPadding} ${yPadding} H ${width / 2} V ${height - yPadding}, H ${
         width - xPadding
       }`,
       [
@@ -66,22 +64,28 @@ export class AngledConnector extends ConnectorBase {
       this.endLineDir = getEdgeLineDirection(this.endPort);
     }
 
-    const firstPoint = getEdgePoint(ending1, this.startLineDir);
-    const lastPoint = getEdgePoint(ending2, this.endLineDir);
+    const firstPoint =
+      this.startStencil !== undefined
+        ? getEdgePoint(ending1, this.startLineDir)
+        : ending1;
+    const lastPoint =
+      this.endStencil !== undefined
+        ? getEdgePoint(ending2, this.endLineDir)
+        : ending2;
 
     this.stepPoints = [
       firstPoint,
       {
         x:
-        this.startLineDir === 'left' || this.startLineDir === 'right'
+          this.startLineDir === 'left' || this.startLineDir === 'right'
             ? lastPoint.x
             : firstPoint.x,
         y:
-        this.startLineDir === 'left' || this.startLineDir === 'right'
+          this.startLineDir === 'left' || this.startLineDir === 'right'
             ? firstPoint.y
             : lastPoint.y,
       },
-      lastPoint
+      lastPoint,
     ];
 
     let result = `M ${ending1.x} ${ending1.y} `;
@@ -332,7 +336,8 @@ export class AngledConnector extends ConnectorBase {
         this.textBoundingBox.height = BASE_HEIGHT;
       } else {
         this.textBoundingBox.x = p1.x - BASE_WIDTH / 2;
-        this.textBoundingBox.y = Math.min(p1.y, p2.y) + Math.abs(p1.y - p2.y) / 2 - BASE_HEIGHT;
+        this.textBoundingBox.y =
+          Math.min(p1.y, p2.y) + Math.abs(p1.y - p2.y) / 2 - BASE_HEIGHT;
         this.textBoundingBox.width = BASE_WIDTH;
         this.textBoundingBox.height = BASE_HEIGHT;
       }
@@ -341,5 +346,4 @@ export class AngledConnector extends ConnectorBase {
       super.setTextBoundingBox();
     }
   }
-
 }
