@@ -27,7 +27,7 @@ flowchartStencilEditorSet.connectorEditorTypes.set(
 );
 
 flowchartStencilEditorSet.availableConnectorTypes = [
-  ArrowConnector, CurvedArrowConnector, AngledArrowConnector
+  AngledArrowConnector, ArrowConnector, CurvedArrowConnector
 ];
 flowchartStencilEditorSet.defaultConnectorType = AngledArrowConnector;
 
