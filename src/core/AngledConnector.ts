@@ -318,4 +318,28 @@ export class AngledConnector extends ConnectorBase {
       this.setTextBoundingBox();
     }
   }
+
+  protected setTextBoundingBox(): void {
+    const BASE_HEIGHT = 20;
+    const BASE_WIDTH = 200;
+    if (this.stepPoints.length > 1) {
+      const [p1, p2] = [this.stepPoints[0], this.stepPoints[1]];
+
+      if (p1.x != p2.x) {
+        this.textBoundingBox.x = Math.min(p1.x, p2.x);
+        this.textBoundingBox.y = p1.y - BASE_HEIGHT;
+        this.textBoundingBox.width = Math.abs(p1.x - p2.x);
+        this.textBoundingBox.height = BASE_HEIGHT;
+      } else {
+        this.textBoundingBox.x = p1.x - BASE_WIDTH / 2;
+        this.textBoundingBox.y = Math.min(p1.y, p2.y) + Math.abs(p1.y - p2.y) / 2 - BASE_HEIGHT;
+        this.textBoundingBox.width = BASE_WIDTH;
+        this.textBoundingBox.height = BASE_HEIGHT;
+      }
+      this.textBlock.boundingBox = this.textBoundingBox;
+    } else {
+      super.setTextBoundingBox();
+    }
+  }
+
 }
