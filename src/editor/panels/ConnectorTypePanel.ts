@@ -1,4 +1,4 @@
-import { ConnectorBase } from '../../core/ConnectorBase';
+import { ConnectorBase } from '../../core';
 import { Language } from '../Language';
 import { ToolboxPanelItem } from '../ToolboxPanelItem';
 import { PropertyPanelBase } from './PropertyPanelBase';

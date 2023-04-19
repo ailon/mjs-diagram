@@ -1,5 +1,4 @@
-import { DiagramSettings } from "../../../core/DiagramSettings";
-import { RectangleTextStencil } from "../../../core/RectangleTextStencil";
+import { DiagramSettings, RectangleTextStencil } from "../../../core";
 
 export class ItemStencil extends RectangleTextStencil {
   public static typeName = 'ItemStencil';

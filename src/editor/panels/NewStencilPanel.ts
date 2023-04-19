@@ -1,5 +1,5 @@
-import { StencilBase } from '../../core/StencilBase';
-import { IStencilProperties } from '../../core/StencilSet';
+import { StencilBase } from '../../core';
+import { IStencilProperties } from '../../core';
 import { Language } from '../Language';
 import { PropertyPanelBase } from './PropertyPanelBase';
 

@@ -1,4 +1,4 @@
-import { SvgHelper } from '../core/SvgHelper';
+import { SvgHelper } from '../core';
 
 export type GripLocation =
   | 'topleft'

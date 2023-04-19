@@ -1,17 +1,23 @@
-import { basicStencilSet } from '../core/BasicStencilSet';
+import {
+  basicStencilSet,
+  RectangleTextStencil,
+  CurvedConnector,
+  ConnectorBase,
+  EllipseStencil,
+  DiamondStencil,
+  TextStencilState,
+  AngledConnector,
+} from '../core';
+
 import { StencilEditorSet } from './StencilEditorSet';
-import { RectangleTextStencil } from '../core/RectangleTextStencil';
 import { TextStencilEditor } from './TextStencilEditor';
-import { CurvedConnector } from '../core/CurvedConnector';
 import { ConnectorBaseEditor } from './ConnectorBaseEditor';
-import { ConnectorBase } from '../core/ConnectorBase';
-import { EllipseStencil } from '../core/EllipseStencil';
-import { DiamondStencil } from '../core/DiamondStencil';
-import { TextStencilState } from '../core/TextStencilState';
-import { AngledConnector } from '../core/AngledConnector';
 
 const basicStencilEditorSet = new StencilEditorSet('core', basicStencilSet);
-basicStencilEditorSet.stencilEditorTypes.set(RectangleTextStencil, TextStencilEditor);
+basicStencilEditorSet.stencilEditorTypes.set(
+  RectangleTextStencil,
+  TextStencilEditor
+);
 basicStencilEditorSet.stencilEditorTypes.set(EllipseStencil, TextStencilEditor);
 basicStencilEditorSet.stencilEditorTypes.set(DiamondStencil, TextStencilEditor);
 
@@ -27,7 +33,7 @@ basicStencilEditorSet.connectorEditorTypes.set(
 basicStencilEditorSet.availableConnectorTypes = [
   ConnectorBase,
   CurvedConnector,
-  AngledConnector
+  AngledConnector,
 ];
 basicStencilEditorSet.defaultConnectorType = AngledConnector;
 

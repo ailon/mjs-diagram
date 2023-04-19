@@ -1,13 +1,15 @@
-import { basicStencilSet } from './core/BasicStencilSet';
-import { ConnectorBase } from './core/ConnectorBase';
-import { DiagramState } from './core/DiagramState';
-import { IPoint } from './core/IPoint';
-import { StencilBase } from './core/StencilBase';
-import { SvgHelper } from './core/SvgHelper';
+import {
+  basicStencilSet,
+  ConnectorBase,
+  DiagramState,
+  IPoint,
+  StencilBase,
+  SvgHelper,
+  Activator,
+  DiagramSettings,
+} from './core';
 
 import Logo from './assets/markerjs-logo-m.svg';
-import { Activator } from './core/Activator';
-import { DiagramSettings } from './core/DiagramSettings';
 
 export interface DiagramViewerEventData {
   viewer: DiagramViewer;
@@ -324,7 +326,7 @@ export class DiagramViewer extends HTMLElement {
       )
     );
 
-    return connector
+    return connector;
   }
 
   private setDocumentBgColor(color: string) {

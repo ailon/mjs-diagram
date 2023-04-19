@@ -1,12 +1,13 @@
-import { ConnectorBase } from '../core/ConnectorBase';
-import { IPoint } from '../core/IPoint';
-import { ResizeGrip } from './ResizeGrip';
-import { SvgHelper } from '../core/SvgHelper';
-import { Port } from '../core/Port';
+import { ConnectorBase } from '../core';
+import { IPoint } from '../core';
+import { SvgHelper } from '../core';
+import { Port } from '../core';
 import {
   ConnectorBaseState,
   ConnectorEndPoints,
-} from '../core/ConnectorBaseState';
+} from '../core';
+
+import { ResizeGrip } from './ResizeGrip';
 import { PropertyPanelBase } from './panels/PropertyPanelBase';
 import { ColorPickerPanel } from './panels/ColorPickerPanel';
 import { ArrowTypePanel } from './panels/ArrowTypePanel';

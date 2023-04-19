@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TextStencilState } from '../../src/core/TextStencilState';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { basicStencilEditorSet, DiagramEditor } from '../../src/editor_index';
+import { basicStencilEditorSet, DiagramEditor } from '../../src/editor';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { flowchartStencilEditorSet } from '../../src/stencilsets/flowchart/FlowchartStencilEditorSet';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -11,7 +11,8 @@ import { mindMapStencilSet } from '../../src/stencilsets/mindmap/MindMapStencilS
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { mindMapStencilEditorSet } from '../../src/stencilsets/mindmap/MindMapStencilEditorSet';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ArrowConnector, DiagramState, DiagramViewer } from '../../src/viewer_index';
+import { DiagramViewer } from '../../src/viewer';
+import { ArrowConnector, DiagramState } from '../../src/core';
 import { ColorSet } from "../../src/editor/ColorSet";
 import { ConnectorEventData, DiagramViewerEventData, StencilEventData } from '../../src/DiagramViewer';
 import { ConnectorEditorEventData, DiagramEditorEventData, StencilEditorEventData } from '../../src/DiagramEditor';

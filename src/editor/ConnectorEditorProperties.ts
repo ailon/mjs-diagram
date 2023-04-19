@@ -1,4 +1,4 @@
-import { ConnectorBase } from "../core/ConnectorBase";
+import { ConnectorBase } from "../core";
 import { EditorSettings } from "./EditorSettings";
 import { Language } from "./Language";
 

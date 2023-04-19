@@ -1,5 +1,4 @@
 export {
-  DiagramViewer,
   DiagramState,
   StencilBase,
   StencilBaseState,
@@ -16,9 +15,8 @@ export {
   TextBlock,
   StencilSet,
   basicStencilSet,
-  flowchartStencilSet,
-  mindMapStencilSet,
-} from './viewer_index';
+} from './core';
+export { DiagramViewer } from './viewer';
 export {
   DiagramEditor,
   StencilBaseEditor,
@@ -27,6 +25,12 @@ export {
   StencilEditorSet,
   TextBlockEditor,
   basicStencilEditorSet,
-  flowchartStencilEditorSet,
-  mindMapStencilEditorSet
-} from './editor_index';
+} from './editor';
+export {
+  CentralTopicStencil,
+  ItemStencil,
+  MindMapConnector,
+  SubTopicStencil,
+  mindMapStencilEditorSet,
+  mindMapStencilSet,
+} from './stencilsets/mindmap/mindmap';

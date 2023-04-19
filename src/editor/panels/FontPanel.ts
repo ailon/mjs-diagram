@@ -1,4 +1,4 @@
-import { FontSize } from "../../core/FontSize";
+import { FontSize } from "../../core";
 import { FontFamily } from "../FontFamily";
 import { Language } from "../Language";
 import { PropertyPanelBase } from './PropertyPanelBase';

@@ -1,9 +1,10 @@
-import { ConnectorBase } from '../core/ConnectorBase';
+import { ConnectorBase } from '../core';
+import { IStencilSet, StencilSet } from '../core';
+import { DiagramState } from '../core';
+import { StencilBase } from '../core';
+
 import { ConnectorBaseEditor } from './ConnectorBaseEditor';
-import { StencilBase } from '../core/StencilBase';
 import { StencilBaseEditor } from './StencilBaseEditor';
-import { IStencilSet, StencilSet } from '../core/StencilSet';
-import { DiagramState } from '../core/DiagramState';
 import { StringSet } from './Language';
 
 export interface IStencilEditorSet {

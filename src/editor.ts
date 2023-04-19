@@ -1,7 +1,6 @@
 import { DiagramEditor } from './DiagramEditor';
 
 export { DiagramEditor } from './DiagramEditor';
-export { DiagramState } from './core/DiagramState';
 
 export { StencilBaseEditor } from './editor/StencilBaseEditor';
 export { ConnectorBaseEditor } from './editor/ConnectorBaseEditor';
@@ -11,8 +10,6 @@ export { TextBlockEditor } from './editor/TextBlockEditor';
 
 export { StencilEditorSet } from './editor/StencilEditorSet';
 export { basicStencilEditorSet } from './editor/BasicStencilEditorSet';
-export { flowchartStencilEditorSet } from './stencilsets/flowchart/FlowchartStencilEditorSet';
-export { mindMapStencilEditorSet } from './stencilsets/mindmap/MindMapStencilEditorSet';
 
 if (
   window &&

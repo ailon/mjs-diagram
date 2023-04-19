@@ -1,11 +1,12 @@
-import { IPoint } from '../core/IPoint';
-import { PortLocation } from '../core/Port';
+import { IPoint } from '../core';
+import { PortLocation } from '../core';
+import { StencilBase } from '../core';
+import { StencilBaseState } from '../core';
+import { SvgHelper } from '../core';
+
 import { PortConnector } from './PortConnector';
 import { PropertyPanelBase } from './panels/PropertyPanelBase';
 import { GripLocation, ResizeGrip } from './ResizeGrip';
-import { StencilBase } from '../core/StencilBase';
-import { StencilBaseState } from '../core/StencilBaseState';
-import { SvgHelper } from '../core/SvgHelper';
 import { EditorSettings } from './EditorSettings';
 import { StencilEditorProperties } from './StencilEditorProperties';
 import { ShapePropertiesPanel } from './panels/ShapePropertiesPanel';

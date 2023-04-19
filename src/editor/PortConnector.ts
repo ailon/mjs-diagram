@@ -1,5 +1,4 @@
-import { SvgHelper } from '../core/SvgHelper';
-import { Port } from '../core/Port';
+import { SvgHelper, Port } from '../core';
 
 
 export class PortConnector {

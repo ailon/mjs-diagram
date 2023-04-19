@@ -1,4 +1,4 @@
-import { ArrowType } from '../../core/ConnectorBase';
+import { ArrowType } from '../../core';
 import { Language } from '../Language';
 import { PropertyPanelBase } from './PropertyPanelBase';
 

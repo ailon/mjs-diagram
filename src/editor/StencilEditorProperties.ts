@@ -1,4 +1,4 @@
-import { StencilBase } from "../core/StencilBase";
+import { StencilBase } from "../core";
 import { EditorSettings } from "./EditorSettings";
 import { Language } from "./Language";
 

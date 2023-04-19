@@ -20,7 +20,7 @@ see README.md and LICENSE for details
 
 export default [
   {
-    input: ['./src/viewer_index.ts', './src/editor_index.ts', './src/index.ts'],
+    input: ['./src/core.ts', './src/viewer.ts', './src/editor.ts'],
     output: {
       dir: './dts/',
     },
@@ -37,67 +37,139 @@ export default [
     ],
   },
   {
-    input: './dts/viewer_index.d.ts',
-    output: [{ file: './dist/viewer.d.ts', format: 'es' }],
-    plugins: [dts()],
-  },
-  {
-    input: './dts/editor_index.d.ts',
-    output: [{ file: './dist/editor.d.ts', format: 'es' }],
-    plugins: [dts()],
-  },
-  {
-    input: './dts/index.d.ts',
+    input: './dts/core.d.ts',
     output: [{ file: outputDir + pkg.types, format: 'es' }],
     plugins: [dts()],
   },
   {
-    input: ['src/viewer_index.ts'],
+    input: './dts/viewer.d.ts',
+    output: [{ file: './dist/viewer.d.ts', format: 'es' }],
+    plugins: [dts()],
+  },
+  {
+    input: './dts/editor.d.ts',
+    output: [{ file: './dist/editor.d.ts', format: 'es' }],
+    plugins: [dts()],
+  },
+  {
+    input: 'src/core.ts',
     output: [
       {
-        file: outputDir + 'viewer.esm.js',
+        file: outputDir + 'core.js',
         format: 'es',
         sourcemap: true,
         banner: banner,
       },
+      // {
+      //   file: outputDir + 'core.js',
+      //   name: 'mjsdcore',
+      //   format: 'umd',
+      //   sourcemap: true,
+      //   banner: banner,
+      // },
+    ],
+    plugins: [
+      typescript({
+        compilerOptions: {
+          rootDir: './src/',
+        },
+      }),
+      svgo(),
+      terser(),
+    ],
+  },
+  {
+    input: 'src/viewer.ts',
+    output: [
       {
         file: outputDir + 'viewer.js',
-        name: 'mjsdviewer',
-        format: 'umd',
+        format: 'es',
         sourcemap: true,
         banner: banner,
       },
+      // {
+      //   file: outputDir + 'viewer.js',
+      //   name: 'mjsdviewer',
+      //   format: 'umd',
+      //   sourcemap: true,
+      //   banner: banner,
+      // },
+    ],
+    external: [
+      './index',
+      './core'
+    ],
+    plugins: [
+      typescript({
+        compilerOptions: {
+          rootDir: './src/',
+        },
+      }),
+      svgo(),
+      terser(),
+    ],
+  },
+  {
+    input: ['src/editor.ts'],
+    output: [
+      {
+        file: outputDir + 'editor.js',
+        format: 'es',
+        sourcemap: true,
+        banner: banner,
+      },
+      // {
+      //   file: outputDir + 'editor.js',
+      //   name: 'mjsdeditor',
+      //   format: 'umd',
+      //   sourcemap: true,
+      //   banner: banner,
+      // },
+    ],
+    external: [
+      /^(\.\.?\/)*core$/
+    ],
+    plugins: [
+      nodeResolve(), 
+      typescript({
+        compilerOptions: {
+          rootDir: './src/',
+        },
+      }), svgo(), terser()],
+  },
+  {
+    input: ['src/stencilsets/mindmap/mindmap.ts'],
+    output: [
+      {
+        file: outputDir + 'stencilsets/mindmap/mindmap.js',
+        format: 'es',
+        sourcemap: true,
+        banner: banner,
+      },
+      // {
+      //   file: outputDir + 'editor.js',
+      //   name: 'mjsdeditor',
+      //   format: 'umd',
+      //   sourcemap: true,
+      //   banner: banner,
+      // },
+    ],
+    external: [
+      /^(\.\.?\/)*core$/,
+      /^(\.\.?\/)*editor$/,
+      /^(\.\.?\/)*viewer$/,
     ],
     plugins: [typescript(), svgo(), terser()],
   },
   {
-    input: ['src/editor_index.ts'],
-    output: [
-      {
-        file: outputDir + 'editor.esm.js',
-        format: 'es',
-        sourcemap: true,
-        banner: banner,
-      },
-      {
-        file: outputDir + 'editor.js',
-        name: 'mjsdeditor',
-        format: 'umd',
-        sourcemap: true,
-        banner: banner,
-      },
-    ],
-    plugins: [nodeResolve(), typescript(), svgo(), terser()],
-  },
-  {
     input: ['src/index.ts'],
     output: [
-      {
-        file: outputDir + pkg.module,
-        format: 'es',
-        sourcemap: true,
-        banner: banner,
-      },
+      // {
+      //   file: outputDir + pkg.module,
+      //   format: 'es',
+      //   sourcemap: true,
+      //   banner: banner,
+      // },
       {
         file: outputDir + pkg.main,
         name: 'mjsdiagram',

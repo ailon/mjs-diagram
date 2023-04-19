@@ -1,4 +1,4 @@
-import { SvgHelper } from '../../viewer_index';
+import { SvgHelper } from '../../core';
 import { Language } from '../Language';
 import { ToolboxPanelItem } from '../ToolboxPanelItem';
 import { PropertyPanelBase } from './PropertyPanelBase';

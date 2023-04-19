@@ -1,11 +1,12 @@
-import { IPoint } from '../core/IPoint';
+import { IPoint } from '../core';
+import { RectangleTextStencil } from '../core';
+import { TextStencil } from '../core';
+import { StencilBaseState } from '../core';
+
 import { StencilBaseEditor } from './StencilBaseEditor';
-import { RectangleTextStencil } from '../core/RectangleTextStencil';
-import { StencilBaseState } from '../core/StencilBaseState';
 import { TextBlockEditor } from './TextBlockEditor';
 import { StencilEditorProperties } from './StencilEditorProperties';
 import { TextPropertiesPanel } from './panels/TextPropertiesPanel';
-import { TextStencil } from '../core/TextStencil';
 import { PropertyPanelBase } from './panels/PropertyPanelBase';
 
 export class TextStencilEditor extends StencilBaseEditor {

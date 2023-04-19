@@ -21,7 +21,7 @@ import { UndoRedoManager } from './editor/UndoRedoManager';
 import { ConnectorTypePanel } from './editor/panels/ConnectorTypePanel';
 import { ConnectorBaseState } from './core/ConnectorBaseState';
 import { NewStencilPanel } from './editor/panels/NewStencilPanel';
-import { StencilEditorSet } from './editor_index';
+import { StencilEditorSet } from './editor';
 
 import Logo from './assets/markerjs-logo-m.svg';
 import { Activator } from './core/Activator';

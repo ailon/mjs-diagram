@@ -1,6 +1,7 @@
-import { DiagramSettings } from "../core/DiagramSettings";
+import { DiagramSettings } from "../core";
+import { ColorType } from "../core";
+
 import { ColorSet } from "./ColorSet";
-import { ColorType } from "../core/ColorType";
 import { FontFamily } from "./FontFamily";
 
 export class EditorSettings extends DiagramSettings {

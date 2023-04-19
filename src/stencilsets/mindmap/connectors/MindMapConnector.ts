@@ -1,5 +1,4 @@
-import { CurvedConnector } from "../../../core/CurvedConnector";
-import { DiagramSettings } from "../../../core/DiagramSettings";
+import { CurvedConnector, DiagramSettings } from "../../../core";
 
 export class MindMapConnector extends CurvedConnector {
   public static typeName = 'MindMapConnector';
