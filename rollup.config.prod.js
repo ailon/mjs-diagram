@@ -19,8 +19,9 @@ see README.md and LICENSE for details
 ********************************** */`;
 
 export default [
+  // types
   {
-    input: ['./src/core.ts', './src/viewer.ts', './src/editor.ts'],
+    input: ['./src/core.ts', './src/viewer.ts', './src/editor.ts', './src/index.ts'],
     output: {
       dir: './dts/',
     },
@@ -38,7 +39,7 @@ export default [
   },
   {
     input: './dts/core.d.ts',
-    output: [{ file: outputDir + pkg.types, format: 'es' }],
+    output: [{ file: './dist/core.d.ts', format: 'es' }],
     plugins: [dts()],
   },
   {
@@ -52,6 +53,13 @@ export default [
     plugins: [dts()],
   },
   {
+    input: './dts/index.d.ts',
+    output: [{ file: outputDir + pkg.types, format: 'es' }],
+    plugins: [dts()],
+  },
+
+  // main modules
+  {
     input: 'src/core.ts',
     output: [
       {
@@ -60,13 +68,6 @@ export default [
         sourcemap: true,
         banner: banner,
       },
-      // {
-      //   file: outputDir + 'core.js',
-      //   name: 'mjsdcore',
-      //   format: 'umd',
-      //   sourcemap: true,
-      //   banner: banner,
-      // },
     ],
     plugins: [
       typescript({
@@ -87,13 +88,6 @@ export default [
         sourcemap: true,
         banner: banner,
       },
-      // {
-      //   file: outputDir + 'viewer.js',
-      //   name: 'mjsdviewer',
-      //   format: 'umd',
-      //   sourcemap: true,
-      //   banner: banner,
-      // },
     ],
     external: [
       './index',
@@ -118,13 +112,6 @@ export default [
         sourcemap: true,
         banner: banner,
       },
-      // {
-      //   file: outputDir + 'editor.js',
-      //   name: 'mjsdeditor',
-      //   format: 'umd',
-      //   sourcemap: true,
-      //   banner: banner,
-      // },
     ],
     external: [
       /^(\.\.?\/)*core$/
@@ -137,8 +124,41 @@ export default [
         },
       }), svgo(), terser()],
   },
+
+  // mindmap
   {
-    input: ['src/stencilsets/mindmap/mindmap.ts'],
+    input: ['./src/stencilsets/mindmap/mindmap.ts'],
+    output: {
+      dir: './dts/stencilsets/mindmap/',
+    },
+    external: [
+      /^(\.\.?\/)*core$/,
+      /^(\.\.?\/)*editor$/,
+      /^(\.\.?\/)*viewer$/,
+    ],
+    plugins: [
+      nodeResolve(),
+      typescript({
+        declaration: true,
+        outDir: './dts/stencilsets/mindmap/',
+        rootDir: './src/',
+        exclude: ['./test/**/*', './dts/**/*', './dist/**/*'],
+      }),
+      svgo(),
+    ],
+  },
+  {
+    input: './dts/stencilsets/mindmap/mindmap.d.ts',
+    output: [{ file: './dist/stencilsets/mindmap/mindmap.d.ts', format: 'es' }],
+    external: [
+      /^(\.\.?\/)*core$/,
+      /^(\.\.?\/)*editor$/,
+      /^(\.\.?\/)*viewer$/,
+    ],
+    plugins: [dts()],
+  },  
+  {
+    input: ['./src/stencilsets/mindmap/mindmap.ts'],
     output: [
       {
         file: outputDir + 'stencilsets/mindmap/mindmap.js',
@@ -146,13 +166,6 @@ export default [
         sourcemap: true,
         banner: banner,
       },
-      // {
-      //   file: outputDir + 'editor.js',
-      //   name: 'mjsdeditor',
-      //   format: 'umd',
-      //   sourcemap: true,
-      //   banner: banner,
-      // },
     ],
     external: [
       /^(\.\.?\/)*core$/,
@@ -161,15 +174,11 @@ export default [
     ],
     plugins: [typescript(), svgo(), terser()],
   },
+
+  // complete UMD package
   {
     input: ['src/index.ts'],
     output: [
-      // {
-      //   file: outputDir + pkg.module,
-      //   format: 'es',
-      //   sourcemap: true,
-      //   banner: banner,
-      // },
       {
         file: outputDir + pkg.main,
         name: 'mjsdiagram',
@@ -180,6 +189,28 @@ export default [
     ],
     plugins: [
       nodeResolve(),
+      typescript(),
+      svgo(),
+      terser(),
+    ],
+  },
+
+  // complete ESM package
+  {
+    input: ['src/index.ts'],
+    output: [
+      {
+        file: outputDir + pkg.module,
+        format: 'es',
+        sourcemap: true,
+        banner: banner,
+      },
+    ],
+    plugins: [
+      nodeResolve(),
+      typescript(),
+      svgo(),
+      terser(),
       generatePackageJson({
         baseContents: (pkg) => {
           pkg.scripts = {};
@@ -188,9 +219,6 @@ export default [
           return pkg;
         },
       }),
-      typescript(),
-      svgo(),
-      terser(),
       copy({
         targets: [
           {
@@ -203,7 +231,7 @@ export default [
           },
         ],
       }),
-      del({ targets: ['dts/*'] }),
+      // del({ targets: ['dts/*'] }),
     ],
   },
 ];
