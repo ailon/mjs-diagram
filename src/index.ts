@@ -25,7 +25,12 @@ export {
   StencilEditorSet,
   TextBlockEditor,
   basicStencilEditorSet,
+  StringSet,
+  LangStringSet,
+  ModuleStringSet,
+  Language,
 } from './editor';
+
 export {
   CentralTopicStencil,
   ItemStencil,
@@ -34,3 +39,12 @@ export {
   mindMapStencilEditorSet,
   mindMapStencilSet,
 } from './stencilsets/mindmap/mindmap';
+
+export {
+  DecisionStencil,
+  IOStencil,
+  ProcessStencil,
+  TerminalStencil,
+  flowchartStencilEditorSet,
+  flowchartStencilSet,
+} from './stencilsets/flowchart/flowchart';

@@ -11,6 +11,13 @@ export { TextBlockEditor } from './editor/TextBlockEditor';
 export { StencilEditorSet } from './editor/StencilEditorSet';
 export { basicStencilEditorSet } from './editor/BasicStencilEditorSet';
 
+export {
+  StringSet,
+  LangStringSet,
+  ModuleStringSet,
+  Language,
+} from './editor/Language';
+
 if (
   window &&
   window.customElements &&

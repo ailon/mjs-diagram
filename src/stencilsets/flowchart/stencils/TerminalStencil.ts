@@ -1,5 +1,5 @@
-import { DiagramSettings } from "../../../core/DiagramSettings";
-import { RectangleTextStencil } from "../../../core/RectangleTextStencil";
+import { DiagramSettings } from "../../../core";
+import { RectangleTextStencil } from "../../../core";
 
 export class TerminalStencil extends RectangleTextStencil {
   public static typeName = 'TerminalStencil';

@@ -1,5 +1,5 @@
-import { DiagramSettings } from "../../../core/DiagramSettings";
-import { RectangleTextStencil } from "../../../core/RectangleTextStencil";
+import { DiagramSettings } from "../../../core";
+import { RectangleTextStencil } from "../../../core";
 
 export class ProcessStencil extends RectangleTextStencil {
   public static typeName = 'ProcessStencil';

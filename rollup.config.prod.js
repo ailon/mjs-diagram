@@ -175,6 +175,56 @@ export default [
     plugins: [typescript(), svgo(), terser()],
   },
 
+  // mindmap
+  {
+    input: ['./src/stencilsets/flowchart/flowchart.ts'],
+    output: {
+      dir: './dts/stencilsets/flowchart/',
+    },
+    external: [
+      /^(\.\.?\/)*core$/,
+      /^(\.\.?\/)*editor$/,
+      /^(\.\.?\/)*viewer$/,
+    ],
+    plugins: [
+      nodeResolve(),
+      typescript({
+        declaration: true,
+        outDir: './dts/stencilsets/flowchart/',
+        rootDir: './src/',
+        exclude: ['./test/**/*', './dts/**/*', './dist/**/*'],
+      }),
+      svgo(),
+    ],
+  },
+  {
+    input: './dts/stencilsets/flowchart/flowchart.d.ts',
+    output: [{ file: './dist/stencilsets/flowchart/flowchart.d.ts', format: 'es' }],
+    external: [
+      /^(\.\.?\/)*core$/,
+      /^(\.\.?\/)*editor$/,
+      /^(\.\.?\/)*viewer$/,
+    ],
+    plugins: [dts()],
+  },  
+  {
+    input: ['./src/stencilsets/flowchart/flowchart.ts'],
+    output: [
+      {
+        file: outputDir + 'stencilsets/flowchart/flowchart.js',
+        format: 'es',
+        sourcemap: true,
+        banner: banner,
+      },
+    ],
+    external: [
+      /^(\.\.?\/)*core$/,
+      /^(\.\.?\/)*editor$/,
+      /^(\.\.?\/)*viewer$/,
+    ],
+    plugins: [typescript(), svgo(), terser()],
+  },
+
   // complete UMD package
   {
     input: ['src/index.ts'],

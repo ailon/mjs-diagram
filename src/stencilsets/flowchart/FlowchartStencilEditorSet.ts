@@ -3,15 +3,18 @@ import { ProcessStencil } from './stencils/ProcessStencil';
 import { DecisionStencil } from './stencils/DecisionStencil';
 import { IOStencil } from './stencils/IOStencil';
 import { TerminalStencil } from './stencils/TerminalStencil';
-import { StencilEditorSet } from '../../editor/StencilEditorSet';
-import { TextStencilEditor } from '../../editor/TextStencilEditor';
-import { ArrowConnector } from '../../core/ArrowConnector';
-import { ConnectorBaseEditor } from '../../editor/ConnectorBaseEditor';
-import { CurvedArrowConnector } from '../../core/CurvedArrowConnector';
-import { TextStencilState } from '../../core/TextStencilState';
+
+import { ArrowConnector } from '../../core';
+import { CurvedArrowConnector } from '../../core';
+import { TextStencilState } from '../../core';
+import { AngledArrowConnector } from '../../core';
+
+import { StencilEditorSet } from '../../editor';
+import { TextStencilEditor } from '../../editor';
+import { ConnectorBaseEditor } from '../../editor';
+
 import en_flowchart_strings from './lang/en';
-import { StringSet } from '../../editor/Language';
-import { AngledArrowConnector } from '../../core/AngledArrowConnector';
+import { StringSet } from '../../editor';
 
 const flowchartStencilEditorSet = new StencilEditorSet('flowchart', flowchartStencilSet);
 flowchartStencilEditorSet.displayName = 'Flowchart';

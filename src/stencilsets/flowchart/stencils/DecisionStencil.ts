@@ -1,4 +1,4 @@
-import { DiamondStencil } from "../../../core/DiamondStencil";
+import { DiamondStencil } from "../../../core";
 
 export class DecisionStencil extends DiamondStencil {
   public static typeName = 'DecisionStencil';

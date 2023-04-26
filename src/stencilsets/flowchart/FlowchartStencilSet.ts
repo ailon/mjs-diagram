@@ -1,11 +1,12 @@
-import { AngledArrowConnector } from '../../core/AngledArrowConnector';
-import { ArrowConnector } from '../../core/ArrowConnector';
-import { CurvedArrowConnector } from '../../core/CurvedArrowConnector';
-import { StencilSet } from '../../core/StencilSet';
 import { DecisionStencil } from './stencils/DecisionStencil';
 import { IOStencil } from './stencils/IOStencil';
 import { ProcessStencil } from './stencils/ProcessStencil';
 import { TerminalStencil } from './stencils/TerminalStencil';
+
+import { AngledArrowConnector } from '../../core';
+import { ArrowConnector } from '../../core';
+import { CurvedArrowConnector } from '../../core';
+import { StencilSet } from '../../core';
 
 const flowchartStencilSet = new StencilSet();
 flowchartStencilSet.stencilTypes.push(
