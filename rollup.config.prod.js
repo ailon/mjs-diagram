@@ -172,10 +172,14 @@ export default [
       /^(\.\.?\/)*editor$/,
       /^(\.\.?\/)*viewer$/,
     ],
-    plugins: [typescript(), svgo(), terser()],
+    plugins: [typescript({
+      compilerOptions: {
+        rootDir: './src/',
+      },
+    }), svgo(), terser()],
   },
 
-  // mindmap
+  // flowchart
   {
     input: ['./src/stencilsets/flowchart/flowchart.ts'],
     output: {
@@ -222,7 +226,11 @@ export default [
       /^(\.\.?\/)*editor$/,
       /^(\.\.?\/)*viewer$/,
     ],
-    plugins: [typescript(), svgo(), terser()],
+    plugins: [typescript({
+      compilerOptions: {
+        rootDir: './src/',
+      },
+    }), svgo(), terser()],
   },
 
   // complete UMD package
