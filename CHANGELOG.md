@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-alpha.12] - 2023-04-26
+### Changed
+- **BREAKING** changed package module structure for better logical separation and separated stencil sets into separate modules.
+
 ## [1.0.0-alpha.11] - 2023-04-12
 ### Added
 - viewer events
@@ -113,6 +117,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial public release.
 
+[1.0.0-alpha.12]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.12
 [1.0.0-alpha.11]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.11
 [1.0.0-alpha.10]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.10
 [1.0.0-alpha.9]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.9
