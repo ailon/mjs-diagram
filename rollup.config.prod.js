@@ -40,16 +40,28 @@ export default [
   {
     input: './dts/core.d.ts',
     output: [{ file: './dist/core.d.ts', format: 'es' }],
+    external: [
+      /^(\.\.?\/)*editor$/,
+      /^(\.\.?\/)*viewer$/,
+    ],
     plugins: [dts()],
   },
   {
     input: './dts/viewer.d.ts',
     output: [{ file: './dist/viewer.d.ts', format: 'es' }],
+    external: [
+      /^(\.\.?\/)*core$/,
+      /^(\.\.?\/)*editor$/,
+    ],
     plugins: [dts()],
   },
   {
     input: './dts/editor.d.ts',
     output: [{ file: './dist/editor.d.ts', format: 'es' }],
+    external: [
+      /^(\.\.?\/)*core$/,
+      /^(\.\.?\/)*viewer$/,
+    ],
     plugins: [dts()],
   },
   {
