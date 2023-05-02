@@ -12,7 +12,7 @@ import { mindMapStencilSet } from '../../src/stencilsets/mindmap/MindMapStencilS
 import { mindMapStencilEditorSet } from '../../src/stencilsets/mindmap/MindMapStencilEditorSet';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { DiagramViewer } from '../../src/viewer';
-import { ArrowConnector, DiagramState } from '../../src/core';
+import { ArrowConnector, basicStencilSet, DiagramState } from '../../src/core';
 import { ColorSet } from "../../src/editor/ColorSet";
 import { ConnectorEventData, DiagramViewerEventData, StencilEventData } from '../../src/DiagramViewer';
 import { ConnectorEditorEventData, DiagramEditorEventData, StencilEditorEventData } from '../../src/DiagramEditor';
@@ -162,8 +162,8 @@ export class Experiments {
       console.log(`editor connector enter ${(<ConnectorEditorEventData>ev.detail).connectorEditor.isSelected}`);
     });
     
-    // this.editor.stencilEditorSet = basicStencilEditorSet;
-    this.editor.stencilEditorSet = flowchartStencilEditorSet;
+    this.editor.stencilEditorSet = basicStencilEditorSet;
+    // this.editor.stencilEditorSet = flowchartStencilEditorSet;
     // this.editor.stencilEditorSet = mindMapStencilEditorSet;
 
     this.editor.settings.setContextColor('ArrowConnector', 'stroke', 'red');
@@ -217,7 +217,8 @@ export class Experiments {
       console.log(`connector click ${(<ConnectorEventData>ev.detail).connector.typeName}`);
     });
 
-    this.viewer.stencilSet = flowchartStencilSet;
+    // this.viewer.stencilSet = flowchartStencilSet;
+    this.viewer.stencilSet = basicStencilSet;
 
     const manualState: DiagramState = {
       stencils: [

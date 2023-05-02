@@ -10,6 +10,8 @@ export class TextStencil extends StencilBase {
 
   public static title = 'Text stencil';
 
+  protected static DEFAULT_TEXT = 'Text';
+
   private _color = 'transparent';
   public get color() {
     return this._color;
@@ -41,8 +43,10 @@ export class TextStencil extends StencilBase {
     this.textBlock.fontSize = value;
   }
 
-  private readonly DEFAULT_TEXT = 'Text';
-  private _text: string = this.DEFAULT_TEXT;
+  protected getDefaultText(): string {
+    return Object.getPrototypeOf(this).constructor.DEFAULT_TEXT;
+  }
+  private _text: string = this.getDefaultText();
   public get text(): string {
     return this.textBlock.text;
   }
@@ -57,7 +61,7 @@ export class TextStencil extends StencilBase {
   public textBoundingBox: DOMRect;
 
   //public textElement!: SVGTextElement;
-  public textBlock: TextBlock = new TextBlock(this.DEFAULT_TEXT);
+  public textBlock: TextBlock = new TextBlock(this.getDefaultText());
 
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     super(iid, container, settings);

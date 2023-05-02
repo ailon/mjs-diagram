@@ -10,7 +10,7 @@ import { TextPropertiesPanel } from './panels/TextPropertiesPanel';
 import { PropertyPanelBase } from './panels/PropertyPanelBase';
 
 export class TextStencilEditor extends StencilBaseEditor {
-  private textPanel: TextPropertiesPanel;
+  protected textPanel: TextPropertiesPanel;
   public get stencil(): RectangleTextStencil {
     return this._stencil as RectangleTextStencil;
   }

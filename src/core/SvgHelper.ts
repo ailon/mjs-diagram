@@ -333,4 +333,11 @@ export class SvgHelper {
     }
   }  
 
+  public static createSvgFromString(stringSvg: string): SVGSVGElement {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.innerHTML = stringSvg;
+
+    return svg;
+  }
+
 }

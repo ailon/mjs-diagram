@@ -7,11 +7,13 @@ import {
   DiamondStencil,
   TextStencilState,
   AngledConnector,
+  LightbulbIconStencil,
 } from '../core';
 
 import { StencilEditorSet } from './StencilEditorSet';
 import { TextStencilEditor } from './TextStencilEditor';
 import { ConnectorBaseEditor } from './ConnectorBaseEditor';
+import { ImageStencilEditor } from './ImageStencilEditor';
 
 const basicStencilEditorSet = new StencilEditorSet('core', basicStencilSet);
 basicStencilEditorSet.stencilEditorTypes.set(
@@ -20,6 +22,7 @@ basicStencilEditorSet.stencilEditorTypes.set(
 );
 basicStencilEditorSet.stencilEditorTypes.set(EllipseStencil, TextStencilEditor);
 basicStencilEditorSet.stencilEditorTypes.set(DiamondStencil, TextStencilEditor);
+basicStencilEditorSet.stencilEditorTypes.set(LightbulbIconStencil, ImageStencilEditor);
 
 basicStencilEditorSet.connectorEditorTypes.set(
   CurvedConnector,

@@ -5,6 +5,7 @@ export { DiagramEditor } from './DiagramEditor';
 export { StencilBaseEditor } from './editor/StencilBaseEditor';
 export { ConnectorBaseEditor } from './editor/ConnectorBaseEditor';
 export { TextStencilEditor } from './editor/TextStencilEditor';
+export { ImageStencilEditor } from './editor/ImageStencilEditor';
 
 export { TextBlockEditor } from './editor/TextBlockEditor';
 

@@ -2,6 +2,8 @@ import { FontSize } from "./FontSize";
 import { SvgHelper } from './SvgHelper';
 
 export class TextBlock {
+  public onTextSizeChanged?: (textBlock: TextBlock) => void;
+
   private _text = '';
   public get text() {
     return this._text;
@@ -158,19 +160,24 @@ export class TextBlock {
     });
   }
 
+  private _textSize?: DOMRect;
+  public get textSize(): DOMRect | undefined {
+    return this._textSize;
+  }
+
   public positionText(textBlock?: TextBlock) {
     const self = textBlock === undefined ? this : textBlock;
     const LINE_SIZE = `${this.fontSize.value}${this.fontSize.units}`;
 
     self.applyFontStyles();
 
-    const textBBox = self._textElement.getBBox();
+    self._textSize = self._textElement.getBBox();
     const centerX =
       self.boundingBox.x + self.boundingBox.width / 2 + self.offsetX;
     const centerY =
       self.boundingBox.y +
       self.boundingBox.height / 2 -
-      textBBox.height / 2 +
+      self._textSize.height / 2 +
       self.offsetY;
 
     self._textElement.childNodes.forEach((ts, lineno) => {
@@ -185,11 +192,15 @@ export class TextBlock {
 
     const bgPadding = 1.2;
     SvgHelper.setAttributes(self.labelBackground, [
-      ['width', (textBBox.width * bgPadding).toString()],
-      ['height', (textBBox.height * bgPadding).toString()],
-      ['x', (centerX - (textBBox.width * bgPadding) / 2).toString()],
-      ['y', (centerY - (textBBox.height / 2) * (bgPadding - 1) * 2).toString()],
+      ['width', (self._textSize.width * bgPadding).toString()],
+      ['height', (self._textSize.height * bgPadding).toString()],
+      ['x', (centerX - (self._textSize.width * bgPadding) / 2).toString()],
+      ['y', (centerY - (self._textSize.height / 2) * (bgPadding - 1) * 2).toString()],
     ]);
+
+    if (self.onTextSizeChanged) {
+      self.onTextSizeChanged(self);
+    }
 
     // restore visibility
     this.textElement.style.opacity = '1';
