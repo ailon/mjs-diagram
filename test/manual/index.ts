@@ -12,12 +12,14 @@ import { mindMapStencilSet } from '../../src/stencilsets/mindmap/MindMapStencilS
 import { mindMapStencilEditorSet } from '../../src/stencilsets/mindmap/MindMapStencilEditorSet';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { DiagramViewer } from '../../src/viewer';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ArrowConnector, basicStencilSet, DiagramState } from '../../src/core';
 import { ColorSet } from "../../src/editor/ColorSet";
 import { ConnectorEventData, DiagramViewerEventData, StencilEventData } from '../../src/DiagramViewer';
 import { ConnectorEditorEventData, DiagramEditorEventData, StencilEditorEventData } from '../../src/DiagramEditor';
 import lt_core_strings from '../../src/editor/lang/lt';
 import lt_flowchart_strings from '../../src/stencilsets/flowchart/lang/lt';
+import { networkStencilSet, networkStencilEditorSet } from '../../src/stencilsets/network/network';
 
 export * from './../../src/index';
 
@@ -162,9 +164,10 @@ export class Experiments {
       console.log(`editor connector enter ${(<ConnectorEditorEventData>ev.detail).connectorEditor.isSelected}`);
     });
     
-    this.editor.stencilEditorSet = basicStencilEditorSet;
+    // this.editor.stencilEditorSet = basicStencilEditorSet;
     // this.editor.stencilEditorSet = flowchartStencilEditorSet;
     // this.editor.stencilEditorSet = mindMapStencilEditorSet;
+    this.editor.stencilEditorSet = networkStencilEditorSet;
 
     this.editor.settings.setContextColor('ArrowConnector', 'stroke', 'red');
     this.editor.settings.setContextColorSet('ArrowConnector', 'stroke', new ColorSet('red','blue','black'));
@@ -218,7 +221,8 @@ export class Experiments {
     });
 
     // this.viewer.stencilSet = flowchartStencilSet;
-    this.viewer.stencilSet = basicStencilSet;
+    // this.viewer.stencilSet = basicStencilSet;
+    this.viewer.stencilSet = networkStencilSet;
 
     const manualState: DiagramState = {
       stencils: [

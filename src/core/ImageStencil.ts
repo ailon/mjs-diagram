@@ -42,8 +42,6 @@ export class ImageStencil extends TextStencil {
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     super(iid, container, settings);
 
-    this.defaultSize = { width: 50, height: 80 };
-
     this.createImage = this.createImage.bind(this);
     this.adjustImage = this.adjustImage.bind(this);
     this.setTextBoundingBox = this.setTextBoundingBox.bind(this);

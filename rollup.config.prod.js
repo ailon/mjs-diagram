@@ -245,6 +245,60 @@ export default [
     }), svgo(), terser()],
   },
 
+  // network diagram
+  {
+    input: ['./src/stencilsets/network/network.ts'],
+    output: {
+      dir: './dts/stencilsets/network/',
+    },
+    external: [
+      /^(\.\.?\/)*core$/,
+      /^(\.\.?\/)*editor$/,
+      /^(\.\.?\/)*viewer$/,
+    ],
+    plugins: [
+      nodeResolve(),
+      typescript({
+        declaration: true,
+        outDir: './dts/stencilsets/network/',
+        rootDir: './src/',
+        exclude: ['./test/**/*', './dts/**/*', './dist/**/*'],
+      }),
+      svgo(),
+    ],
+  },
+  {
+    input: './dts/stencilsets/network/network.d.ts',
+    output: [{ file: './dist/stencilsets/network/network.d.ts', format: 'es' }],
+    external: [
+      /^(\.\.?\/)*core$/,
+      /^(\.\.?\/)*editor$/,
+      /^(\.\.?\/)*viewer$/,
+    ],
+    plugins: [dts()],
+  },  
+  {
+    input: ['./src/stencilsets/network/network.ts'],
+    output: [
+      {
+        file: outputDir + 'stencilsets/network/network.js',
+        format: 'es',
+        sourcemap: true,
+        banner: banner,
+      },
+    ],
+    external: [
+      /^(\.\.?\/)*core$/,
+      /^(\.\.?\/)*editor$/,
+      /^(\.\.?\/)*viewer$/,
+    ],
+    plugins: [typescript({
+      compilerOptions: {
+        rootDir: './src/',
+      },
+    }), svgo(), terser()],
+  },
+
   // complete UMD package
   {
     input: ['src/index.ts'],

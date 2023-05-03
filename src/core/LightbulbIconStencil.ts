@@ -12,6 +12,8 @@ export class LightbulbIconStencil extends ImageStencil {
 
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     super(iid, container, settings);
+
+    this.defaultSize = { width: 50, height: 80 };
     
     this._fillColor = '#fde047';
     this.strokeEditable = false;
