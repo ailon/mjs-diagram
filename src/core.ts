@@ -10,6 +10,7 @@ export { EllipseStencil } from './core/EllipseStencil';
 export { DiamondStencil } from './core/DiamondStencil';
 export { ImageStencil } from './core/ImageStencil';
 export { LightbulbIconStencil } from './core/LightbulbIconStencil';
+export { LabelStencil } from './core/LabelStencil';
 
 export { ConnectorBase, ArrowType } from './core/ConnectorBase';
 export { ConnectorBaseState, ConnectorEndPoints } from './core/ConnectorBaseState';

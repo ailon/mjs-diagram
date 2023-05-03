@@ -16,7 +16,7 @@ export class StencilBase {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected static getPathD(width: number, height: number): string {
-    return '';
+    return 'M0,0';
   }
 
   private _iid: number;

@@ -6,6 +6,7 @@ import { EllipseStencil } from './EllipseStencil';
 import { StencilSet } from './StencilSet';
 import { RectangleTextStencil } from './RectangleTextStencil';
 import { LightbulbIconStencil } from './LightbulbIconStencil';
+import { LabelStencil } from './LabelStencil';
 
 const basicStencilSet = new StencilSet();
 basicStencilSet.stencilTypes.push(
@@ -24,6 +25,10 @@ basicStencilSet.stencilTypes.push(
   {
     stencilType: DiamondStencil,
     displayName: 'Diamond',
+  },
+  {
+    stencilType: LabelStencil,
+    displayName: 'Label',
   },
   {
     stencilType: LightbulbIconStencil,

@@ -8,6 +8,7 @@ import {
   TextStencilState,
   AngledConnector,
   LightbulbIconStencil,
+  LabelStencil,
 } from '../core';
 
 import { StencilEditorSet } from './StencilEditorSet';
@@ -22,6 +23,7 @@ basicStencilEditorSet.stencilEditorTypes.set(
 );
 basicStencilEditorSet.stencilEditorTypes.set(EllipseStencil, TextStencilEditor);
 basicStencilEditorSet.stencilEditorTypes.set(DiamondStencil, TextStencilEditor);
+basicStencilEditorSet.stencilEditorTypes.set(LabelStencil, TextStencilEditor);
 basicStencilEditorSet.stencilEditorTypes.set(LightbulbIconStencil, ImageStencilEditor);
 
 basicStencilEditorSet.connectorEditorTypes.set(

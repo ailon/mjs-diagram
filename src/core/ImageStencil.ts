@@ -11,13 +11,6 @@ export class ImageStencil extends TextStencil {
 
   protected static svgString?: string;
 
-  // @todo need to have this for some reason even if it doesn't draw anyt path?
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected static getPathD(width: number, height: number): string {
-    const result = `M0,0`;
-    return result;
-  }
-
   public static getThumbnail(width: number, height: number): SVGSVGElement {
     if (this.svgString === undefined) {
       return super.getThumbnail(width, height);
