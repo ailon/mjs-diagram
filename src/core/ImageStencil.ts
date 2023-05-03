@@ -1,7 +1,6 @@
 import { SvgHelper } from './SvgHelper';
 import { DiagramSettings } from './DiagramSettings';
 import { TextStencil } from './TextStencil';
-import { TextBlock } from './TextBlock';
 
 export class ImageStencil extends TextStencil {
   public static typeName = 'ImageStencil';
