@@ -73,7 +73,7 @@ export class ImageStencil extends TextStencil {
     if (
       this.textBlock &&
       this.textBlock.textSize !== undefined &&
-      (this.textBlock.textSize.height > 0 || this.textBlock.text === '')
+      this.textBlock.textSize.height > 0
     ) {
       this.textBoundingBox.y =
         this.height - this.padding - this.textBlock.textSize.height;
@@ -116,6 +116,10 @@ export class ImageStencil extends TextStencil {
       SvgHelper.setAttributes(this.SVGImage, [
         ['viewBox', `0 0 ${this.naturalWidth} ${this.naturalHeight}`],
         ['pointer-events', 'none'],
+        ['fill', this._fillColor],
+        ['stroke', this._strokeColor],
+        ['stroke-width', this.strokeWidth.toString()],
+        ['stroke-dasharray', this.strokeDasharray],
       ]);
       this.adjustImage();
       this.visual.appendChild(this.SVGImage);
@@ -126,7 +130,40 @@ export class ImageStencil extends TextStencil {
   public adjustImage(): void {
     if (this.SVGImage !== undefined) {
       this.SVGImage.setAttribute('width', `${this.width}px`);
-      this.SVGImage.setAttribute('height', `${this.textBoundingBox.y}px`);
+      if (this.textBlock && this.textBlock.text !== '') {
+        this.SVGImage.setAttribute('height', `${this.textBoundingBox.y}px`);
+      } else {
+        this.SVGImage.setAttribute('height', `${this.height}px`);
+      }
     }
   }
+
+  public setStrokeColor(color: string): void {
+    super.setStrokeColor(color);
+    if (this.SVGImage !== undefined) {
+      SvgHelper.setAttributes(this.SVGImage, [['stroke', color]]);
+    }
+  }
+  public setFillColor(color: string): void {
+    super.setFillColor(color);
+    if (this.SVGImage !== undefined) {
+      SvgHelper.setAttributes(this.SVGImage, [['fill', color]]);
+    }
+  }
+  public setStrokeWidth(width: number | string): void {
+    super.setStrokeWidth(width);
+    if (this.SVGImage !== undefined) {
+      SvgHelper.setAttributes(this.SVGImage, [
+        ['stroke-width', this.strokeWidth.toString()],
+      ]);
+    }
+  }
+  public setStrokeDasharray(dashes: string): void {
+    super.setStrokeDasharray(dashes);
+    if (this.SVGImage !== undefined) {
+      SvgHelper.setAttributes(this.SVGImage, [
+        ['stroke-dasharray', this.strokeDasharray],
+      ]);
+    }
+  }  
 }

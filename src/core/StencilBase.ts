@@ -88,8 +88,14 @@ export class StencilBase {
   public get strokeColor() {
     return this._strokeColor;
   }
-  protected strokeWidth = 1;
-  protected strokeDasharray = '';
+  protected _strokeWidth = 1;
+  public get strokeWidth() {
+    return this._strokeWidth;
+  }
+  protected _strokeDasharray = '';
+  public get strokeDasharray() {
+    return this._strokeDasharray;
+  }
 
   public ports = new Map<PortLocation, Port>([
     ['topleft', new Port('topleft')],
@@ -101,6 +107,9 @@ export class StencilBase {
     ['bottomcenter', new Port('bottomcenter')],
     ['bottomright', new Port('bottomright')],
   ]);
+
+  public fillEditable = true;
+  public strokeEditable = true;
 
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     this._iid = iid;
@@ -122,7 +131,7 @@ export class StencilBase {
     this._strokeColor = this.settings.getColor(this.typeName, 'stroke');
     this._fillColor = this.settings.getColor(this.typeName, 'fill');
     this.setStrokeWidth(this.settings.getStrokeWidth(this.typeName));
-    this.strokeDasharray = this.settings.getDashArray(this.typeName);
+    this._strokeDasharray = this.settings.getDashArray(this.typeName);
   }
 
   protected static getThumbnailSVG(
@@ -280,7 +289,7 @@ export class StencilBase {
   }
   public setStrokeWidth(width: number | string): void {
     const numWidth = typeof(width) === 'string' ? Number.parseFloat(width) : width;
-    this.strokeWidth = numWidth;
+    this._strokeWidth = numWidth;
     if (this._frame !== undefined) {
       SvgHelper.setAttributes(this._frame, [
         ['stroke-width', this.strokeWidth.toString()],
@@ -288,7 +297,7 @@ export class StencilBase {
     }
   }
   public setStrokeDasharray(dashes: string): void {
-    this.strokeDasharray = dashes;
+    this._strokeDasharray = dashes;
     if (this._frame !== undefined) {
       SvgHelper.setAttributes(this._frame, [
         ['stroke-dasharray', this.strokeDasharray],
@@ -368,10 +377,10 @@ export class StencilBase {
       this._strokeColor = state.strokeColor;
     }
     if (state.strokeWidth !== undefined) {
-      this.strokeWidth = state.strokeWidth;
+      this._strokeWidth = state.strokeWidth;
     }
     if (state.strokeDasharray !== undefined) {
-      this.strokeDasharray = state.strokeDasharray;
+      this._strokeDasharray = state.strokeDasharray;
     }
 
     this.createVisual();

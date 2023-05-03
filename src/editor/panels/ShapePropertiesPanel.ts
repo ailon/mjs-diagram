@@ -31,6 +31,9 @@ export class ShapePropertiesPanel extends PropertyPanelBase {
   public lineStyle?: string;
   public lineWidth?: string;
 
+  public fillPanelsEnabled = true;
+  public strokePanelsEnabled = true;
+
   constructor(title: string, language: Language, properties: ShapePropertiesPanelProperties) {
     super(title, language);
 
@@ -89,21 +92,29 @@ export class ShapePropertiesPanel extends PropertyPanelBase {
 
     const panelDiv = document.createElement('div');
 
-    panelDiv.appendChild(addTitle(this.language.getString('toolbox-linecolor-title') ?? 'Line color'));
-    this.strokePanel.currentColor = this.strokeColor;
-    panelDiv.appendChild(this.strokePanel.getUi());
+    if (this.strokePanelsEnabled) {
+      panelDiv.appendChild(addTitle(this.language.getString('toolbox-linecolor-title') ?? 'Line color'));
+      this.strokePanel.currentColor = this.strokeColor;
+      panelDiv.appendChild(this.strokePanel.getUi());
+    }
 
-    panelDiv.appendChild(addTitle(this.language.getString('toolbox-fillcolor-title') ?? 'Fill color'));
-    this.fillPanel.currentColor = this.fillColor;
-    panelDiv.appendChild(this.fillPanel.getUi());
+    if (this.fillPanelsEnabled) {
+      panelDiv.appendChild(addTitle(this.language.getString('toolbox-fillcolor-title') ?? 'Fill color'));
+      this.fillPanel.currentColor = this.fillColor;
+      panelDiv.appendChild(this.fillPanel.getUi());
+    }
 
-    panelDiv.appendChild(addTitle(this.language.getString('toolbox-linewidth-title') ?? 'Line width'));
-    this.lineWidthPanel.currentStyle = this.lineWidth;
-    panelDiv.appendChild(this.lineWidthPanel.getUi());
-
-    panelDiv.appendChild(addTitle(this.language.getString('toolbox-linestyle-title') ?? 'Line style'));
-    this.lineStylePanel.currentStyle = this.lineStyle;
-    panelDiv.appendChild(this.lineStylePanel.getUi());
+    if (this.strokePanelsEnabled) {
+      panelDiv.appendChild(addTitle(this.language.getString('toolbox-linewidth-title') ?? 'Line width'));
+      this.lineWidthPanel.currentStyle = this.lineWidth;
+      panelDiv.appendChild(this.lineWidthPanel.getUi());
+    }
+    
+    if (this.strokePanelsEnabled) {
+      panelDiv.appendChild(addTitle(this.language.getString('toolbox-linestyle-title') ?? 'Line style'));
+      this.lineStylePanel.currentStyle = this.lineStyle;
+      panelDiv.appendChild(this.lineStylePanel.getUi());
+    }
 
     return panelDiv;
   }

@@ -112,6 +112,9 @@ export class StencilBaseEditor {
         lineWidth: this.settings.getStrokeWidth(this.stencil.typeName),
       }
     );
+    this.shapePanel.fillPanelsEnabled = this.stencil.fillEditable;
+    this.shapePanel.strokePanelsEnabled = this.stencil.strokeEditable;
+    
     this.shapePanel.onStrokeColorChanged = this._stencil.setStrokeColor;
     this.shapePanel.onFillColorChanged = this._stencil.setFillColor;
     this.shapePanel.onLineStyleChanged = this._stencil.setStrokeDasharray;
