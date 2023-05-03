@@ -73,7 +73,7 @@ export class ImageStencil extends TextStencil {
     if (
       this.textBlock &&
       this.textBlock.textSize !== undefined &&
-      (this.textBlock.textSize.height > 0 || this.textBlock.text === '')
+      this.textBlock.textSize.height > 0
     ) {
       this.textBoundingBox.y =
         this.height - this.padding - this.textBlock.textSize.height;
@@ -126,7 +126,11 @@ export class ImageStencil extends TextStencil {
   public adjustImage(): void {
     if (this.SVGImage !== undefined) {
       this.SVGImage.setAttribute('width', `${this.width}px`);
-      this.SVGImage.setAttribute('height', `${this.textBoundingBox.y}px`);
+      if (this.textBlock && this.textBlock.text !== '') {
+        this.SVGImage.setAttribute('height', `${this.textBoundingBox.y}px`);
+      } else {
+        this.SVGImage.setAttribute('height', `${this.height}px`);
+      }
     }
   }
 }
