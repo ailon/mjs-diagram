@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-alpha.14] - 2023-05-04
+### Added
+- `ImageStencil` - base type for image based stencils
+- `LabelStencil` - a simple text stencil with no frames or backgrounds
+- Network diagram (`network`) stencilset
+
 ## [1.0.0-alpha.13] - 2023-04-28
 ### Fixed
 - all core types repeated in viewer type declation file resulting in type mismatch errors in TypeScript projects
@@ -121,6 +127,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial public release.
 
+[1.0.0-alpha.14]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.14
 [1.0.0-alpha.13]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.13
 [1.0.0-alpha.12]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.12
 [1.0.0-alpha.11]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.11
