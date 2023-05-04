@@ -1,4 +1,4 @@
-import { TextStencil } from "./TextStencil";
+import { TextStencil } from './TextStencil';
 
 export class RectangleTextStencil extends TextStencil {
   public static typeName = 'RectangleTextStencil';
@@ -13,5 +13,9 @@ export class RectangleTextStencil extends TextStencil {
       V 0`;
 
     return result;
+  }
+
+  public static getThumbnail(width: number, height: number): SVGSVGElement {
+    return super.getThumbnail(width, height);
   }
 }
