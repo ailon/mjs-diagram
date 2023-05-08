@@ -148,6 +148,8 @@ export class StencilBaseEditor {
 
     this.initManipulation = this.initManipulation.bind(this);
     this.create = this.create.bind(this);
+
+    this.moveStencilTo = this.moveStencilTo.bind(this);
   }
 
   public ownsTarget(el: EventTarget | null): boolean {
@@ -529,6 +531,24 @@ export class StencilBaseEditor {
     return result;
   }
 
+  public moveStencilTo(x?: number, y?: number) {
+    if (x !== undefined) {
+      this._stencil.left = x;
+    }
+    if (y !== undefined) {
+      this._stencil.top = y;
+    }
+    this._stencil.moveVisual({
+      x: this._stencil.left,
+      y: this._stencil.top,
+    });
+    this.adjustControlBox();
+    this.adjustPortBox();
+    if (this.onStencilChanged) {
+      this.onStencilChanged(this);
+    }
+  }
+
   public manipulate(point: IPoint): void {
     if (this._stencil) {
       if (this.state === 'move') {
@@ -540,15 +560,7 @@ export class StencilBaseEditor {
           this.manipulationStartTop +
           (point.y - this.manipulationStartTop) -
           this.offsetY;
-        this._stencil.moveVisual({
-          x: this._stencil.left,
-          y: this._stencil.top,
-        });
-        this.adjustControlBox();
-        this.adjustPortBox();
-        if (this.onStencilChanged) {
-          this.onStencilChanged(this);
-        }
+        this.moveStencilTo();
       } else if (this.state === 'resize') {
         this.resize(point);
         if (this.onStencilChanged) {

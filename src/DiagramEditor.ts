@@ -21,6 +21,7 @@ import { UndoRedoManager } from './editor/UndoRedoManager';
 import { ConnectorTypePanel } from './editor/panels/ConnectorTypePanel';
 import { ConnectorBaseState } from './core/ConnectorBaseState';
 import { NewStencilPanel } from './editor/panels/NewStencilPanel';
+import { AlignPanel, VerticalAlignment, HorizontalAlignment } from './editor/panels/AlignPanel';
 import { StencilEditorSet } from './editor';
 
 import Logo from './assets/markerjs-logo-m.svg';
@@ -92,6 +93,7 @@ export class DiagramEditor extends HTMLElement {
   private _connectorEditors: ConnectorBaseEditor[] = [];
   private _connectorTypePanel!: ConnectorTypePanel;
   private _newStencilPanel!: NewStencilPanel;
+  private _alignPanel!: AlignPanel;
 
   private _documentBackgroundPanel!: ColorPickerPanel;
   private _documentDimensionsPanel!: DimensionsPanel;
@@ -243,6 +245,9 @@ export class DiagramEditor extends HTMLElement {
 
     this.finishMarqueeSelection = this.finishMarqueeSelection.bind(this);
 
+    this.alignHorizontally = this.alignHorizontally.bind(this);
+    this.alignVertically = this.alignVertically.bind(this);
+
     this.attachShadow({ mode: 'open' });
 
     this.addStyles();
@@ -292,6 +297,13 @@ export class DiagramEditor extends HTMLElement {
       this.documentHeight
     );
     this._documentDimensionsPanel.onDimensionsChanged = this.setDocumentSize;
+
+    this._alignPanel = new AlignPanel(
+      this.language.getString('toolbox-align-title') ?? 'Align',
+      this.language,
+    );
+    this._alignPanel.onHorizontalAlignmentClicked = this.alignHorizontally;
+    this._alignPanel.onVerticalAlignmentClicked = this.alignVertically;
   }
 
   private addStyles() {
@@ -699,19 +711,26 @@ export class DiagramEditor extends HTMLElement {
   }
   private addToolboxPanels(panels?: PropertyPanelBase[]) {
     if (panels !== undefined) {
-      this._toolboxPanel.innerHTML = '';
-      this._currentToolboxPanels = panels;
-      panels.forEach((p) => this.addToolboxPanel(p));
-    } else if (
-      this._currentToolboxPanels.length === 1 &&
-      this._currentToolboxPanels[0] === this._newStencilPanel
-    ) {
-      // already showing new stencil panel
+      //this._toolboxPanel.innerHTML = '';
+      panels.forEach((p) => {
+        if (this._currentToolboxPanels.indexOf(p) < 0) {
+          this._currentToolboxPanels.push(p);
+          this.addToolboxPanel(p)
+        }
+      });
+    // } else if (
+    //   this._currentToolboxPanels.length === 1 &&
+    //   this._currentToolboxPanels[0] === this._newStencilPanel
+    // ) {
+    //   // already showing new stencil panel
+    // } else {
+    //   this._toolboxPanel.innerHTML = '';
+    //   this._currentToolboxPanels = [this._newStencilPanel];
+    //   this._newStencilPanel.deselectType();
+    //   this.addToolboxPanel(this._newStencilPanel);
     } else {
       this._toolboxPanel.innerHTML = '';
-      this._currentToolboxPanels = [this._newStencilPanel];
-      this._newStencilPanel.deselectType();
-      this.addToolboxPanel(this._newStencilPanel);
+      this._currentToolboxPanels = [];
     }
   }
 
@@ -788,6 +807,7 @@ export class DiagramEditor extends HTMLElement {
       this.toggleToolbox();
     }
     this.deselectStencil();
+    this.addToolboxPanels();
     this.addToolboxPanels([this._newStencilPanel]);
   }
 
@@ -1016,8 +1036,9 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private applyStencilSet() {
-    this.setupPanels();
     this.addToolboxPanels();
+    this.setupPanels();
+    this.addToolboxPanels([this._newStencilPanel]);
     if (
       this._stencilEditorSet !== undefined &&
       this._stencilEditorSet.newDocumentTemplate !== undefined
@@ -1142,7 +1163,7 @@ export class DiagramEditor extends HTMLElement {
       this._currentConnectorEditor.deselect();
       this.pushToConnectorLayer(this._currentConnectorEditor);
       this._currentConnectorEditor = undefined;
-      this.addToolboxPanels([]);
+      this.addToolboxPanels();
     }
   }
 
@@ -1715,6 +1736,7 @@ export class DiagramEditor extends HTMLElement {
         // this.toolbar.setCurrentMarker();
         // this._newStencilPanel.deselectType();
         this.addToolboxPanels();
+        this.addToolboxPanels([this._newStencilPanel]);
       }
     }
     this._currentStencilEditor = stencilEditor;
@@ -1732,6 +1754,9 @@ export class DiagramEditor extends HTMLElement {
   }
 
   public selectStencil(stencilEditor: StencilBaseEditor): void {
+    if (this._selectedStencilEditors.length === 0) {
+      this.addToolboxPanels();
+    }
     if (this._selectedStencilEditors.indexOf(stencilEditor) < 0) {
       this._selectedStencilEditors.push(stencilEditor);
       stencilEditor.select();
@@ -1740,6 +1765,9 @@ export class DiagramEditor extends HTMLElement {
       }
     } else {
       this.deselectStencil(stencilEditor);
+    }
+    if (this._selectedStencilEditors.length > 0) {
+      this.addToolboxPanels([this._alignPanel]);
     }
   }
 
@@ -2201,6 +2229,104 @@ export class DiagramEditor extends HTMLElement {
       this._logoUI.style.top = `${
         this._contentContainer.offsetHeight - this._logoUI.clientHeight - 20
       }px`;
+    }
+  }
+
+  private readonly PAGE_MARGIN = 10;
+  private alignHorizontally(alignment: HorizontalAlignment) {
+    if (this._selectedStencilEditors.length > 0) {
+      if (this._selectedStencilEditors.length > 1) {
+        switch(alignment) {
+          case 'left': {
+            const x = this._selectedStencilEditors[0].stencil.left;
+            for (let i = 1; i < this._selectedStencilEditors.length; i++) {
+              this._selectedStencilEditors[i].moveStencilTo(x);  
+            }
+            break;
+          }
+          case 'center': {
+            const centerX = this._selectedStencilEditors[0].stencil.left + this._selectedStencilEditors[0].stencil.width / 2;
+            for (let i = 1; i < this._selectedStencilEditors.length; i++) {
+              const x = centerX - this._selectedStencilEditors[i].stencil.width / 2;
+              this._selectedStencilEditors[i].moveStencilTo(x);  
+            }
+            break;
+          }
+          case 'right': {
+            const rightX = this._selectedStencilEditors[0].stencil.left + this._selectedStencilEditors[0].stencil.width;
+            for (let i = 1; i < this._selectedStencilEditors.length; i++) {
+              const x = rightX - this._selectedStencilEditors[i].stencil.width;
+              this._selectedStencilEditors[i].moveStencilTo(x);  
+            }
+            break;
+          }
+        }
+      } else {
+        switch(alignment) {
+          case 'left': {
+            this._selectedStencilEditors[0].moveStencilTo(this.PAGE_MARGIN);
+            break;
+          }
+          case 'center': {
+            const x = this.documentWidth / 2 - this._selectedStencilEditors[0].stencil.width / 2;
+            this._selectedStencilEditors[0].moveStencilTo(x);
+            break;
+          }
+          case 'right': {
+            const x = this.documentWidth - this.PAGE_MARGIN - this._selectedStencilEditors[0].stencil.width;
+            this._selectedStencilEditors[0].moveStencilTo(x);
+            break;
+          }
+        }
+      }
+    }
+  }
+  private alignVertically(alignment: VerticalAlignment) {
+    if (this._selectedStencilEditors.length > 0) {
+      if (this._selectedStencilEditors.length > 1) {
+        switch(alignment) {
+          case 'top': {
+            const y = this._selectedStencilEditors[0].stencil.top;
+            for (let i = 1; i < this._selectedStencilEditors.length; i++) {
+              this._selectedStencilEditors[i].moveStencilTo(undefined, y);
+            }
+            break;
+          }
+          case 'middle': {
+            const middleX = this._selectedStencilEditors[0].stencil.top + this._selectedStencilEditors[0].stencil.height / 2;
+            for (let i = 1; i < this._selectedStencilEditors.length; i++) {
+              const y = middleX - this._selectedStencilEditors[i].stencil.height / 2;
+              this._selectedStencilEditors[i].moveStencilTo(undefined, y);  
+            }
+            break;
+          }
+          case 'bottom': {
+            const bottomY = this._selectedStencilEditors[0].stencil.top + this._selectedStencilEditors[0].stencil.height;
+            for (let i = 1; i < this._selectedStencilEditors.length; i++) {
+              const y = bottomY - this._selectedStencilEditors[i].stencil.height;
+              this._selectedStencilEditors[i].moveStencilTo(undefined, y);  
+            }
+            break;
+          }
+        }
+      } else {
+        switch(alignment) {
+          case 'top': {
+            this._selectedStencilEditors[0].moveStencilTo(undefined, this.PAGE_MARGIN);
+            break;
+          }
+          case 'middle': {
+            const y = this.documentHeight / 2 - this._selectedStencilEditors[0].stencil.height / 2;
+            this._selectedStencilEditors[0].moveStencilTo(undefined, y);
+            break;
+          }
+          case 'bottom': {
+            const y = this.documentHeight - this.PAGE_MARGIN - this._selectedStencilEditors[0].stencil.height;
+            this._selectedStencilEditors[0].moveStencilTo(undefined, y);
+            break;
+          }
+        }
+      }
     }
   }
 }
