@@ -31,6 +31,7 @@ import { DimensionsPanel } from './editor/panels/DimensionsPanel';
 import { EditorSettings } from './editor/EditorSettings';
 import { Language } from './editor/Language';
 import en_core_strings from './editor/lang/en';
+import { ArrangePanel, ArrangementType } from './editor/panels/ArrangePanel';
 
 export type DiagramEditorMode = 'select' | 'connect';
 
@@ -94,6 +95,7 @@ export class DiagramEditor extends HTMLElement {
   private _connectorTypePanel!: ConnectorTypePanel;
   private _newStencilPanel!: NewStencilPanel;
   private _alignPanel!: AlignPanel;
+  private _arrangePanel!: ArrangePanel;
 
   private _documentBackgroundPanel!: ColorPickerPanel;
   private _documentDimensionsPanel!: DimensionsPanel;
@@ -208,6 +210,7 @@ export class DiagramEditor extends HTMLElement {
 
     this.addToolboxPanels = this.addToolboxPanels.bind(this);
     this.toggleToolbox = this.toggleToolbox.bind(this);
+    this.removeToolboxPanels = this.removeToolboxPanels.bind(this);
 
     this.deleteSelected = this.deleteSelected.bind(this);
     this.deleteConnector = this.deleteConnector.bind(this);
@@ -247,6 +250,7 @@ export class DiagramEditor extends HTMLElement {
 
     this.alignHorizontally = this.alignHorizontally.bind(this);
     this.alignVertically = this.alignVertically.bind(this);
+    this.arrange = this.arrange.bind(this);
 
     this.attachShadow({ mode: 'open' });
 
@@ -304,6 +308,12 @@ export class DiagramEditor extends HTMLElement {
     );
     this._alignPanel.onHorizontalAlignmentClicked = this.alignHorizontally;
     this._alignPanel.onVerticalAlignmentClicked = this.alignVertically;
+
+    this._arrangePanel = new ArrangePanel(
+      this.language.getString('toolbox-arrange-title') ?? 'Arrange',
+      this.language,
+    );
+    this._arrangePanel.onArrangeClicked = this.arrange;
   }
 
   private addStyles() {
@@ -728,6 +738,27 @@ export class DiagramEditor extends HTMLElement {
     //   this._currentToolboxPanels = [this._newStencilPanel];
     //   this._newStencilPanel.deselectType();
     //   this.addToolboxPanel(this._newStencilPanel);
+    } else {
+      this._toolboxPanel.innerHTML = '';
+      this._currentToolboxPanels = [];
+    }
+  }
+
+  private removeToolboxPanels(panels?: PropertyPanelBase[]) {
+    if (panels !== undefined) {
+      let removed = false;
+      panels.forEach((p) => {
+        if (this._currentToolboxPanels.indexOf(p) > -1) {
+          this._currentToolboxPanels.splice(this._currentToolboxPanels.indexOf(p), 1);
+          removed = true;
+        }
+      });
+      if (removed) {
+        this._toolboxPanel.innerHTML = '';
+        this._currentToolboxPanels.forEach(p => {
+          this.addToolboxPanel(p);
+        })
+      }
     } else {
       this._toolboxPanel.innerHTML = '';
       this._currentToolboxPanels = [];
@@ -1767,7 +1798,13 @@ export class DiagramEditor extends HTMLElement {
       this.deselectStencil(stencilEditor);
     }
     if (this._selectedStencilEditors.length > 0) {
+      this.removeToolboxPanels([this._newStencilPanel]);
       this.addToolboxPanels([this._alignPanel]);
+      if (this._selectedStencilEditors.length === 1) {
+        this.addToolboxPanels([this._arrangePanel]);
+      } else {
+        this.removeToolboxPanels([this._arrangePanel]);
+      }
     }
   }
 
@@ -2327,6 +2364,78 @@ export class DiagramEditor extends HTMLElement {
           }
         }
       }
+    }
+  }
+
+  private arrange(arrangement: ArrangementType) {
+    if (this._objectLayer !== undefined && this._currentStencilEditor !== undefined) {
+      const currentStencilIndex = this._stencilEditors.indexOf(this._currentStencilEditor);
+      let currentContainerIndex = -1;
+      const currentContainer = this._currentStencilEditor.container;
+      for (let i = 0; i < this._objectLayer.children.length; i++) {
+        if (this._objectLayer.children[i] === currentContainer) {
+          currentContainerIndex = i;
+          break;
+        }
+      }
+
+      if (currentStencilIndex > -1 && currentContainerIndex > -1) {
+        switch(arrangement) {
+          case 'front': {
+            if (currentStencilIndex < (this._stencilEditors.length - 1)) {
+              this._stencilEditors.splice(currentStencilIndex, 1);
+              this._stencilEditors.push(this._currentStencilEditor);
+            }
+            if (currentContainerIndex < (this._objectLayer.children.length - 1)) {
+              this._objectLayer.removeChild(currentContainer);
+              this._objectLayer.appendChild(currentContainer);
+            }
+            break;
+          }
+          case 'forward': {
+            if (currentStencilIndex < (this._stencilEditors.length - 1)) {
+              this._stencilEditors.splice(currentStencilIndex, 1);
+              if (currentStencilIndex < (this._stencilEditors.length - 1)) {
+                this._stencilEditors.splice(currentStencilIndex + 1, 0, this._currentStencilEditor);
+              } else {
+                this._stencilEditors.push(this._currentStencilEditor);
+              }
+            }
+            if (currentContainerIndex < (this._objectLayer.children.length - 1)) {
+              this._objectLayer.removeChild(currentContainer);
+              if (currentContainerIndex < (this._objectLayer.children.length - 1)) {
+                this._objectLayer.insertBefore(currentContainer, this._objectLayer.children[currentContainerIndex + 1]);
+              } else {
+                this._objectLayer.appendChild(currentContainer);
+              }
+            }
+            break;
+          }
+          case 'backward': {
+            if (currentStencilIndex > 0) {
+              this._stencilEditors.splice(currentStencilIndex, 1);
+              this._stencilEditors.splice(currentStencilIndex - 1, 0, this._currentStencilEditor);
+            }
+            if (currentContainerIndex > 0) {
+              this._objectLayer.removeChild(currentContainer);
+              this._objectLayer.insertBefore(currentContainer, this._objectLayer.children[currentContainerIndex - 1]);
+            }
+            break;
+          }
+          case 'back': {
+            if (currentStencilIndex > 0) {
+              this._stencilEditors.splice(currentStencilIndex, 1);
+              this._stencilEditors.splice(0, 0, this._currentStencilEditor);
+            }
+            if (currentContainerIndex > 0) {
+              this._objectLayer.removeChild(currentContainer);
+              this._objectLayer.insertBefore(currentContainer, this._objectLayer.firstChild);
+            }
+            break;
+          }
+        }
+      }
+
     }
   }
 }
