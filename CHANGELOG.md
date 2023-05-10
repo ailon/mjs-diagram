@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-alpha.16] - 2023-05-10
+### Added
+- stencil alignment
+- arranging of stencils (bring to front, back, etc.)
+
 ## [1.0.0-alpha.15] - 2023-05-04
 ### Fixed
 - attempt to fix a weird runtime error in some setups.
@@ -131,6 +136,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial public release.
 
+[1.0.0-alpha.16]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.16
 [1.0.0-alpha.15]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.15
 [1.0.0-alpha.14]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.14
 [1.0.0-alpha.13]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-alpha.13
