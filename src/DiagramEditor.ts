@@ -1254,6 +1254,11 @@ export class DiagramEditor extends HTMLElement {
 
     this.touchPoints++;
     if (this.touchPoints === 1 || ev.pointerType !== 'touch') {
+      // release capture from the original target when used with touch
+      // otherwise we get the original target on pointermove/up/etc.
+      if (ev.target && (<Element>ev.target).hasPointerCapture(ev.pointerId)) {
+        (<Element>ev.target).releasePointerCapture(ev.pointerId);
+      }
       if (
         this._currentStencilEditor !== undefined &&
         (this._currentStencilEditor.state === 'new' ||
