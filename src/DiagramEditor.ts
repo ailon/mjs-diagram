@@ -540,6 +540,7 @@ export class DiagramEditor extends HTMLElement {
     this._container.appendChild(this._contentContainer);
 
     this._canvasContainer = document.createElement('div');
+    this._canvasContainer.style.touchAction = 'pinch-zoom';
     this._canvasContainer.className = 'canvas-container';
     this._canvasContainer.style.display = 'grid';
     this._canvasContainer.style.gridTemplateColumns = '1fr';
