@@ -1195,7 +1195,8 @@ export class DiagramEditor extends HTMLElement {
       this._currentConnectorEditor.deselect();
       this.pushToConnectorLayer(this._currentConnectorEditor);
       this._currentConnectorEditor = undefined;
-      this.addToolboxPanels();
+      this.removeToolboxPanels();
+      this.addToolboxPanels([this._newStencilPanel]);
     }
   }
 
@@ -1226,6 +1227,7 @@ export class DiagramEditor extends HTMLElement {
       this._currentConnectorEditor = conEditor;
       this.popFromConnectorLayer(this._currentConnectorEditor);
       conEditor.select();
+      this.removeToolboxPanels();
       this.addToolboxPanels([
         this._connectorTypePanel,
         ...this._currentConnectorEditor.propertyPanels,
