@@ -535,7 +535,6 @@ export class DiagramEditor extends HTMLElement {
     this._contentContainer.style.position = 'relative';
     this._contentContainer.style.flexGrow = '2';
     this._contentContainer.style.flexShrink = '1';
-    this._contentContainer.style.backgroundColor = 'magenta';
     this._contentContainer.style.overflow = 'hidden';
     this._container.appendChild(this._contentContainer);
 
