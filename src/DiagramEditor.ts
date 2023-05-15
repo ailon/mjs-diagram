@@ -1320,7 +1320,7 @@ export class DiagramEditor extends HTMLElement {
               },
               ev.target
             );
-            console.log(this.connectionStartPort);
+            // console.log(this.connectionStartPort);
           } else {
             this.mode = 'select';
             hitEditor.switchConnectModeOff();
@@ -1526,7 +1526,7 @@ export class DiagramEditor extends HTMLElement {
               x: hitEditor.stencil.left + this.connectionEndPort.port.x,
               y: hitEditor.stencil.top + this.connectionEndPort.port.y,
             });
-            console.log(this.connectionEndPort);
+            // console.log(this.connectionEndPort);
           } else if (this._currentConnectorEditor.state === 'move') {
             if (
               this._currentConnectorEditor.movingPort ===
@@ -1562,7 +1562,7 @@ export class DiagramEditor extends HTMLElement {
               x: hitEditor.stencil.left + targetPort.port.x,
               y: hitEditor.stencil.top + targetPort.port.y,
             });
-            console.log(targetPort);
+            // console.log(targetPort);
           }
         } else if (
           this._currentConnectorEditor !== undefined &&

@@ -431,7 +431,7 @@ export class StencilBaseEditor {
     this._state = 'connect';
     this.hideControlBox();
     this.showPortBox();
-    console.log('connect');
+    // console.log('connect');
   }
 
   public switchConnectModeOff(): void {
