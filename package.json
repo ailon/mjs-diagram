@@ -1,6 +1,6 @@
 {
   "name": "@markerjs/mjs-diagram",
-  "version": "1.0.0-alpha.16",
+  "version": "1.0.0-beta.0",
   "description": "MJS Diagram",
   "main": "umd/mjs-diagram.js",
   "module": "mjs-diagram.js",
