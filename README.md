@@ -1,8 +1,8 @@
 # MJS Diagram &mdash; add interactive diagrams and diagramming to your web apps
 
-*Note: MJS Diagram is in early stages of its lifecycle and under heavy development. A lot will change before the stable release, including inevitable breaking changes.*
+*Note: MJS Diagram is in the preview state and under heavy development. Things may change before the stable release, including possible breaking changes.*
 
-MJS Diagram is a set of web components for creating and dislplaying interactive diagrams, such as Flowcharts, Mind Maps, and others.
+MJS Diagram is a set of web components for creating and dislplaying interactive diagrams, such as Flowcharts, Mind Maps, Network Diagrams, and other.
 
 MJS Diagram is extensible and enables you to add your own diagram types.
 
@@ -21,22 +21,25 @@ yarn add @markerjs/mjs-diagram
 
 ## Usage
 
+> See the below scenario in action and full source code [here](https://codesandbox.io/s/mjs-diagram-simple-flowchart-starter-2fwqcv?file=/index.html).
+
 To add a **diagram editor** to your web app follow these steps:
 
-1. Add a diagram editor web component to your page.
-2. Assign a stencil set (diagram type).
-3. Setup an event hander for the `saveclick` event to process the results.
+1. Add or import required modules (`@markerjs/mjs-diagram/core`, `@markerjs/mjs-diagram/editor`, and a stencil set (diagram type)).
+2. Add a diagram editor web component to your page.
+3. Assign a stencil set (diagram type).
+4. Setup an event hander for the `saveclick` event to process the results.
 
 ### Here's a simple example:
 
 On the page:
 ```html
-<mjs-diagram-editor id="mjsDia"></mjs-diagram-editor>
+<mjs-diagram-editor id="mjsDiaEditor"></mjs-diagram-editor>
 ```
 When page loads:
 
 ```js
-let editor = document.getElementById('mjsDia');
+let editor = document.getElementById('mjsDiaEditor');
 
 // assign imported Flowchart stencil set
 editor.stencilEditorSet = flowchartStencilEditorSet;
@@ -49,28 +52,28 @@ editor.addEventListener('saveclick', (ev) => {
 
 To add a **diagram viewer** to your web app follow these steps:
 
-1. Add diagram viewer web component to your page.
-2. Assign a stencil set (diagram type).
-3. Load diagram configuration via the `show()` method.
+1. Add or import required modules (`@markerjs/mjs-diagram/core`, `@markerjs/mjs-diagram/viewer`, and a stencil set (diagram type)).
+2. Add diagram viewer web component to your page.
+3. Assign a stencil set (diagram type).
+4. Load diagram configuration via the `show()` method.
 
 Here's a simple diagram viewer example:
 
 On your page:
 
 ```html
-<mjs-diagram-viewer id="mjsDiaView"></mjs-diagram-viewer>
+<mjs-diagram-viewer id="mjsDiaViewer"></mjs-diagram-viewer>
 ```
 
 When page loads:
 
 ```js
-let viewer = document.getElementById('mjsDiaView');
+let viewer = document.getElementById('mjsDiaViewer');
 // assign imported Flowchart stencil set
 viewer.stencilSet = flowchartStencilSet;
 // load diagram (state)
 viewer.show(savedState);
 ```
-
 ## Demos
 
 Check out MJS Diagram demos [here](https://markerjs.com/demos/diagram/getting-started).
