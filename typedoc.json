@@ -1,0 +1,15 @@
+{
+  "entryPoints": [
+    "src/core.ts",
+    "src/viewer.ts",
+    "src/editor.ts",
+    "src/stencilsets/flowchart/flowchart.ts",
+    "src/stencilsets/mindmap/mindmap.ts",
+    "src/stencilsets/network/network.ts",
+  ],
+  "excludeExternals": true,
+  "excludePrivate": true,
+  "disableSources": true,
+  "name": "MJS Diagram",
+  "out": "docs"
+}
