@@ -23,11 +23,12 @@ export { AngledArrowConnector } from './core/AngledArrowConnector';
 export { TextBlock } from './core/TextBlock';
 export { FontSize } from './core/FontSize';
 
-export { StencilSet, IStencilSet, IStencilProperties } from './core/StencilSet';
+export { StencilSet, IStencilSet, IStencilProperties, IConnectorProperties } from './core/StencilSet';
 export { basicStencilSet } from './core/BasicStencilSet';
 
 export { SvgHelper } from './core/SvgHelper';
 export { IPoint } from './core/IPoint';
+export { ISize } from './core/ISize';
 export { Port, PortLocation } from './core/Port';
 export { ColorType } from './core/ColorType';
 

@@ -1,6 +1,12 @@
 import { DiagramViewer } from './DiagramViewer';
 
-export { DiagramViewer } from './DiagramViewer';
+export {
+  DiagramViewer,
+  DiagramViewerEventMap,
+  ConnectorEventData,
+  DiagramViewerEventData,
+  StencilEventData,
+} from './DiagramViewer';
 
 if (
   window &&
