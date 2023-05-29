@@ -1,4 +1,23 @@
-
+/**
+ * The `network` stencilset represents all the stencils, connectors, and editors
+ * need to create and view Network Diagrams.
+ * 
+ * Import the module into your project like this:
+ * 
+ * ```ts
+ * import * as network from "@markerjs/mjs-diagram/stencilsets/network/network";
+ * ```
+ * 
+ * Then assign the {@link viewer!DiagramViewer.stencilSet | DiagramViewer.stencilSet} 
+ * or {@link editor!DiagramEditor.stencilEditorSet | DiagramEditor.stencilEditorSet} like this:
+ * 
+ * ```ts
+ * viewer.stencilSet = network.networkStencilSet;
+ * editor.stencilEditorSet = network.networkStencilEditorSet;
+ * ```
+ * 
+ * @module stencilsets/network
+ */
 export { CloudStencil } from './stencils/CloudStencil';
 export { DatabaseStencil } from './stencils/DatabaseStencil';
 export { DesktopStencil } from './stencils/DesktopStencil';

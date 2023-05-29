@@ -1,3 +1,32 @@
+/**
+ * The `editor` module contains everything pertaining to diagram editing.
+ * 
+ * The core class here is {@link DiagramEditor}. It represents the editor web component.
+ * 
+ * @example
+ * Here's a basic scenario for adding a Flowchart editor on your page.
+ * 
+ * In the markup part add the diagram editor web component:
+ * ```html
+ * <mjs-diagram-editor id="mjsDiaEditor"></mjs-diagram-editor>
+ * ```
+ * 
+ * Then in your code configure it to use the flowchart stencil editor set:
+ * 
+ * ```ts
+ * import * as mjsde from "@markerjs/mjs-diagram/editor";
+ * import * as flowchart from "@markerjs/mjs-diagram/stencilsets/flowchart/flowchart";
+ * ...
+ * const editor = document.getElementById("mjsDiaEditor");
+ * editor.stencilEditorSet = flowchart.flowchartStencilEditorSet;
+ * editor.addEventListener("saveclick", (ev) => {
+ *   // process the created diagram
+ *   // the diagram state (configuration) is in ev.detail.state
+ * });
+ * ```
+ * 
+ * @module editor
+ */
 import { DiagramEditor } from './DiagramEditor';
 
 export {

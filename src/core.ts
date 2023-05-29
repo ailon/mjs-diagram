@@ -1,3 +1,10 @@
+/**
+ * The `core` module contains classes that are common across all parts of MJS Diagram
+ * and base classes for general purpose stencils and connectors.
+ * 
+ * @module core
+ */
+
 export { DiagramState } from './core/DiagramState';
 export { DiagramSettings } from './core/DiagramSettings';
 
