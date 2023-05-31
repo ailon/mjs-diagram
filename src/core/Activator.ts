@@ -1,5 +1,6 @@
 /**
  * Manages commercial licenses.
+ * @ignore
  */
 export class Activator {
   private static keys: Map<string, string> = new Map<string, string>();
@@ -19,7 +20,7 @@ export class Activator {
    */
   public static isLicensed(product: string): boolean {
     // NOTE:
-    // before removing or modifying this please consider supporting marker.js
+    // before removing or modifying this please consider supporting MJS Diagram development
     // by visiting https://markerjs.com/ for details
     // thank you!
     if (Activator.keys.has(product)) {

@@ -6,61 +6,166 @@ import { StencilBase } from './StencilBase';
 import { SvgHelper } from './SvgHelper';
 import { TextBlock } from './TextBlock';
 
+/**
+ * Defines location of arrows on a connector.
+ * 
+ * - `both` - arrows displayed on both ends of a connector.
+ * - `start` - arrow displayend on the start side of a connector.
+ * - `end` - arrow displayed on the end side of a connector.
+ * - `none` - no arrows are displayed.
+ */
 export type ArrowType = 'both' | 'start' | 'end' | 'none';
 
+/**
+ * Represents the base type for all connectors in MJS Diagram.
+ */
 export class ConnectorBase {
+  /**
+   * A string representation of the type used
+   * in diagram configuration (state) JSON.
+   */
   public static typeName = 'ConnectorBase';
 
+   /**
+   * A string representation of the type used
+   * in diagram configuration (state) JSON.
+   * 
+   * @remarks
+   * Instance accessor returning the value of static {@link typeName}.
+   */ 
   public get typeName(): string {
     return Object.getPrototypeOf(this).constructor.typeName;
   }
 
   private _iid: number;
+  /**
+   * Internal connector identifier used in state/configuration JSON
+   * as reference to this connector.
+   */
   public get IId(): number {
     return this._iid;
   }
 
+  /**
+   * SVG group containing all the SVG elements for this connector.
+   */
   public container: SVGGElement;
 
+  /**
+   * Reference to the stencil at the start tip of this connector.
+   */
   public startStencil?: StencilBase;
+  /**
+   * Reference to the stencil connector port and the start tip of this connector.
+   */
   public startPort?: Port;
+  /**
+   * Reference to the stencil at the end tip of this connector.
+   */
   public endStencil?: StencilBase;
+  /**
+   * Reference to the stencil connector port and the end tip of this connector.
+   */
   public endPort?: Port;
 
+  /**
+   * X coordinate of the start tip.
+   */
   public x1 = 0;
+  /**
+   * Y coordinate of the start tip.
+   */
   public y1 = 0;
+  /**
+   * X coordinate of the end tip.
+   */
   public x2 = 0;
+  /**
+   * Y coordinate of the end tip.
+   */
   public y2 = 0;
 
+  /**
+   * The top level SVG element (group) of the connector's visual.
+   */
   public visual: SVGGraphicsElement = SvgHelper.createGroup();
 
+  /**
+   * Visible connector line.
+   */
   public visibleLine!: SVGLineElement | SVGPathElement;
+  /**
+   * Invisible wider connector line used to improve selection accuracy.
+   */
   public selectorLine!: SVGLineElement | SVGPathElement;
+  /**
+   * Connector line color.
+   */
   public strokeColor = '#000';
+  /**
+   * Connector line width.
+   */
   public strokeWidth = 1;
+  /**
+   * Connector line dash array.
+   */
   public strokeDasharray = '';
 
+  // @todo why public?
   public _labelText = '';
+  /**
+   * Gets label text for the connector.
+   */
   public get labelText(): string {
     return this.textBlock.text;
   }
+  /**
+   * Sets label text for the connector.
+   */
   public set labelText(value: string) {
     this._labelText = value;
     this.textBlock.text = this._labelText;
   }
 
+  /**
+   * Text block displaying the connector label.
+   */
   public textBlock: TextBlock = new TextBlock();
 
+  /**
+   * Bounding box for the label text.
+   */
   public textBoundingBox = new DOMRect();
 
+  /**
+   * SVG polygon for the start tip arrow.
+   */
   protected arrow1!: SVGPolygonElement;
+  /**
+   * SVG polygon for the end tip arrow.
+   */
   protected arrow2!: SVGPolygonElement;
 
+  /**
+   * {@inheritDoc core!ArrowType}
+   */
   public arrowType: ArrowType = 'none';
 
+  /**
+   * Arrow height.
+   */
   protected arrowBaseHeight = 10;
+  /**
+   * Arrow width.
+   */
   protected arrowBaseWidth = 10;
 
+  /**
+   * Returns connector thumbnail used to define the shape of the connector in the {@link editor!DiagramEditor}.
+   * @param width - thumbnail image width
+   * @param height - thumbnail image height
+   * @returns SVG image of the thumbnail.
+   */
   public static getThumbnail(width: number, height: number): SVGSVGElement {
     const result = document.createElementNS(
       'http://www.w3.org/2000/svg',
@@ -91,10 +196,19 @@ export class ConnectorBase {
   }
 
   private _settings: DiagramSettings;
+  /**
+   * {@link core!DiagramSettings} of the whole diagram.
+   */
   protected get settings(): DiagramSettings {
     return this._settings;
   }
 
+  /**
+   * Creates a connector.
+   * @param iid - connector identifier.
+   * @param container - SVG container to contain all the connector visuals.
+   * @param settings - whole diagram settings.
+   */
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     this._iid = iid;
     this.container = container;
@@ -127,6 +241,9 @@ export class ConnectorBase {
     this.restoreState = this.restoreState.bind(this);
   }
 
+  /**
+   * Returns true if manipulation target belongs to this connector.
+   */
   public ownsTarget(el: EventTarget): boolean {
     return (
       el === this.visual ||
@@ -136,6 +253,9 @@ export class ConnectorBase {
     );
   }
 
+  /**
+   * Creates visual elements of the connector.
+   */
   public createVisual() {
     this.createCoreVisual();
 
@@ -148,6 +268,9 @@ export class ConnectorBase {
     this.addVisualToContainer(this.visual);
   }
 
+  /**
+   * Creates the main visual of the connector.
+   */
   public createCoreVisual() {
     this.selectorLine = SvgHelper.createLine(
       this.x1,
@@ -173,6 +296,11 @@ export class ConnectorBase {
     this.visual.appendChild(this.visibleLine);
   }
 
+  /**
+   * Adds an element to the connector's container.
+   * The elements are inserted in the beggining (lowest layer) of the stack.
+   * @param element - element to add.
+   */
   public addVisualToContainer(element: SVGElement): void {
     if (this.container.childNodes.length > 0) {
       this.container.insertBefore(element, this.container.childNodes[0]);
@@ -207,11 +335,17 @@ export class ConnectorBase {
     this.visual.appendChild(this.arrow2);
   }
 
+  /**
+   * Adjusts layout of the connector.
+   */
   public adjust(): void {
     this.adjustPoints();
     this.adjustVisual();
   }
 
+  /**
+   * Adjusts connector's end pointis.
+   */
   public adjustPoints(): void {
     if (this.startStencil && this.startPort) {
       const start = this.startStencil.getPortPosition(this.startPort.location);
@@ -226,12 +360,24 @@ export class ConnectorBase {
     }
   }
 
+  /**
+   * Gets coordinates of connector's line ending depending on the
+   * arrow types and other factors. 
+   * @param baseEnding - base connector ending (as if there were no arrows, etc.)
+   * @param port - port to which the connector is connected.
+   * @returns - adjusted coordinates of connector line ending.
+   */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected getEnding(baseEnding: IPoint, port?: Port): IPoint {
     const result: IPoint = { x: baseEnding.x, y: baseEnding.y };
     return result;
   }
 
+  /**
+   * Gets coordinates of connector line endings adjusted based on arrow types
+   * and other factors
+   * @returns connector ending coordinates.
+   */
   protected getEndings(): [IPoint, IPoint] {
     let ending1: IPoint = { x: this.x1, y: this.y1 };
     let ending2: IPoint = { x: this.x2, y: this.y2 };
@@ -246,6 +392,10 @@ export class ConnectorBase {
     return [ending1, ending2];
   }
 
+  /**
+   * Adjusts connector visual based on updated position and other
+   * circumnstances.
+   */
   public adjustVisual(): void {
     if (this.selectorLine && this.visibleLine) {
       const [ending1, ending2] = this.getEndings();
@@ -275,6 +425,9 @@ export class ConnectorBase {
     }
   }
 
+  /**
+   * Adjust connector tips (arrows).
+   */
   public adjustTips() {
     if (this.arrow1 && this.arrow2) {
       this.arrow1.style.display =
@@ -301,6 +454,9 @@ export class ConnectorBase {
     }
   }
 
+  /**
+   * Rotates arrows based on the connector tip position, connected ports, etc.
+   */
   protected rotateArrows() {
     if (Math.abs(this.x1 - this.x2) > 0.1) {
       const lineAngle1 =
@@ -317,24 +473,40 @@ export class ConnectorBase {
     }
   }
 
+  /**
+   * Sets start tip position to supplied coordinates.
+   * @param point new tip position.
+   */
   public setStartPosition(point: IPoint) {
     this.x1 = point.x;
     this.y1 = point.y;
     this.adjustVisual();
   }
 
+  /**
+   * Sets end tip position to supplied coordinates.
+   * @param point new tip position.
+   */
   public setEndPosition(point: IPoint) {
     this.x2 = point.x;
     this.y2 = point.y;
     this.adjustVisual();
   }
 
+  /**
+   * Moves label to supplied offset coordinates.
+   * @param offsetX horizontal offset from the auto-calculated position
+   * @param offsetY vertical offset from the auto-calculated position.
+   */
   public moveLabel(offsetX = 0, offsetY = 0) {
     this.textBlock.offsetX += offsetX;
     this.textBlock.offsetY += offsetY;
     this.setTextBoundingBox();
   }
 
+  /**
+   * Calculates and sets the bounding box for the connector's label.
+   */
   protected setTextBoundingBox() {
     this.textBoundingBox.x = Math.min(this.x1, this.x2);
     this.textBoundingBox.y = Math.min(this.y1, this.y2);
@@ -345,16 +517,29 @@ export class ConnectorBase {
     this.textBlock.boundingBox = this.textBoundingBox;
   }
 
+  /**
+   * Sets the color of the connector's visual
+   * @param color CSS compatible color.
+   */
   public setStrokeColor(color: string): void {
     this.strokeColor = color;
     this.adjustVisual();
   }
 
+  /**
+   * Sets connector's arrow type.
+   * @param arrowType arrow type.
+   */
   public setArrowType(arrowType: ArrowType): void {
     this.arrowType = arrowType;
     this.adjustVisual();
   }
 
+  /**
+   * Scales the connector based on supplied scale factors.
+   * @param scaleX horizontal scale factor.
+   * @param scaleY vertical scale factor.
+   */
   public scale(scaleX: number, scaleY: number): void {
     this.x1 = this.x1 * scaleX;
     this.y1 = this.y1 * scaleY;
@@ -364,6 +549,11 @@ export class ConnectorBase {
     this.adjustVisual();
   }
 
+  /**
+   * Returns connector's state (configuration) used for storing the diagram 
+   * and for undo/redo operations.
+   * @returns connector state object.
+   */
   public getState(): ConnectorBaseState {
     return {
       typeName: this.typeName,
@@ -388,6 +578,11 @@ export class ConnectorBase {
     };
   }
 
+  /**
+   * Restores connector settings from a previously saved state (configuration).
+   * @param state previously saved or created state.
+   * @param endPoints stencils and ports the connector is connecting.
+   */
   public restoreState(
     state: ConnectorBaseState,
     endPoints: ConnectorEndPoints
