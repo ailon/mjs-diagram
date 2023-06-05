@@ -7,6 +7,9 @@ import { DiagramSettings } from './DiagramSettings';
 export class AngledArrowConnector extends AngledConnector {
   public static typeName = 'AngledArrowConnector';
 
+  /**
+   * {@inheritDoc core!ConnectorBase.constructor}
+   */
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     super(iid, container, settings);
 

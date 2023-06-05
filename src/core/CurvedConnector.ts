@@ -4,6 +4,9 @@ import { IPoint } from './IPoint';
 import { Port } from './Port';
 import { SvgHelper } from './SvgHelper';
 
+/**
+ * Represents a curved connector.
+ */
 export class CurvedConnector extends ConnectorBase {
   public static typeName = 'CurvedConnector';
 
@@ -40,8 +43,15 @@ export class CurvedConnector extends ConnectorBase {
     return result;
   }
 
+  /**
+   * When set to `true` the last segment connected to the corner ports is drawn 
+   * at a 45 degree angle.
+   */
   protected andgledCorners = true;
 
+  /**
+   * {@inheritDoc core!ConnectorBase.constructor}
+   */  
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     super(iid, container, settings);
 

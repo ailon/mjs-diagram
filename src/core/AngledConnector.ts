@@ -5,8 +5,14 @@ import { Port } from './Port';
 import { StencilBase } from './StencilBase';
 import { SvgHelper } from './SvgHelper';
 
+/**
+ * Represents direction of a line segment (in an angled connector, for example).
+ */
 type LineDirection = 'left' | 'up' | 'right' | 'down';
 
+/**
+ * Angled connector is a type of connector comprised of vertical and horizontal lines only.
+ */
 export class AngledConnector extends ConnectorBase {
   public static typeName = 'AngledConnector';
 
@@ -41,6 +47,9 @@ export class AngledConnector extends ConnectorBase {
     return result;
   }
 
+  /**
+   * {@inheritDoc core!ConnectorBase.constructor}
+   */  
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     super(iid, container, settings);
 
