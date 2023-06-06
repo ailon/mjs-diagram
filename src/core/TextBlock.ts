@@ -1,25 +1,51 @@
 import { FontSize } from "./FontSize";
 import { SvgHelper } from './SvgHelper';
 
+/**
+ * TextBlock represents a block of text used across all text-based stencils and connector labels.
+ */
 export class TextBlock {
+  /**
+   * Fired when text size changes.
+   * 
+   * @group Events
+   */
   public onTextSizeChanged?: (textBlock: TextBlock) => void;
 
   private _text = '';
+  /**
+   * Returns the text block's text
+   */
   public get text() {
     return this._text;
   }
+  /**
+   * Sets the text block's text.
+   */
   public set text(value) {
     this._text = value;
     this.renderText();
   }
 
+  /**
+   * Text block's horizontal offset from the automatically calculated position.
+   */
   public offsetX = 0;
+  /**
+   * Text block's vertical offset from the automatically calculated position.
+   */
   public offsetY = 0;
 
   private _boundingBox: DOMRect = new DOMRect();
+  /**
+   * Returns the bounding box where text should fit and/or be anchored.
+   */
   public get boundingBox(): DOMRect {
     return this._boundingBox;
   }
+  /**
+   * Sets the bounding box where text should fit and/or be anchored.
+   */
   public set boundingBox(value: DOMRect) {
     this._boundingBox = value;
     this.positionText();
@@ -28,30 +54,48 @@ export class TextBlock {
   private _labelBackground: SVGRectElement = SvgHelper.createRect(10, 10, [
     ['fill', 'white'],
   ]);
+  /**
+   * Returns the background rectangle (behind the text).
+   */
   public get labelBackground(): SVGRectElement {
     return this._labelBackground;
   }
 
   private _textElement: SVGTextElement = SvgHelper.createText();
+  /**
+   * Returns the text block's text element.
+   */
   public get textElement(): SVGTextElement {
     return this._textElement;
   }
 
   private _color = 'transparent';
+  /**
+   * Sets the text color.
+   */
   public set color(value: string) {
     if (this.textElement) {
       SvgHelper.setAttributes(this._textElement, [['fill', value]]);
     }
     this._color = value;
   }
+  /**
+   * Returns the text color.
+   */
   public get color(): string {
     return this._color;
   }
 
   private _fontFamily = '';
+  /**
+   * Returns the text's font family.
+   */
   public get fontFamily() {
     return this._fontFamily;
   }
+  /**
+   * Sets the text's font family.
+   */
   public set fontFamily(value) {
     if (this._textElement) {
       this._textElement.style.fontFamily = value;
@@ -65,9 +109,15 @@ export class TextBlock {
     units: 'rem',
     step: 0.1,
   };
+  /**
+   * Returns the text's font size.
+   */
   public get fontSize() {
     return this._fontSize;
   }
+  /**
+   * Sets the text's font size.
+   */
   public set fontSize(value: FontSize) {
     if (this._textElement) {
       this._textElement.style.fontSize = `${value.value}${value.units}`;
@@ -76,6 +126,10 @@ export class TextBlock {
     this.positionText();
   }
 
+  /**
+   * Creates a text block
+   * @param text initial text
+   */
   constructor(text?: string) {
     this.setupTextElement();
 
@@ -94,6 +148,11 @@ export class TextBlock {
     this.applyFontStyles = this.applyFontStyles.bind(this);
   }
 
+  /**
+   * Returns true if the text block contains the supplied element.
+   * @param el element to test.
+   * @returns true if the element belongs to the text block, false otherwise.
+   */
   public ownsTarget(el: EventTarget) {
     if (el === this._textElement) {
       return true;
@@ -121,6 +180,9 @@ export class TextBlock {
     this._labelBackground.style.strokeOpacity = '0';
   }
 
+  /**
+   * Renders text within the text block according to its settings.
+   */
   public renderText() {
     const LINE_SIZE = `${this.fontSize.value}${this.fontSize.units}`;
 
@@ -161,10 +223,17 @@ export class TextBlock {
   }
 
   private _textSize?: DOMRect;
+  /**
+   * Returns the size of the rectangle containing the text block's text.
+   */
   public get textSize(): DOMRect | undefined {
     return this._textSize;
   }
 
+  /**
+   * Positions the text within the text block.
+   * @param textBlock 
+   */
   public positionText(textBlock?: TextBlock) {
     const self = textBlock === undefined ? this : textBlock;
     const LINE_SIZE = `${this.fontSize.value}${this.fontSize.units}`;
@@ -206,18 +275,30 @@ export class TextBlock {
     this.textElement.style.opacity = '1';
   }
 
+  /**
+   * Makes the text block content visible.
+   */
   public show() {
     this._textElement.style.display = '';
     this._labelBackground.style.display = '';
   }
+  /**
+   * Hides the text block content.
+   */
   public hide() {
     this._textElement.style.display = 'none';
     this._labelBackground.style.display = 'none';
   }
 
+  /**
+   * Shows the text block's dashed outline.
+   */
   public showControlBox() {
     this.labelBackground.style.strokeOpacity = '1';
   }
+  /**
+   * Hides the text block's dashed outline.
+   */
   public hideControlBox() {
     this.labelBackground.style.strokeOpacity = '0';
   }

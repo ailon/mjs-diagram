@@ -2,6 +2,9 @@ import { SvgHelper } from './SvgHelper';
 import { DiagramSettings } from './DiagramSettings';
 import { TextStencil } from './TextStencil';
 
+/**
+ * Base stencil type for stencils defined by a drawing or a raster image.
+ */
 export class ImageStencil extends TextStencil {
   public static typeName = 'ImageStencil';
 
@@ -9,6 +12,9 @@ export class ImageStencil extends TextStencil {
 
   protected static DEFAULT_TEXT = 'Image';
 
+  /**
+   * Inner SVG string content of an SVG image (w/o the SVG tags).
+   */
   protected static svgString?: string;
 
   public static getThumbnail(width: number, height: number): SVGSVGElement {
@@ -28,8 +34,17 @@ export class ImageStencil extends TextStencil {
     }
   }
 
+  /**
+   * Main SVG or image element of the stencil.
+   */
   protected SVGImage?: SVGSVGElement | SVGImageElement;
+  /**
+   * Natural (real) width of the image.
+   */
   protected naturalWidth = 24;
+  /**
+   * Natural (real) height of the image.
+   */
   protected naturalHeight = 24;
 
   // protected SVGImage?: SVGSVGElement | SVGImageElement = SvgHelper.createImage([
@@ -39,6 +54,9 @@ export class ImageStencil extends TextStencil {
   //   ],
   // ]);
 
+  /**
+   * {@inheritDoc core!ConnectorBase.constructor}
+   */    
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     super(iid, container, settings);
 

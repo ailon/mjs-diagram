@@ -321,6 +321,14 @@ export class SvgHelper {
     return obj;
   }
 
+  /**
+   * Returns local coordinates relative to the provided `localRoot` of a client (screen) point.
+   * @param localRoot relative coordinate root
+   * @param x horizontal client coordinate
+   * @param y vertical client coordinate
+   * @param zoomLevel zoom level
+   * @returns local coordinates relative to `localRoot`
+   */
   public static clientToLocalCoordinates(localRoot: SVGElement | undefined, x: number, y: number, zoomLevel = 1): IPoint {
     if (localRoot) {
       const clientRect = localRoot.getBoundingClientRect();
@@ -333,11 +341,15 @@ export class SvgHelper {
     }
   }  
 
+  /**
+   * Creates an SVG image element from a supplied inner SVG markup string.
+   * @param stringSvg SVG markup (without the root svg tags)
+   * @returns SVG image element
+   */
   public static createSvgFromString(stringSvg: string): SVGSVGElement {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.innerHTML = stringSvg;
 
     return svg;
   }
-
 }

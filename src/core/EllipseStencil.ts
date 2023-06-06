@@ -1,6 +1,10 @@
 import { DiagramSettings } from './DiagramSettings';
 import { RectangleTextStencil } from './RectangleTextStencil';
 
+/**
+ * Ellipse stencil represents a generic ellipse (or a circle) that
+ * can be used and extended in various diagram types.
+ */
 export class EllipseStencil extends RectangleTextStencil {
   public static typeName = 'EllipseStencil';
 
@@ -11,6 +15,9 @@ export class EllipseStencil extends RectangleTextStencil {
     return result;
   }
 
+  /**
+   * {@inheritDoc core!ConnectorBase.constructor}
+   */  
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     super(iid, container, settings);
 

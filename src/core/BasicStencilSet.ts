@@ -8,6 +8,11 @@ import { RectangleTextStencil } from './RectangleTextStencil';
 import { LightbulbIconStencil } from './LightbulbIconStencil';
 import { LabelStencil } from './LabelStencil';
 
+/**
+ * Basic stencil set includes all the core stencils and connectors
+ * available in MJS Diagram that are not special to any particular
+ * diagram type.
+ */
 const basicStencilSet = new StencilSet();
 basicStencilSet.stencilTypes.push(
   // {

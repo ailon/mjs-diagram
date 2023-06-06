@@ -1,6 +1,10 @@
 import { DiagramSettings } from './DiagramSettings';
 import { RectangleTextStencil } from './RectangleTextStencil';
 
+/**
+ * Diamond (or rhombus) stencil is a common shape used in many diagram types.
+ * For example, it represents a decision stencil in a Flowchart.
+ */
 export class DiamondStencil extends RectangleTextStencil {
   public static typeName = 'DiamondStencil';
 
@@ -11,6 +15,9 @@ export class DiamondStencil extends RectangleTextStencil {
     return result;
   }
 
+  /**
+   * {@inheritDoc core!StencilBase.constructor}
+   */    
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     super(iid, container, settings);
 
