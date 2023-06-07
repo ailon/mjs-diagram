@@ -33,38 +33,165 @@ import { Language } from './editor/Language';
 import en_core_strings from './editor/lang/en';
 import { ArrangePanel, ArrangementType } from './editor/panels/ArrangePanel';
 
+/**
+ * Diagram editor operation mode:
+ * 
+ * - `select` - editor primarily treats pointer events for stencil/connector selection
+ * - `connect` - editor primarily treats pointer events for connecting stencils
+ */
 export type DiagramEditorMode = 'select' | 'connect';
 
+/**
+ * {@link editor!DiagramEditor} events.
+ */
 export interface DiagramEditorEventMap {
+  /**
+   * Save button clicked.
+   */
   saveclick: CustomEvent<RenderEventData>;
+  /**
+   * Editor initialized.
+   */
   editorinit: CustomEvent<DiagramEditorEventData>;
+  /**
+   * Diagram loaded (restored).
+   */
   diagramload: CustomEvent<DiagramEditorEventData>;
+  /**
+   * Diagram state changed.
+   * 
+   * Fired on every stencil/connector creation, edit, deletion.
+   */
   statechange: CustomEvent<DiagramEditorEventData>;
+  /**
+   * Pointer entered stencil space.
+   */
   stencilpointerenter: CustomEvent<StencilEditorEventData>;
+  /**
+   * Pointer left stencil space.
+   */
   stencilpointerleave: CustomEvent<StencilEditorEventData>;
+  /**
+   * Stencil clicked.
+   */
   stencilclick: CustomEvent<StencilEditorEventData>;
+  /**
+   * Pointer entered connector space. 
+   */
   connectorpointerenter: CustomEvent<ConnectorEditorEventData>;
+  /**
+   * Pointer left connector space.
+   */
   connectorpointerleave: CustomEvent<ConnectorEditorEventData>;
+  /**
+   * Connector clicked.
+   */
   connectorclick: CustomEvent<ConnectorEditorEventData>;
 }
 
+/**
+ * Defines the data object for the editor's render event.
+ * 
+ * @see {@link editor!DiagramEditorEventMap.saveclick}
+ */
 export interface RenderEventData {
+  /**
+   * Diagram's state (configuration).
+   */
   state: DiagramState;
 }
 
+/**
+ * Defines the data object for {@link DiagramEditor} level events.
+ * 
+ * @see 
+ * - {@link DiagramEditorEventMap.editorinit}
+ * - {@link DiagramEditorEventMap.diagramload}
+ * - {@link DiagramEditorEventMap.statechange}
+ */
 export interface DiagramEditorEventData {
+  /**
+   * {@link DiagramEditor} instance.
+   */
   editor: DiagramEditor;
 }
 
+/**
+ * Defines the data object for stencil related events.
+ * 
+ * @see 
+ * - {@link DiagramEditorEventMap.stencilpointerenter}
+ * - {@link DiagramEditorEventMap.stencilpointerleave}
+ * - {@link DiagramEditorEventMap.stencilclick}
+ */
 export interface StencilEditorEventData {
+  /**
+   * Diagram editor instance.
+   */
   diagramEditor: DiagramEditor;
+  /**
+   * Stencil editor for the affected stencil.
+   */
   stencilEditor: StencilBaseEditor;
 }
+
+/**
+ * Defines the data object for connector releated events.
+ * 
+ * @see
+ * - {@link DiagramEditorEventMap.connectorpointerenter}
+ * - {@link DiagramEditorEventMap.connectorpointerleave}
+ * - {@link DiagramEditorEventMap.connectorclick}
+ */
 export interface ConnectorEditorEventData {
+  /**
+   * Diagram editor instance.
+   */
   diagramEditor: DiagramEditor;
+  /**
+   * Connector editor for the affected connector.
+   */
   connectorEditor: ConnectorBaseEditor;
 }
 
+/**
+ * DiagramEditor is the main diagram editing web component of the MJS Diagram library.
+ * 
+ * You add an instance of DiagramEditor to your page to enable diagram editing.
+ * 
+ * You can add it in your HTML markup as a custom element with something like this:
+ * 
+ * ```html
+ * <mjs-diagram-editor id="mjsDiaEditor"></mjs-diagram-editor>
+ * ```
+ * 
+ * Or you can add it in code.
+ * 
+ * One important thing to set when the component loads is the {@link editor!StencilEditorSet} you want to use.
+ * 
+ * Here we add a Flowchart stencil set:
+ * 
+ * ```ts
+ * let editor = document.getElementById('mjsDiaEditor');
+ * editor.stencilEditorSet = flowchartStencilEditorSet;
+ * ```
+ * 
+ * You may want to add a previously saved state via the {@link DiagramEditor#restoreState}.
+ * 
+ * Finally, you most probably want to handle the {@link editor!DiagramEditorEventMap.saveclick} event 
+ * to store the editing results:
+ * 
+ * ```ts
+ * editor.addEventListener('saveclick', (ev) => {
+ *   // process state (represents the created diagram)
+ *   console.log(ev.detail.state);
+ * });
+ * ``` 
+ * 
+ * @see
+ * Check out MJS Diagram [docs](https://markerjs.com/docs/diagram/getting-started) 
+ * and [demos](https://markerjs.com/demos/diagram/getting-started/) for more details.
+ */
 export class DiagramEditor extends HTMLElement {
   private _container?: HTMLDivElement;
   private _toolbarContainer?: HTMLDivElement;
@@ -117,11 +244,20 @@ export class DiagramEditor extends HTMLElement {
   ]);
   private _marqueeSelectRect = new DOMRect(0, 0, 0, 0);
 
+  /**
+   * Steps zoom in/out buttons go through.
+   */
   public zoomSteps = [0.5, 0.8, 1, 1.5, 2, 4];
   private _zoomLevel = 1;
+  /**
+   * Returns the current zoom level.
+   */
   public get zoomLevel(): number {
     return this._zoomLevel;
   }
+  /**
+   * Sets the current zoom level.
+   */
   public set zoomLevel(value: number) {
     this._zoomLevel = value;
     if (
@@ -149,9 +285,18 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private _stencilEditorSet = basicStencilEditorSet;
+  /**
+   * Returns the current stencil editor set.
+   */
   public get stencilEditorSet(): StencilEditorSet {
     return this._stencilEditorSet;
   }
+  /**
+   * Sets the current stencil editor set.
+   * 
+   * @remarks
+   * Note that all the current edits are lost when new stencil set is set.
+   */
   public set stencilEditorSet(value: StencilEditorSet) {
     this._stencilEditorSet = value;
     this._currentConnectorType = value.defaultConnectorType ?? ConnectorBase;
@@ -168,16 +313,28 @@ export class DiagramEditor extends HTMLElement {
 
   private _toolboxPanel!: HTMLDivElement;
 
+  // @todo why protected?
   protected _manipulationStartX = 0;
   protected _manipulationStartY = 0;
 
   private undoRedoManager: UndoRedoManager<DiagramState> =
     new UndoRedoManager<DiagramState>();
 
+  /**
+   * Editor settings.
+   * 
+   * Control available colors, font families, etc. through this property.
+   */
   public readonly settings: EditorSettings = new EditorSettings();
 
+  /**
+   * Enables multi-language support.
+   */
   public readonly language = new Language();
 
+  /**
+   * Creates the new instance of the editor.
+   */
   constructor() {
     super();
 
@@ -258,6 +415,11 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private _iid = 0;
+  /**
+   * Generates a new internal identifier used to identify stencils and connectors when
+   * serialized to the state JSON.
+   * @returns new internally unique identifier.
+   */
   public getNewIId(): number {
     return ++this._iid;
   }
@@ -1688,6 +1850,10 @@ export class DiagramEditor extends HTMLElement {
     }
   }
 
+  /**
+   * Creates a new stencil of the specified type
+   * @param stencilType stencil type as either type or its string representation
+   */
   public createNewStencil(
     stencilType: typeof StencilBase | string | undefined
   ): void {
@@ -1765,6 +1931,11 @@ export class DiagramEditor extends HTMLElement {
     this.addUndoStep();
   }
 
+  /**
+   * Sets the currently active stencil editor. If multiple stencils are selected then
+   * there's no "current" stencil. Passing nothing/undefined unsets the current stencil.
+   * @param stencilEditor stencil editor to make active.
+   */
   public setCurrentStencil(stencilEditor?: StencilBaseEditor): void {
     if (this._currentStencilEditor !== stencilEditor) {
       // no need to deselect if not changed
@@ -1791,6 +1962,11 @@ export class DiagramEditor extends HTMLElement {
     }
   }
 
+  /**
+   * Selects a stencil. If there already is a selected stencil then the 
+   * supplied stencil is added to the selection.
+   * @param stencilEditor stencil editor to select.
+   */
   public selectStencil(stencilEditor: StencilBaseEditor): void {
     if (this._selectedStencilEditors.length === 0) {
       this.addToolboxPanels();
@@ -1815,6 +1991,11 @@ export class DiagramEditor extends HTMLElement {
     }
   }
 
+  /**
+   * Removes the supplied stencil editor from selection. If no stencil editor is supplied, 
+   * all selected stencils are unselected.
+   * @param stencilEditor stencil editor to select.
+   */
   public deselectStencil(stencilEditor?: StencilBaseEditor): void {
     if (stencilEditor !== undefined) {
       const i = this._selectedStencilEditors.indexOf(stencilEditor);
@@ -1978,6 +2159,10 @@ export class DiagramEditor extends HTMLElement {
     super.addEventListener(type, listener, options);
   }
 
+  /**
+   * Returns the diagram configration state object. Use it to store the state in databases, files, etc.
+   * @returns diagram configuration as a serializable object.
+   */
   public getState(): DiagramState {
     const result: DiagramState = {
       width: this.documentWidth,
@@ -2049,6 +2234,10 @@ export class DiagramEditor extends HTMLElement {
     }
   }
 
+  /**
+   * Restores (loads) previous saved (or manually created) diagram.
+   * @param state diagram configuration object.
+   */
   public restoreState(state: DiagramState): void {
     if (state.width !== undefined && state.height !== undefined) {
       this.setDocumentSize(state.width, state.height);
@@ -2097,6 +2286,10 @@ export class DiagramEditor extends HTMLElement {
     );
   }
 
+  /**
+   * Zooms in or out to the supplied zoom level (1 = 100%).
+   * @param factor zoom level.
+   */
   public zoom(factor: number): void {
     const currentLevelIndex = this.zoomSteps.indexOf(this.zoomLevel);
     if (factor === 0 || currentLevelIndex === -1) {
@@ -2108,6 +2301,14 @@ export class DiagramEditor extends HTMLElement {
     }
   }
 
+  /**
+   * Use this method to reneder the current diagram as a static raster image.
+   * @param width target width
+   * @param height target height
+   * @param imageType image type (image/png, image/jpeg, etc.)
+   * @param quality render quality for lossy codecs (1=100% for jpeg).
+   * @returns rendered image as a [data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URLs).
+   */
   public async render(
     width?: number,
     height?: number,
@@ -2224,7 +2425,7 @@ export class DiagramEditor extends HTMLElement {
   /**
    * NOTE:
    *
-   * before removing or modifying this method please consider supporting marker.js
+   * before removing or modifying this method please consider supporting MJS Diagram
    * by visiting https://markerjs.com/buy for details
    *
    * thank you!
