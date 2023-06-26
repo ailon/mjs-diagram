@@ -11,33 +11,79 @@ import {
 
 import Logo from './assets/markerjs-logo-m.svg';
 
+/**
+ * Defines event data for the {@link DiagramViewer} events.
+ */
 export interface DiagramViewerEventData {
+  /**
+   * {@link DiagramViewer} instance.
+   */
   viewer: DiagramViewer;
 }
 
-export interface DiagramViewerEventMap {
-  viewerinit: CustomEvent<DiagramViewerEventData>;
-  diagramload: CustomEvent<DiagramViewerEventData>;
-}
-
+/**
+ * Defines event data for stencil-related events in {@link DiagramViewer}.
+ */
 export interface StencilEventData {
+  /**
+   * {@link DiagramViewer} instance.
+   */
   viewer: DiagramViewer;
+  /**
+   * Stencil target of the event.
+   */
   stencil: StencilBase;
 }
 
+/**
+ * Defines event data for connector-related events in {@link DiagramViewer}.
+ */
 export interface ConnectorEventData {
+  /**
+   * {@link DiagramViewer} instance.
+   */
   viewer: DiagramViewer;
+  /**
+   * Connector target of the event.
+   */
   connector: ConnectorBase;
 }
 
+/**
+ * {@link DiagramViewer} events.
+ */
 export interface DiagramViewerEventMap {
+  /**
+   * Viewer initialized.
+   */
   viewerinit: CustomEvent<DiagramViewerEventData>;
+  /**
+   * Diagram loaded.
+   */
   diagramload: CustomEvent<DiagramViewerEventData>;
+  /**
+   * Pointer entered stencil.
+   */
   stencilpointerenter: CustomEvent<StencilEventData>;
+  /**
+   * Pointer left stencil.
+   */
   stencilpointerleave: CustomEvent<StencilEventData>;
+  /**
+   * Stencil clicked.
+   */
   stencilclick: CustomEvent<StencilEventData>;
+  /**
+   * Pointer entered connector.
+   */
   connectorpointerenter: CustomEvent<ConnectorEventData>;
+  /**
+   * Pointer left connector.
+   */
   connectorpointerleave: CustomEvent<ConnectorEventData>;
+  /**
+   * Connector clicked.
+   */
   connectorclick: CustomEvent<ConnectorEventData>;
 }
 
