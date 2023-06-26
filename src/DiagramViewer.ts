@@ -87,6 +87,39 @@ export interface DiagramViewerEventMap {
   connectorclick: CustomEvent<ConnectorEventData>;
 }
 
+/**
+ * DiagramViewer is the main diagram viewing web component of the MJS Diagram library.
+ * 
+ * You add an instance of DiagramViewer to your page to display dynamic and interactive diagrams 
+ * created either with {@link editor!DiagramEditor} or in code.
+ * 
+ * You can add it in your HTML markup as a custom element with something like this:
+ * 
+ * ```html
+ * <mjs-diagram-viewer id="mjsDiaViewer"></mjs-diagram-viewer>
+ * ```
+ * 
+ * Or you can add it in code.
+ * 
+ * One important thing to set when the component loads is the {@link core!StencilSet} you want to use.
+ * 
+ * Here we add a Flowchart stencil set:
+ * 
+ * ```ts
+ * let viewer = document.getElementById('mjsDiaViewer');
+ * viewer.stencilSet = flowchartStencilSet;
+ * ```
+ * 
+ * You display previously saved or created state by passing it to the {@link DiagramViewer.show} method.
+ * 
+ * ```ts
+ * viewer.show(myState);
+ * ```
+ * 
+ * @see
+ * Check out MJS Diagram [docs](https://markerjs.com/docs/diagram/getting-started) 
+ * and [demos](https://markerjs.com/demos/diagram/getting-started/) for more details.
+ */
 export class DiagramViewer extends HTMLElement {
   private _container?: HTMLDivElement;
 
@@ -99,11 +132,20 @@ export class DiagramViewer extends HTMLElement {
 
   private _connectors: ConnectorBase[] = [];
 
+  /**
+   * Zoom level steps the interactive zoom controls go through.
+   */
   public zoomSteps = [1, 1.5, 2, 4];
   private _zoomLevel = 1;
+  /**
+   * Gets the current zoom level of the control (1 is 100%).
+   */
   public get zoomLevel(): number {
     return this._zoomLevel;
   }
+  /**
+   * Set the zoom level of the contrl (1 is 100%).
+   */
   public set zoomLevel(value: number) {
     this._zoomLevel = value;
     // @todo
@@ -123,9 +165,15 @@ export class DiagramViewer extends HTMLElement {
   }
 
   private _stencilSet = basicStencilSet;
+  /**
+   * Returns currently active {@link core!StencilSet}.
+   */
   public get stencilSet() {
     return this._stencilSet;
   }
+  /**
+   * Sets current {@link core!StencilSet}.
+   */
   public set stencilSet(value) {
     this._stencilSet = value;
     if (!Activator.isLicensed('MJSDV')) {
@@ -139,8 +187,14 @@ export class DiagramViewer extends HTMLElement {
     }
   }
 
+  /**
+   * Diagram settings.
+   */
   public readonly settings: DiagramSettings = new DiagramSettings();
 
+  /**
+   * Creates a new instance of the Diagram Viewer.
+   */
   constructor() {
     super();
 
@@ -166,6 +220,10 @@ export class DiagramViewer extends HTMLElement {
   }
 
   private _iid = 0;
+  /**
+   * Returns a new internal object identifier.
+   * @returns 
+   */
   public getNewIId(): number {
     return ++this._iid;
   }
@@ -491,6 +549,15 @@ export class DiagramViewer extends HTMLElement {
     this.shadowRoot?.appendChild(styleSheet);
   }
 
+  /**
+   * Displays a previously saved diagram.
+   * 
+   * @remarks
+   * Make sure to set the correct corresponding {@link DiagramViewer.stencilSet} before 
+   * calling `show()`.
+   * 
+   * @param state diagram configration object.
+   */
   public show(state: DiagramState): void {
     this.dispatchEvent(
       new CustomEvent<DiagramViewerEventData>('viewerinit', {
