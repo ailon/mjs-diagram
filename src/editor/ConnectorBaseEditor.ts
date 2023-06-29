@@ -16,6 +16,9 @@ import { EditorSettings } from './EditorSettings';
 import { ConnectorEditorProperties } from './ConnectorEditorProperties';
 import { Language } from './Language';
 
+/**
+ * Represents the state of the connector editor.
+ */
 export type ConnectorState =
   | 'new'
   | 'creating'
@@ -24,18 +27,50 @@ export type ConnectorState =
   | 'edit'
   | 'move-label';
 
+/**
+ * ConnectorBaseEditor covers basic connector creating and editing features.
+ * It is used to edit most of the common connector types that don't require 
+ * some special editor treatment.
+ */
 export class ConnectorBaseEditor {
+  /**
+   * Current state of the connector editor.
+   */
   protected _state: ConnectorState = 'new';
+  /**
+   * Returns current state of the connector editor.
+   */
   public get state(): ConnectorState {
     return this._state;
   }
-
+  
+  /**
+   * Fired when the connector creation is completed.
+   * @group Events
+   */  
   public onConnectorCreated?: (connector: ConnectorBaseEditor) => void;
+
+  /**
+   * Fired when the connector is changed (moved, edited, etc.).
+   * @group Events
+   */  
   public onConnectorUpdated?: (connector: ConnectorBaseEditor) => void;
 
+  /**
+   * Initial X coordinate where pointer manipulation has started.
+   */
   protected manipulationStartX = 0;
+  /**
+   * Initial Y coordinate where pointer manipulation has started.
+   */
   protected manipulationStartY = 0;
+  /**
+   * Pointer's X coordinate after the previous pointer event.
+   */
   protected prevX = 0;
+  /**
+   * Pointer's Y coordinate after the previous pointer event.
+   */
   protected prevY = 0;
 
   private manipulationStartX1 = 0;
@@ -65,26 +100,51 @@ export class ConnectorBaseEditor {
    */
   protected activeGrip?: ResizeGrip;
 
+  /**
+   * Connector being edited by this connector editor.
+   */
   public connector: ConnectorBase;
+  /**
+   * Reference to the port being moved.
+   */
   public movingPort?: Port;
 
+  /**
+   * SVG group container encapsulating all the connector's elements.
+   */
   protected _container: SVGGElement;
+  /**
+   * Returns the SVG group container for the connector's elements.
+   */
   public get container(): SVGGElement {
     return this._container;
   }
 
+  /**
+   * HTML overlay container for editor elements like text editor, etc.
+   */
   protected overlayContainer: HTMLDivElement;
 
   private strokePanel: ColorPickerPanel;
   private arrowTypePanel: ArrowTypePanel;
 
   private _settings: EditorSettings;
+  /**
+   * Returns editor settings.
+   */
   protected get settings(): EditorSettings {
     return this._settings;
   }
 
+  /**
+   * Language (localization) subsystem instance.
+   */
   protected _language: Language;
 
+  /**
+   * Creates a new instance of the connector editor.
+   * @param properties connector editor properties.
+   */
   constructor(properties: ConnectorEditorProperties) {
     this.connector =
       properties.connector ??
@@ -134,6 +194,12 @@ export class ConnectorBaseEditor {
     this.textChanged = this.textChanged.bind(this);
   }
 
+  /**
+   * Returns true if the supplied element (event target) belongs to this connector
+   * or connector editor.
+   * @param el target element.
+   * @returns true if the element belongs to the connector or editor.
+   */
   public ownsTarget(el: EventTarget | null): boolean {
     let found = false;
     if (el !== null) {
@@ -150,11 +216,20 @@ export class ConnectorBaseEditor {
     return found;
   }
 
+  /**
+   * Is connector selected?
+   */
   protected _isSelected = false;
+  /**
+   * Returns true if the connector is currently selected.
+   */
   public get isSelected(): boolean {
     return this._isSelected;
   }
 
+  /**
+   * Selects the connector.
+   */
   public select(): void {
     this.connector.container.style.cursor = 'move';
     this._isSelected = true;
@@ -165,16 +240,26 @@ export class ConnectorBaseEditor {
     this.showControlBox();
   }
 
+  /**
+   * Deselects the connector.
+   */
   public deselect(): void {
     this.connector.container.style.cursor = 'default';
     this._isSelected = false;
     this.hideControlBox();
   }
 
+  /**
+   * Hides the connector editor controls.
+   */
   protected hideControlBox(): void {
     this.controlBox.style.display = 'none';
     this.connector.textBlock.hideControlBox();
   }
+
+  /**
+   * Shows the connector editor controls.
+   */
   protected showControlBox(): void {
     if (this.controlBox === undefined) {
       this.setupControlBox();
@@ -183,6 +268,11 @@ export class ConnectorBaseEditor {
     this.connector.textBlock.showControlBox();
   }
 
+  /**
+   * Handles `pointerdown` event on the connector editor.
+   * @param point pointer location.
+   * @param target immediate pointer event target.
+   */
   public pointerDown(point: IPoint, target?: EventTarget): void {
     this.manipulationStartX = point.x;
     this.manipulationStartY = point.y;
@@ -239,11 +329,20 @@ export class ConnectorBaseEditor {
     }
   }
 
+  /**
+   * Handles double-click event on the connector - opens the text editor for the label.
+   * @param point pointer location.
+   * @param target immediate event target.
+   */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public dblClick(point: IPoint, target?: EventTarget): void {
     this.showTextEditor();
   }
 
+  /**
+   * Handles pointer manipulation depending on the editor's state (movement, resizing, etc.)
+   * @param point pointer location.
+   */
   public manipulate(point: IPoint): void {
     if (this.state === 'creating') {
       this.resize(point);
@@ -271,6 +370,10 @@ export class ConnectorBaseEditor {
     this.prevY = point.y;
   }
 
+  /**
+   * Resizes the connector.
+   * @param point pointer location.
+   */
   protected resize(point: IPoint): void {
     switch (this.activeGrip) {
       case this.grip1:
@@ -284,6 +387,9 @@ export class ConnectorBaseEditor {
     this.adjustControlBox();
   }
 
+  /**
+   * Creates the control box for the editor.
+   */
   protected setupControlBox(): void {
     this.controlBox = SvgHelper.createGroup();
 
@@ -303,6 +409,9 @@ export class ConnectorBaseEditor {
     this.positionGrips();
   }
 
+  /**
+   * Adds control grips to the editor.
+   */
   protected addControlGrips(): void {
     this.grip1 = this.createGrip();
     this.grip2 = this.createGrip();
@@ -310,6 +419,10 @@ export class ConnectorBaseEditor {
     this.positionGrips();
   }
 
+  /**
+   * Creates a control grip (for resizing).
+   * @returns created grip.
+   */
   protected createGrip(): ResizeGrip {
     const grip = new ResizeGrip();
     grip.visual.transform.baseVal.appendItem(SvgHelper.createTransform());
@@ -318,6 +431,9 @@ export class ConnectorBaseEditor {
     return grip;
   }
 
+  /**
+   * Positions control grips according to the connector's position.
+   */
   protected positionGrips(): void {
     const gripSize = this.grip1.GRIP_SIZE;
 
@@ -333,12 +449,22 @@ export class ConnectorBaseEditor {
     );
   }
 
+  /**
+   * Positions a control grip at specified location.
+   * @param grip grip to position.
+   * @param x horizontal coordinate.
+   * @param y vertical coordinate.
+   */
   protected positionGrip(grip: SVGGraphicsElement, x: number, y: number): void {
     const translate = grip.transform.baseVal.getItem(0);
     translate.setTranslate(x, y);
     grip.transform.baseVal.replaceItem(translate, 0);
   }
 
+  /**
+   * Handles the `pointerup` event.
+   * @param point pointer location.
+   */
   public pointerUp(point: IPoint): void {
     const inState = this.state;
     this.manipulate(point);
@@ -420,18 +546,34 @@ export class ConnectorBaseEditor {
     // }
   }
 
+  /**
+   * Returns diagram editor property panels for the connector.
+   */
   public get propertyPanels(): PropertyPanelBase[] {
     return [this.strokePanel, this.arrowTypePanel];
   }
 
+  /**
+   * Disposes of the editor.
+   */
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public dispose(): void {}
 
+  /**
+   * Scales the connector and editor.
+   * @param scaleX horizontal scale factor.
+   * @param scaleY vertical scale factor.
+   */
   public scale(scaleX: number, scaleY: number): void {
     this.connector.scale(scaleX, scaleY);
     this.adjustControlBox();
   }
 
+  /**
+   * Restores the connector's state and adjusts the editor accordingly.
+   * @param state connector's state.
+   * @param endPoints connector's end points.
+   */
   public restoreState(
     state: ConnectorBaseState,
     endPoints: ConnectorEndPoints

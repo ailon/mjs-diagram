@@ -12,6 +12,9 @@ import { StencilEditorProperties } from './StencilEditorProperties';
 import { ShapePropertiesPanel } from './panels/ShapePropertiesPanel';
 import { Language } from './Language';
 
+/**
+ * The state of the stencil editor.
+ */
 export type StencilEditorState =
   | 'new'
   | 'creating'
@@ -22,37 +25,76 @@ export type StencilEditorState =
   | 'edit'
   | 'connect';
 
+/**
+ * The core stencil editor class for most stencil types.
+ */
 export class StencilBaseEditor {
   // @todo switch type to use the generic
+  /**
+   * Type of the edited stencil.
+   */
   protected _stencilType: typeof StencilBase;
+  /**
+   * Stencil being edited.
+   */
   protected _stencil: StencilBase;
+  /**
+   * Returns the stencil being edited.
+   */
   public get stencil(): StencilBase {
     return this._stencil;
   }
 
+  /**
+   * SVG container for the stencil's and editor's visual elements.
+   */
   protected _container: SVGGElement;
+  /**
+   * Returns the SVG container for the stencil's and editor's visual elements.
+   */
   public get container(): SVGGElement {
     return this._container;
   }
 
+  /**
+   * Overlay container for HTML elements like text editors, etc.
+   */
   protected _overlayContainer: HTMLDivElement;
+  /**
+   * Overlay container for HTML elements like text editors, etc.
+   */
   public get overlayContainer(): HTMLDivElement {
     return this._overlayContainer;
   }
 
+  /**
+   * Editor's state.
+   */
   protected _state: StencilEditorState = 'new';
+  /**
+   * Gets editor's state.
+   */
   public get state(): StencilEditorState {
     return this._state;
   }
+  /**
+   * Sets editor's state.
+   */
   public set state(value: StencilEditorState) {
     this._state = value;
   }
 
   private _settings: EditorSettings;
+  /**
+   * Editor settings and contextual settings manager.
+   */
   protected get settings(): EditorSettings {
     return this._settings;
   }
 
+  /**
+   * Resize grips.
+   */
   protected resizeGrips = new Map<GripLocation, ResizeGrip>([
     ['topleft', new ResizeGrip()],
     ['topcenter', new ResizeGrip()],
@@ -63,24 +105,49 @@ export class StencilBaseEditor {
     ['bottomcenter', new ResizeGrip()],
     ['bottomright', new ResizeGrip()],
   ]);
+  /**
+   * Currently active grip.
+   */
   protected activeGrip?: ResizeGrip;
 
+  /**
+   * Collection of ports.
+   */
   protected portConnectors = new Map<PortLocation, PortConnector>();
 
+  /**
+   * SVG group holding editor's control box.
+   */
   protected _controlBox = SvgHelper.createGroup();
+  /**
+   * SVG group holding resize grips.
+   */
   protected _gripBox = SvgHelper.createGroup();
   private readonly CB_DISTANCE: number = 10;
   private _controlRect?: SVGRectElement;
 
+  /**
+   * SVG group for holding connector ports.
+   */
   protected _portBox = SvgHelper.createGroup();
+  /**
+   * Outline displayed in "connect" mode.
+   */
   protected _connectorOutline?: SVGPathElement;
 
   // private strokePanel: ColorPickerPanel;
   // private fillPanel: ColorPickerPanel;
   private shapePanel: ShapePropertiesPanel;
 
+  /**
+   * Language (localization) subsystem.
+   */
   protected _language: Language;
 
+  /**
+   * Creates a new stencil editor.
+   * @param properties stencil editor properties.
+   */
   constructor(properties: StencilEditorProperties) {
     this._container = properties.container;
     this._overlayContainer = properties.overlayContainer;
@@ -152,6 +219,11 @@ export class StencilBaseEditor {
     this.moveStencilTo = this.moveStencilTo.bind(this);
   }
 
+  /**
+   * Returns true if the element belongs to the stencil or the editor.
+   * @param el target element.
+   * @returns true if the element belongs to the stencil or editor.
+   */
   public ownsTarget(el: EventTarget | null): boolean {
     let found = false;
     if (el !== null) {
@@ -175,6 +247,13 @@ export class StencilBaseEditor {
     return found;
   }
 
+  /**
+   * Returns a port under the current pointer.
+   * @param ev pointer event.
+   * @param exact if true, returns the port exactly under the pointer, otherwise - closest.
+   * @param zoomLevel current zoom level.
+   * @returns target port.
+   */
   public getTargetPort(
     ev: PointerEvent | null,
     exact = true,
@@ -215,9 +294,18 @@ export class StencilBaseEditor {
     return result;
   }
 
+  /**
+   * Fired when stencil is created.
+   */
   public onStencilCreated?: (stencilEditor: StencilBaseEditor) => void;
+  /**
+   * Fired when stencil changes.
+   */
   public onStencilChanged?: (stencilEditor: StencilBaseEditor) => void;
 
+  /**
+   * Creates visuals for the stencil and editor.
+   */
   protected setupVisuals() {
     this._stencil.createVisual();
 
@@ -373,16 +461,28 @@ export class StencilBaseEditor {
     }
   }
 
+  /**
+   * Hides the control box.
+   */
   protected hideControlBox(): void {
     this._controlBox.style.display = 'none';
   }
+  /**
+   * Shows the control box.
+   */
   protected showControlBox(): void {
     this._controlBox.style.display = '';
   }
 
+  /**
+   * Hides the port box.
+   */
   protected hidePortBox(): void {
     this._portBox.style.display = 'none';
   }
+  /**
+   * Shows the port box.
+   */
   protected showPortBox(): void {
     this._portBox.style.display = '';
   }
@@ -427,6 +527,9 @@ export class StencilBaseEditor {
     }
   }
 
+  /**
+   * Switches the stencil editor to connect mode.
+   */
   public switchToConnectMode(): void {
     this._state = 'connect';
     this.hideControlBox();
@@ -434,6 +537,9 @@ export class StencilBaseEditor {
     // console.log('connect');
   }
 
+  /**
+   * Switches the stencil editor out of the connect mode.
+   */
   public switchConnectModeOff(): void {
     if (this._state === 'connect') {
       this._state = 'select';
@@ -441,6 +547,11 @@ export class StencilBaseEditor {
     }
   }
 
+  /**
+   * Scales the editor and stencil.
+   * @param scaleX horizontal scale factor.
+   * @param scaleY vertical scale factor.
+   */
   public scale(scaleX: number, scaleY: number): void {
     this._stencil?.scale(scaleX, scaleY);
 
@@ -486,6 +597,10 @@ export class StencilBaseEditor {
    */
   protected offsetY = 0;
 
+  /**
+   * Initial actions when manipulation starts.
+   * @param point pointer location
+   */
   public initManipulation(point: IPoint): void {
     this.manipulationStartLeft = this._stencil.left;
     this.manipulationStartTop = this._stencil.top;
@@ -499,6 +614,11 @@ export class StencilBaseEditor {
     this.offsetY = point.y - this._stencil.top;
   }
 
+  /**
+   * Handles a `pointerdown` event.
+   * @param point pointer location.
+   * @param target event target element.
+   */
   public pointerDown(point: IPoint, target?: EventTarget): void {
     if (this._stencil !== undefined) {
       this.initManipulation(point);
@@ -514,9 +634,19 @@ export class StencilBaseEditor {
     }
   }
 
+  /**
+   * Handles a double-click event.
+   * @param point pointer location.
+   * @param target pointer event target.
+   */
   // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
   public dblClick(point: IPoint, target?: EventTarget): void {}
 
+  /**
+   * Finds a resize grip by the target visual.
+   * @param target event target.
+   * @returns resize grip or undefined if not found.
+   */
   protected findGripByVisual(
     target: SVGGraphicsElement
   ): ResizeGrip | undefined {
@@ -531,6 +661,11 @@ export class StencilBaseEditor {
     return result;
   }
 
+  /**
+   * Moves the stencil to specified location.
+   * @param x horizontal location.
+   * @param y vertical location.
+   */
   public moveStencilTo(x?: number, y?: number) {
     if (x !== undefined) {
       this._stencil.left = x;
@@ -549,6 +684,10 @@ export class StencilBaseEditor {
     }
   }
 
+  /**
+   * Handles manipulation.
+   * @param point pointer location.
+   */
   public manipulate(point: IPoint): void {
     if (this._stencil) {
       if (this.state === 'move') {
@@ -570,6 +709,10 @@ export class StencilBaseEditor {
     }
   }
 
+  /**
+   * Resizes the stencil.
+   * @param point pointer location.
+   */
   protected resize(point: IPoint): void {
     if (this._stencil) {
       let newX = this.manipulationStartLeft;
@@ -630,6 +773,9 @@ export class StencilBaseEditor {
     }
   }
 
+  /**
+   * Adjusts stencil and editor size.
+   */
   protected setSize(): void {
     if (this._stencil) {
       this._stencil.setSize();
@@ -638,6 +784,9 @@ export class StencilBaseEditor {
     this.adjustPortBox();
   }
 
+  /**
+   * When set to true `stencilcreate` event isn't fired.
+   */
   protected _suppressStencilCreateEvent = false;
   public pointerUp(point: IPoint): void {
     if (this._stencil) {
@@ -646,6 +795,10 @@ export class StencilBaseEditor {
     }
   }
 
+  /**
+   * Creates a stencil at specified location.
+   * @param point location at which to create the stencil.
+   */
   public create(point: IPoint): void {
     if (this._stencil !== undefined && this.state === 'new') {
       this.setupVisuals();
@@ -667,15 +820,30 @@ export class StencilBaseEditor {
     }
   }
 
+  /**
+   * Is stencil selected?
+   */
   protected _isSelected = false;
+  /**
+   * Returns true if the stencil is selected.
+   */
   public get isSelected(): boolean {
     return this._isSelected;
   }
+  /**
+   * Is stencil in focus?
+   */
   protected _isFocused = false;
+  /**
+   * Returns true if the stencil is in focus.
+   */
   public get isFocused(): boolean {
     return this._isFocused;
   }
 
+  /**
+   * Select the stencil.
+   */
   public select(): void {
     this.container.style.cursor = 'move';
     this._isSelected = true;
@@ -688,6 +856,9 @@ export class StencilBaseEditor {
     this._gripBox.style.display = 'none';
   }
 
+  /**
+   * Deselect the stencil.
+   */
   public deselect(): void {
     this.container.style.cursor = 'default';
     this._isSelected = false;
@@ -695,23 +866,36 @@ export class StencilBaseEditor {
     this.blur();
   }
 
+  /**
+   * Puts the stencil editor in focus.
+   */
   public focus(): void {
     this.select();
     this._isFocused = true;
     this._gripBox.style.display = '';
   }
 
+  /**
+   * Unfocus the stencil.
+   */
   public blur(): void {
     this._gripBox.style.display = 'none';
     this._isFocused = false;
   }
 
+  /**
+   * Returns property panels for the UI for this stencil.
+   */
   public get propertyPanels(): PropertyPanelBase[] {
     this.shapePanel.fillColor = this.stencil.fillColor;
     this.shapePanel.strokeColor = this.stencil.strokeColor;
     return [this.shapePanel];
   }
 
+  /**
+   * Restores the stencil from previously saved state.
+   * @param state stencil state (configuration)
+   */
   public restoreState(state: StencilBaseState): void {
     this.stencil.restoreState(state);
     this.setupControlBox();

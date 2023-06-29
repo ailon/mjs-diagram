@@ -16,6 +16,10 @@ import { TextStencilEditor } from './TextStencilEditor';
 import { ConnectorBaseEditor } from './ConnectorBaseEditor';
 import { ImageStencilEditor } from './ImageStencilEditor';
 
+/**
+ * Basic stencil editor set sets up editing capabilities for creating
+ * diagrams with the {@link core!basicStencilSet}.
+ */
 const basicStencilEditorSet = new StencilEditorSet('core', basicStencilSet);
 basicStencilEditorSet.stencilEditorTypes.set(
   RectangleTextStencil,

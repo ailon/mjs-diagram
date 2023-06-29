@@ -1,12 +1,29 @@
 import { SvgHelper, Port } from '../core';
 
-
+/**
+ * Visual representation of a port for connectors.
+ * 
+ * @see {@link core!Port}
+ */
 export class PortConnector {
+  /**
+   * Port the visual represents.
+   */
   public port: Port;
 
+  /**
+   * Port connector visual element.
+   */
   public visual: SVGGraphicsElement;
+  /**
+   * Visual size.
+   */
   public readonly PORT_SIZE = 5;
 
+  /**
+   * Creates a new visual for the port.
+   * @param port underlying port.
+   */
   constructor(port: Port) {
     this.port = port;
 
@@ -27,6 +44,11 @@ export class PortConnector {
     this.adjustVisual = this.adjustVisual.bind(this);
   }
 
+  /**
+   * Returns true if supplied element belongs to the port connector.
+   * @param el target element.
+   * @returns true if the element belongs to this port connector.
+   */
   public ownsTarget(el: EventTarget): boolean {
     if (el === this.visual ||
       el === this.visual.childNodes[0] ||
@@ -37,6 +59,9 @@ export class PortConnector {
     }
   }
 
+  /**
+   * Updates the visual.
+   */
   public adjustVisual(): void {
     const translate = this.visual.transform.baseVal.getItem(0);
     translate.setTranslate(this.port.x - this.PORT_SIZE / 2, this.port.y - this.PORT_SIZE / 2);

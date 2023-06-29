@@ -1,5 +1,8 @@
 import { SvgHelper } from '../core';
 
+/**
+ * Location of the resize grip in relation to the stencil.
+ */
 export type GripLocation =
   | 'topleft'
   | 'topcenter'
