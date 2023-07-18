@@ -1,17 +1,35 @@
 import { Language } from '../Language';
 import { PropertyPanelBase } from './PropertyPanelBase';
 
+/**
+ * Dimensions change event handler type.
+ */
 export type DimensionsChangeHandler = (newWidth: number, newHeight: number) => void;
 
+/**
+ * Dimensions toolbox panel.
+ */
 export class DimensionsPanel extends PropertyPanelBase {
+  /**
+   * Current width.
+   */
   public currentWidth = 0;
+  /**
+   * Current height.
+   */
   public currentHeight = 0;
 
   private widthInput!: HTMLInputElement;
   private heightInput!: HTMLInputElement;
 
+  /**
+   * Dimension change event handler.
+   */
   public onDimensionsChanged?: DimensionsChangeHandler;
 
+  /**
+   * {@inheritDoc editor!PropertyPanelBase.constructor}
+   */
   constructor(title: string, language: Language, currentWidth: number, currentHeight: number) {
     super(title, language);
     this.currentWidth = currentWidth;

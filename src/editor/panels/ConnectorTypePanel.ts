@@ -3,15 +3,30 @@ import { Language } from '../Language';
 import { ToolboxPanelItem } from '../ToolboxPanelItem';
 import { PropertyPanelBase } from './PropertyPanelBase';
 
+/**
+ * Connector type change event handler type.
+ */
 export type ConnectorTypeChangeHandler = (newType: typeof ConnectorBase) => void;
 
+/**
+ * Connector type selection toolbox panel.
+ */
 export class ConnectorTypePanel extends PropertyPanelBase {
+  /**
+   * Avalable connector types.
+   */
   public connectorTypes: typeof ConnectorBase[] = [];
   private currentType?: typeof ConnectorBase;
   private typeBoxes: ToolboxPanelItem<typeof ConnectorBase>[] = [];
 
+  /**
+   * Connector type event handler.
+   */
   public onConnectorTypeChanged?: ConnectorTypeChangeHandler;
 
+  /**
+   * {@inheritDoc editor!PropertyPanelBase.constructor}
+   */
   constructor(title: string, language: Language, connectorTypes: typeof ConnectorBase[], currentType?: typeof ConnectorBase) {
     super(title, language);
     this.connectorTypes = connectorTypes;
@@ -70,6 +85,10 @@ export class ConnectorTypePanel extends PropertyPanelBase {
     }
   }
 
+  /**
+   * Selects connector type based on the supplied name.
+   * @param typeName connector type name
+   */
   public selectType(typeName: string) {
     this.connectorTypes.forEach((t, index) => {
       if (t.typeName === typeName) {

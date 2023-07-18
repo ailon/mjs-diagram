@@ -1,16 +1,40 @@
 import { Language } from "../Language";
 import { PropertyPanelBase } from "./PropertyPanelBase";
 
+/**
+ * Horizontal alignment options.
+ */
 export type HorizontalAlignment = 'left' | 'center' | 'right';
+/**
+ * Vertical alignment options.
+ */
 export type VerticalAlignment = 'top' | 'middle' | 'bottom';
 
+/**
+ * Horizontal alignment change event handler type.
+ */
 export type HorizontalAlignmentClickHandler = (alignment: HorizontalAlignment) => void;
+/**
+ * Vertical alignment change event handler type.
+ */
 export type VerticalAlignmentClickHandler = (alignment: VerticalAlignment) => void;
 
+/**
+ * Toolbox panel for editing object and text alignment.
+ */
 export class AlignPanel extends PropertyPanelBase {
+  /**
+   * Horizontal alignmen change event handler.
+   */
   public onHorizontalAlignmentClicked?: HorizontalAlignmentClickHandler;
+  /**
+   * Vertical alignment change event handler.
+   */
   public onVerticalAlignmentClicked?: VerticalAlignmentClickHandler;
 
+  /**
+   * {@inheritDoc editor!PropertyPanelBase.constructor}
+   */
   constructor(title: string, language: Language) {
     super(title, language);
 

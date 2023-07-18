@@ -9,8 +9,17 @@ import { StencilEditorProperties } from './StencilEditorProperties';
 import { TextPropertiesPanel } from './panels/TextPropertiesPanel';
 import { PropertyPanelBase } from './panels/PropertyPanelBase';
 
+/**
+ * The default editor for the text-based stencils.
+ */
 export class TextStencilEditor extends StencilBaseEditor {
+  /**
+   * Panel for the text-related editor properties.
+   */
   protected textPanel: TextPropertiesPanel;
+  /**
+   * Returns the stencil being edited.
+   */
   public get stencil(): RectangleTextStencil {
     return this._stencil as RectangleTextStencil;
   }
@@ -21,6 +30,10 @@ export class TextStencilEditor extends StencilBaseEditor {
   private pointerDownPoint?: IPoint;
   private pointerDownTimestamp!: number;
 
+  /**
+   * Creates a new text stencil editor instance.
+   * @param properties editor properties.
+   */
   constructor(properties: StencilEditorProperties) {
     super(properties);
 

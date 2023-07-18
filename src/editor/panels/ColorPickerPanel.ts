@@ -3,15 +3,33 @@ import { Color } from "../Color";
 import { PropertyPanelBase } from './PropertyPanelBase';
 import { Language } from "../Language";
 
+/**
+ * Color change event handler type.
+ */
 export type ColorChangeHandler = (newColor: string) => void;
 
+/**
+ * Color picker tooblox panel.
+ */
 export class ColorPickerPanel extends PropertyPanelBase {
+  /**
+   * Available colors.
+   */
   public colors: ColorSet = [];
+  /**
+   * Selected color.
+   */
   public currentColor?: string;
   private colorBoxes: HTMLDivElement[] = [];
 
+  /**
+   * Color change event handler.
+   */
   public onColorChanged?: ColorChangeHandler;
 
+  /**
+   * {@inheritDoc editor!PropertyPanelBase.constructor}
+   */
   constructor(title: string, language: Language, colors: ColorSet, currentColor?: string) {
     super(title, language);
     this.colors = colors;

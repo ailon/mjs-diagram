@@ -3,21 +3,53 @@ import { FontFamily } from "../FontFamily";
 import { Language } from "../Language";
 import { PropertyPanelBase } from './PropertyPanelBase';
 
+/**
+ * Font family change event handler type.
+ */
 export type FontFamilyChangeHandler = (newStyle: string) => void;
+/**
+ * Font size change event handler type.
+ */
 export type FontSizeChangeHandler = (newSize: FontSize) => void;
 
+/**
+ * Font properties toolbox panel.
+ */
 export class FontPanel extends PropertyPanelBase {
+  /**
+   * Available font families.
+   */
   public fontFamilies: FontFamily[] = [];
+  /**
+   * Currently selected font family.
+   */
   public currentFontFamily?: string;
+  /**
+   * Current font size.
+   */
   public currentFontSize: FontSize = {
     value: 1,
     units: 'rem',
     step: 0.1
   };
 
+  /**
+   * Font family change event handler.
+   */
   public onFontFamilyChanged?: FontFamilyChangeHandler;
+  /**
+   * Font size change event handler.
+   */
   public onFontSizeChanged?: FontSizeChangeHandler;
 
+  /**
+   * Creates a new font properties panel
+   * @param title panel title
+   * @param language language (localization) subsystem
+   * @param fontFamilies available font families
+   * @param currentFontFamily select font family
+   * @param currentFontSize current font size
+   */
   constructor(
     title: string, 
     language: Language,

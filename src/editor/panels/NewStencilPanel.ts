@@ -3,15 +3,34 @@ import { IStencilProperties } from '../../core';
 import { Language } from '../Language';
 import { PropertyPanelBase } from './PropertyPanelBase';
 
+/**
+ * New stencil type selected event handler type.
+ */
 export type CreateNewStencilHandler = (stencilType?: typeof StencilBase) => void;
 
+/**
+ * Toolbox panel displaying available stencil types.
+ */
 export class NewStencilPanel extends PropertyPanelBase {
+  /**
+   * Available stencil types.
+   */
   public stencilTypes: IStencilProperties[] = [];
   private currentType?: typeof StencilBase;
   private typeBoxes: HTMLDivElement[] = [];
 
+  /**
+   * New type selected event handler.
+   */
   public onCreateNewStencil?: CreateNewStencilHandler;
 
+  /**
+   * Creates a new stencil toolbox panel.
+   * @param title panel title
+   * @param language language (localization) subsystem
+   * @param stencilTypes available stencil types
+   * @param currentType selected stencil type
+   */
   constructor(title: string, language: Language, stencilTypes: IStencilProperties[], currentType?: typeof StencilBase) {
     super(title, language);
     this.stencilTypes = stencilTypes;
@@ -71,6 +90,9 @@ export class NewStencilPanel extends PropertyPanelBase {
     }
   }
 
+  /**
+   * Deselects selected stencil type.
+   */
   public deselectType() {
     this.currentType = undefined;
     this.typeBoxes.forEach((t) => {

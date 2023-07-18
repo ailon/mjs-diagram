@@ -3,18 +3,48 @@ import { Language } from '../Language';
 import { ToolboxPanelItem } from '../ToolboxPanelItem';
 import { PropertyPanelBase } from './PropertyPanelBase';
 
+/**
+ * Line style change event handler type.
+ */
 export type LineStyleChangeHandler = (newStyle: string) => void;
 
+/**
+ * Line style toolbox panel.
+ * Can be [re]used to control different line attributes.
+ */
 export class LineStylePanel extends PropertyPanelBase {
+  /**
+   * Available line styles.
+   */
   public lineStyles: string[] = [];
+  /**
+   * Selected line style.
+   */
   public currentStyle?: string;
   private typeBoxes: ToolboxPanelItem<string>[] = [];
 
+  /**
+   * Common line attributes.
+   */
   public lineAttributes: Array<[string, string]> = [];
+  /**
+   * Panel controlled attribute name.
+   */
   public lineStyleAttribute: string;
 
+  /**
+   * Line style change event handler.
+   */
   public onLineStyleChanged?: LineStyleChangeHandler;
 
+  /**
+   * Creates a new line style panel.
+   * @param title panel title
+   * @param language language (localization) subsystem
+   * @param lineStyleAttribute name of the line attribute to edit
+   * @param lineStyles available styles
+   * @param currentStyle currently selected style
+   */
   constructor(title: string, language: Language, lineStyleAttribute: string, lineStyles: string[], currentStyle?: string) {
     super(title, language);
     this.lineStyleAttribute = lineStyleAttribute;
@@ -97,6 +127,10 @@ export class LineStylePanel extends PropertyPanelBase {
     }
   }
 
+  /**
+   * Selects supplied style box.
+   * @param style current style to select.
+   */
   public selectStyle(style: string) {
     this.lineStyles.forEach((t, index) => {
       if (t === style) {

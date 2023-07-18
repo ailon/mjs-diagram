@@ -1,13 +1,28 @@
 import { Language } from "../Language";
 import { PropertyPanelBase } from "./PropertyPanelBase";
 
+/**
+ * Arrangement options.
+ */
 export type ArrangementType = 'front' | 'forward' | 'backward' | 'back';
 
+/**
+ * Arrange event handler type.
+ */
 export type ArrangeClickHandler = (arrange: ArrangementType) => void;
 
+/**
+ * Object arrangemen panel.
+ */
 export class ArrangePanel extends PropertyPanelBase {
+  /**
+   * Handler for the arrange event.
+   */
   public onArrangeClicked?: ArrangeClickHandler;
 
+  /**
+   * {@inheritDoc editor!PropertyPanelBase.constructor}
+   */
   constructor(title: string, language: Language) {
     super(title, language);
 

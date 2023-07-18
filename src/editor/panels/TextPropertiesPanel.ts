@@ -6,26 +6,71 @@ import { FontFamilyChangeHandler, FontPanel, FontSizeChangeHandler } from "./Fon
 import { PropertyPanelBase } from "./PropertyPanelBase";
 import { Language } from "../Language";
 
+/**
+ * Text properties panel controlled properties.
+ */
 export interface TextPropertiesPanelProperties {
+  /**
+   * Available text colors.
+   */
   textColors: ColorSet,
+  /**
+   * Selected text color.
+   */
   textColor?: string,
+  /**
+   * Available font families.
+   */
   fontFamilies: FontFamily[],
+  /**
+   * Selected font family.
+   */
   fontFamily?: string,
+  /**
+   * Current font size.
+   */
   fontSize?: FontSize
 }
 
+/**
+ * Toolbox meta-panel for text properties.
+ */
 export class TextPropertiesPanel extends PropertyPanelBase {
   private colorPanel: ColorPickerPanel;
   private fontPanel: FontPanel;
 
+  /**
+   * Font color change event handler.
+   */
   public onColorChanged?: ColorChangeHandler;
+  /**
+   * Font family change event handler.
+   */
   public onFontFamilyChanged?: FontFamilyChangeHandler;
+  /**
+   * Font size change event handler.
+   */
   public onFontSizeChanged?: FontSizeChangeHandler;
 
+  /**
+   * Current text color.
+   */
   public textColor?: string;
+  /**
+   * Current font family.
+   */
   public fontFamily?: string;
+  /**
+   * Current font size.
+   */
   public fontSize?: FontSize;
 
+  /**
+   * Creates a new text properties panel.
+   * @param title panel title
+   * @param language language (localization) subsystem
+   * @param properties panel properties
+   */
   constructor(title: string, language: Language, properties: TextPropertiesPanelProperties) {
     super(title, language);
 

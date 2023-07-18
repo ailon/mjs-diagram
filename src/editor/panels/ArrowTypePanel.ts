@@ -2,15 +2,27 @@ import { ArrowType } from '../../core';
 import { Language } from '../Language';
 import { PropertyPanelBase } from './PropertyPanelBase';
 
+/**
+ * Arrow type change event handler type.
+ */
 export type ArrowTypeChangeHandler = (newType: ArrowType) => void;
 
+/**
+ * Arrow type toolbox panel.
+ */
 export class ArrowTypePanel extends PropertyPanelBase {
   private currentType?: ArrowType;
 
   private typeBoxes: HTMLDivElement[] = [];
 
+  /**
+   * Arrow type change event handler.
+   */
   public onArrowTypeChanged?: ArrowTypeChangeHandler;
 
+  /**
+   * {@inheritDoc editor!PropertyPanelBase.constructor}
+   */
   constructor(title: string, language: Language, currentType?: ArrowType) {
     super(title, language);
     this.currentType = currentType;
