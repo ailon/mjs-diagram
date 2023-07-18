@@ -55,7 +55,7 @@ export class ImageStencil extends TextStencil {
   // ]);
 
   /**
-   * {@inheritDoc core!ConnectorBase.constructor}
+   * {@inheritDoc core!StencilBase.constructor}
    */    
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     super(iid, container, settings);
