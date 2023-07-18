@@ -8,6 +8,9 @@ import { ArrowConnector } from '../../core';
 import { CurvedArrowConnector } from '../../core';
 import { StencilSet } from '../../core';
 
+/**
+ * Stencils and connectors for Flowchart diagrams.
+ */
 const flowchartStencilSet = new StencilSet();
 flowchartStencilSet.stencilTypes.push(
   {

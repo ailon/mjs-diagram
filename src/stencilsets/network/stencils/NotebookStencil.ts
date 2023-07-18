@@ -1,5 +1,8 @@
 import { DiagramSettings, ImageStencil } from "../../../core";
 
+/**
+ * Notebook (laptop computer) image stencil.
+ */
 export class NotebookStencil extends ImageStencil {
   public static typeName = 'NotebookStencil';
 
@@ -9,6 +12,9 @@ export class NotebookStencil extends ImageStencil {
 
   protected static svgString = '<path d="M4,6H20V16H4M20,18A2,2 0 0,0 22,16V6C22,4.89 21.1,4 20,4H4C2.89,4 2,4.89 2,6V16A2,2 0 0,0 4,18H0V20H24V18H20Z" />';
 
+  /**
+   * {@inheritDoc core!ImageStencil.constructor}
+   */
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     super(iid, container, settings);
 

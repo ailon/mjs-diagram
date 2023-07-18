@@ -1,5 +1,8 @@
 import { DiagramSettings, RectangleTextStencil } from "../../../core";
 
+/**
+ * Mind Map leaf item stencil.
+ */
 export class ItemStencil extends RectangleTextStencil {
   public static typeName = 'ItemStencil';
 
@@ -13,6 +16,9 @@ export class ItemStencil extends RectangleTextStencil {
     return super.getThumbnail(width, width / 5);
   }
 
+  /**
+   * {@inheritDoc core!RectangleTextStencil.constructor}
+   */
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     super(iid, container, settings);
     

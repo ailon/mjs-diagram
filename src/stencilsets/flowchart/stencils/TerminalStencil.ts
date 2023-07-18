@@ -1,6 +1,9 @@
 import { DiagramSettings } from "../../../core";
 import { RectangleTextStencil } from "../../../core";
 
+/**
+ * Terminal Flowchart stencil.
+ */
 export class TerminalStencil extends RectangleTextStencil {
   public static typeName = 'TerminalStencil';
 

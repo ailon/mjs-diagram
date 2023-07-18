@@ -5,6 +5,9 @@ import { CentralTopicStencil } from './stencils/CentralTopicStencil';
 import { ItemStencil } from './stencils/ItemStencil';
 import { SubTopicStencil } from './stencils/SubTopicStencil';
 
+/**
+ * Mind Map related stencils and connectors.
+ */
 const mindMapStencilSet = new StencilSet();
 mindMapStencilSet.stencilTypes.push(
   {

@@ -16,6 +16,9 @@ import { ConnectorBaseEditor } from '../../editor';
 import en_flowchart_strings from './lang/en';
 import { StringSet } from '../../editor';
 
+/**
+ * Editor set for editing Flowchart diagrams.
+ */
 const flowchartStencilEditorSet = new StencilEditorSet('flowchart', flowchartStencilSet);
 flowchartStencilEditorSet.displayName = 'Flowchart';
 flowchartStencilEditorSet.defaultStringSet = new StringSet(en_flowchart_strings);

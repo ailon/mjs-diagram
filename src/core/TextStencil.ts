@@ -108,7 +108,7 @@ export class TextStencil extends StencilBase {
   public textBlock: TextBlock = new TextBlock(this.getDefaultText());
 
   /**
-   * {@inheritDoc core!ConnectorBase.constructor}
+   * {@inheritDoc core!StencilBase.constructor}
    */  
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     super(iid, container, settings);

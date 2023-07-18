@@ -20,6 +20,9 @@ import { RouterStencil } from './stencils/RouterStencil';
 import { ServerStencil } from './stencils/ServerStencil';
 import { WiFiRouterStencil } from './stencils/WiFiRouterStencil';
 
+/**
+ * Network diagram editor set.
+ */
 const networkStencilEditorSet = new StencilEditorSet(
   'network',
   networkStencilSet

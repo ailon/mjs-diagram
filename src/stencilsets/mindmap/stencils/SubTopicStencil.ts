@@ -1,5 +1,8 @@
 import { DiagramSettings, RectangleTextStencil } from "../../../core";
 
+/**
+ * Second level Mind Map topic stencil.
+ */
 export class SubTopicStencil extends RectangleTextStencil {
   public static typeName = 'SubTopicStencil';
 
@@ -25,6 +28,9 @@ export class SubTopicStencil extends RectangleTextStencil {
     return super.getThumbnail(width, width / 4);
   }
 
+  /**
+   * {@inheritDoc core!RectangleTextStencil.constructor}
+   */
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     super(iid, container, settings);
 

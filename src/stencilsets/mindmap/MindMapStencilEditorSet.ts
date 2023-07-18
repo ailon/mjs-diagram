@@ -7,6 +7,9 @@ import { SubTopicStencil } from './stencils/SubTopicStencil';
 import { ItemStencil } from './stencils/ItemStencil';
 import { MindMapConnector } from './connectors/MindMapConnector';
 
+/**
+ * Mind Map editor set.
+ */
 const mindMapStencilEditorSet = new StencilEditorSet('mindmap', mindMapStencilSet);
 mindMapStencilEditorSet.stencilEditorTypes.set(CentralTopicStencil, TextStencilEditor);
 mindMapStencilEditorSet.stencilEditorTypes.set(SubTopicStencil, TextStencilEditor);

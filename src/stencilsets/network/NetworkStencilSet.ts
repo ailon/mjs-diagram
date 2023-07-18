@@ -9,6 +9,9 @@ import { CloudStencil } from "./stencils/CloudStencil";
 import { DatabaseStencil } from "./stencils/DatabaseStencil";
 import { PrinterStencil } from "./stencils/PrinterStencil";
 
+/**
+ * Network diagram stencil and connectors.
+ */
 const networkStencilSet = new StencilSet();
 networkStencilSet.stencilTypes.push(
   {

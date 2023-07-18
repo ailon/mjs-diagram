@@ -1,6 +1,9 @@
 import { DiagramSettings } from "../../../core";
 import { RectangleTextStencil } from "../../../core";
 
+/**
+ * I/O Flowchart stencil.
+ */
 export class IOStencil extends RectangleTextStencil {
   public static typeName = 'IOStencil';
 
@@ -11,6 +14,9 @@ export class IOStencil extends RectangleTextStencil {
     return result;
   }
 
+  /**
+   * {@inheritDoc core!RectangleTextStencil.constructor}
+   */
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     super(iid, container, settings);
 
