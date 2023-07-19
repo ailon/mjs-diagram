@@ -1641,17 +1641,18 @@ export class DiagramEditor extends HTMLElement {
       const hitEditor = this.getHitEditor(ev.target);
       if (this._currentHitEditor !== hitEditor) {
         // hovered editor changed
-        if (hitEditor !== undefined) {
-          if (!hitEditor.isSelected) {
-            this.mode = 'connect';
-            hitEditor.switchToConnectMode();
-          }
-        } else if (
+        if (
           this._currentHitEditor !== undefined /*&& !this.isDragging*/
         ) {
           this.mode = 'select';
           if (this._currentHitEditor.state === 'connect') {
             this._currentHitEditor.switchConnectModeOff();
+          }
+        }
+        if (hitEditor !== undefined) {
+          if (!hitEditor.isSelected) {
+            this.mode = 'connect';
+            hitEditor.switchToConnectMode();
           }
         }
         this._currentHitEditor = hitEditor;
