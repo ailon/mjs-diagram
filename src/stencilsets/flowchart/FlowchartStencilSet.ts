@@ -3,7 +3,7 @@ import { IOStencil } from './stencils/IOStencil';
 import { ProcessStencil } from './stencils/ProcessStencil';
 import { TerminalStencil } from './stencils/TerminalStencil';
 
-import { AngledArrowConnector } from '../../core';
+import { AngledArrowConnector, LabelStencil } from '../../core';
 import { ArrowConnector } from '../../core';
 import { CurvedArrowConnector } from '../../core';
 import { StencilSet } from '../../core';
@@ -28,6 +28,10 @@ flowchartStencilSet.stencilTypes.push(
   {
     stencilType: TerminalStencil,
     displayName: 'Terminal',
+  },
+  {
+    stencilType: LabelStencil,
+    displayName: 'Label'
   }
 );
 flowchartStencilSet.connectorTypes.push(

@@ -1,4 +1,4 @@
-import { StencilSet } from '../../core';
+import { LabelStencil, StencilSet } from '../../core';
 
 import { MindMapConnector } from './connectors/MindMapConnector';
 import { CentralTopicStencil } from './stencils/CentralTopicStencil';
@@ -21,6 +21,10 @@ mindMapStencilSet.stencilTypes.push(
   {
     stencilType: ItemStencil,
     displayName: 'Item',
+  },
+  {
+    stencilType: LabelStencil,
+    displayName: 'Label'
   },
 );
 mindMapStencilSet.connectorTypes.push({

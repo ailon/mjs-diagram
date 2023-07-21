@@ -4,7 +4,7 @@ import { DecisionStencil } from './stencils/DecisionStencil';
 import { IOStencil } from './stencils/IOStencil';
 import { TerminalStencil } from './stencils/TerminalStencil';
 
-import { ArrowConnector } from '../../core';
+import { ArrowConnector, LabelStencil } from '../../core';
 import { CurvedArrowConnector } from '../../core';
 import { TextStencilState } from '../../core';
 import { AngledArrowConnector } from '../../core';
@@ -26,6 +26,7 @@ flowchartStencilEditorSet.stencilEditorTypes.set(ProcessStencil, TextStencilEdit
 flowchartStencilEditorSet.stencilEditorTypes.set(DecisionStencil, TextStencilEditor);
 flowchartStencilEditorSet.stencilEditorTypes.set(IOStencil, TextStencilEditor);
 flowchartStencilEditorSet.stencilEditorTypes.set(TerminalStencil, TextStencilEditor);
+flowchartStencilEditorSet.stencilEditorTypes.set(LabelStencil, TextStencilEditor);
 
 flowchartStencilEditorSet.connectorEditorTypes.set(
   ArrowConnector,

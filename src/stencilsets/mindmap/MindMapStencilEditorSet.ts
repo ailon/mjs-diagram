@@ -1,5 +1,5 @@
 import { StencilEditorSet, TextStencilEditor, ConnectorBaseEditor } from '../../editor';
-import { TextStencilState } from '../../core';
+import { LabelStencil, TextStencilState } from '../../core';
 
 import { mindMapStencilSet } from './MindMapStencilSet';
 import { CentralTopicStencil } from './stencils/CentralTopicStencil';
@@ -14,6 +14,7 @@ const mindMapStencilEditorSet = new StencilEditorSet('mindmap', mindMapStencilSe
 mindMapStencilEditorSet.stencilEditorTypes.set(CentralTopicStencil, TextStencilEditor);
 mindMapStencilEditorSet.stencilEditorTypes.set(SubTopicStencil, TextStencilEditor);
 mindMapStencilEditorSet.stencilEditorTypes.set(ItemStencil, TextStencilEditor);
+mindMapStencilEditorSet.stencilEditorTypes.set(LabelStencil, TextStencilEditor);
 
 mindMapStencilEditorSet.connectorEditorTypes.set(
   MindMapConnector,
