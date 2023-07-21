@@ -13,7 +13,7 @@ export class RectangleTextStencil extends TextStencil {
       H ${width} 
       V ${height} 
       H 0 
-      V 0`;
+      V 0 Z`;
 
     return result;
   }
