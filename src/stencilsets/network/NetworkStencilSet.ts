@@ -8,6 +8,11 @@ import { WiFiRouterStencil } from "./stencils/WiFiRouterStencil";
 import { CloudStencil } from "./stencils/CloudStencil";
 import { DatabaseStencil } from "./stencils/DatabaseStencil";
 import { PrinterStencil } from "./stencils/PrinterStencil";
+import { CameraStencil } from "./stencils/CameraStencil";
+import { SmartphoneStencil } from "./stencils/SmartphoneStencil";
+import { TabletStencil } from "./stencils/TabletStencil";
+import { TVStencil } from "./stencils/TVStencil";
+import { UserStencil } from "./stencils/UserStencil";
 
 /**
  * Network diagram stencil and connectors.
@@ -21,6 +26,18 @@ networkStencilSet.stencilTypes.push(
   {
     stencilType: DesktopStencil,
     displayName: 'Desktop PC'
+  },
+  {
+    stencilType: SmartphoneStencil,
+    displayName: 'Phone'
+  },
+  {
+    stencilType: TabletStencil,
+    displayName: 'Tablet'
+  },
+  {
+    stencilType: TVStencil,
+    displayName: 'TV'
   },
   {
     stencilType: ServerStencil,
@@ -45,6 +62,14 @@ networkStencilSet.stencilTypes.push(
   {
     stencilType: PrinterStencil,
     displayName: 'Printer'
+  },
+  {
+    stencilType: UserStencil,
+    displayName: 'User'
+  },
+  {
+    stencilType: CameraStencil,
+    displayName: 'Camera'
   },
 
   {

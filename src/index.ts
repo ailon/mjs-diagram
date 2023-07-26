@@ -121,3 +121,21 @@ export {
   flowchartStencilEditorSet,
   flowchartStencilSet,
 } from './stencilsets/flowchart/flowchart';
+
+export {
+  CameraStencil,
+  CloudStencil,
+  DatabaseStencil,
+  DesktopStencil,
+  NotebookStencil,
+  PrinterStencil,
+  RouterStencil,
+  ServerStencil,
+  SmartphoneStencil,
+  TVStencil,
+  TabletStencil,
+  UserStencil,
+  WiFiRouterStencil,
+  networkStencilEditorSet,
+  networkStencilSet,
+} from './stencilsets/network/network';

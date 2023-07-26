@@ -26,6 +26,11 @@ export { PrinterStencil } from './stencils/PrinterStencil';
 export { RouterStencil } from './stencils/RouterStencil';
 export { ServerStencil } from './stencils/ServerStencil';
 export { WiFiRouterStencil } from './stencils/WiFiRouterStencil';
+export { CameraStencil } from './stencils/CameraStencil';
+export { SmartphoneStencil } from './stencils/SmartphoneStencil';
+export { TabletStencil } from './stencils/TabletStencil';
+export { TVStencil } from './stencils/TVStencil';
+export { UserStencil } from './stencils/UserStencil';
 
 export { networkStencilSet } from './NetworkStencilSet';
 export { networkStencilEditorSet } from './NetworkStencilEditorSet';

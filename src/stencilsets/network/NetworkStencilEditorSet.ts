@@ -19,6 +19,11 @@ import { PrinterStencil } from './stencils/PrinterStencil';
 import { RouterStencil } from './stencils/RouterStencil';
 import { ServerStencil } from './stencils/ServerStencil';
 import { WiFiRouterStencil } from './stencils/WiFiRouterStencil';
+import { CameraStencil } from "./stencils/CameraStencil";
+import { SmartphoneStencil } from "./stencils/SmartphoneStencil";
+import { TabletStencil } from "./stencils/TabletStencil";
+import { TVStencil } from "./stencils/TVStencil";
+import { UserStencil } from "./stencils/UserStencil";
 
 /**
  * Network diagram editor set.
@@ -59,6 +64,26 @@ networkStencilEditorSet.stencilEditorTypes.set(
 );
 networkStencilEditorSet.stencilEditorTypes.set(
   PrinterStencil,
+  ImageStencilEditor
+);
+networkStencilEditorSet.stencilEditorTypes.set(
+  CameraStencil,
+  ImageStencilEditor
+);
+networkStencilEditorSet.stencilEditorTypes.set(
+  SmartphoneStencil,
+  ImageStencilEditor
+);
+networkStencilEditorSet.stencilEditorTypes.set(
+  TabletStencil,
+  ImageStencilEditor
+);
+networkStencilEditorSet.stencilEditorTypes.set(
+  TVStencil,
+  ImageStencilEditor
+);
+networkStencilEditorSet.stencilEditorTypes.set(
+  UserStencil,
   ImageStencilEditor
 );
 
