@@ -235,6 +235,8 @@ export class ConnectorBase {
 
     this.setStrokeColor = this.setStrokeColor.bind(this);
     this.setArrowType = this.setArrowType.bind(this);
+    this.setStrokeDasharray = this.setStrokeDasharray.bind(this);
+    this.setStrokeWidth = this.setStrokeWidth.bind(this);
 
     this.scale = this.scale.bind(this);
     this.getState = this.getState.bind(this);
@@ -525,6 +527,26 @@ export class ConnectorBase {
     this.strokeColor = color;
     this.adjustVisual();
   }
+
+  /**
+   * Sets the dash array of the connector's visual
+   * @param dashes stroke dash array values.
+   */
+  public setStrokeDasharray(dashes: string): void {
+    this.strokeDasharray = dashes;
+    this.adjustVisual();
+  }
+
+  /**
+   * Sets the stroke width of the connector's visual
+   * @param width stroke (line) width.
+   */
+  public setStrokeWidth(width: number | string): void {
+    const numWidth = typeof(width) === 'string' ? Number.parseFloat(width) : width;
+    this.strokeWidth = numWidth;
+    this.adjustVisual();
+  }
+
 
   /**
    * Sets connector's arrow type.

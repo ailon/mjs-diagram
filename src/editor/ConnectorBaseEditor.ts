@@ -15,6 +15,7 @@ import { TextBlockEditor } from './TextBlockEditor';
 import { EditorSettings } from './EditorSettings';
 import { ConnectorEditorProperties } from './ConnectorEditorProperties';
 import { Language } from './Language';
+import { LineStylePanel } from './panels/LineStylePanel';
 
 /**
  * Represents the state of the connector editor.
@@ -127,6 +128,9 @@ export class ConnectorBaseEditor {
 
   private strokePanel: ColorPickerPanel;
   private arrowTypePanel: ArrowTypePanel;
+  private lineStylePanel: LineStylePanel;
+  private lineWidthPanel: LineStylePanel;
+
 
   private _settings: EditorSettings;
   /**
@@ -176,6 +180,25 @@ export class ConnectorBaseEditor {
       this.connector.arrowType
     );
     this.arrowTypePanel.onArrowTypeChanged = this.connector.setArrowType;
+
+    this.lineStylePanel = new LineStylePanel(
+      this._language.getString('toolbox-linestyle-title') ?? 'Line style',
+      this._language,
+      'stroke-dasharray',
+      this.settings.getDashArrays(this.connector.typeName),
+      this.connector.strokeDasharray
+    );
+    this.lineStylePanel.lineAttributes = [['stroke-width', '3']];
+    this.lineStylePanel.onLineStyleChanged = this.connector.setStrokeDasharray;
+
+    this.lineWidthPanel = new LineStylePanel(
+      this._language.getString('toolbox-linestyle-title') ?? 'Line width',
+      this._language,
+      'stroke-width',
+      this.settings.getStrokeWidths(this.connector.typeName),
+      this.connector.strokeWidth.toString()
+    );
+    this.lineWidthPanel.onLineStyleChanged = this.connector.setStrokeWidth;    
 
     this.select = this.select.bind(this);
     this.deselect = this.deselect.bind(this);
@@ -550,7 +573,7 @@ export class ConnectorBaseEditor {
    * Returns diagram editor property panels for the connector.
    */
   public get propertyPanels(): PropertyPanelBase[] {
-    return [this.strokePanel, this.arrowTypePanel];
+    return [this.arrowTypePanel, this.strokePanel, this.lineWidthPanel, this.lineStylePanel];
   }
 
   /**

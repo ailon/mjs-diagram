@@ -165,9 +165,9 @@ export class Experiments {
     });
     
     // this.editor.stencilEditorSet = basicStencilEditorSet;
-    // this.editor.stencilEditorSet = flowchartStencilEditorSet;
+    this.editor.stencilEditorSet = flowchartStencilEditorSet;
     // this.editor.stencilEditorSet = mindMapStencilEditorSet;
-    this.editor.stencilEditorSet = networkStencilEditorSet;
+    // this.editor.stencilEditorSet = networkStencilEditorSet;
 
     this.editor.settings.setContextColor('ArrowConnector', 'stroke', 'red');
     this.editor.settings.setContextColorSet('ArrowConnector', 'stroke', new ColorSet('red','blue','black'));
@@ -220,9 +220,9 @@ export class Experiments {
       console.log(`connector click ${(<ConnectorEventData>ev.detail).connector.typeName}`);
     });
 
-    // this.viewer.stencilSet = flowchartStencilSet;
+    this.viewer.stencilSet = flowchartStencilSet;
     // this.viewer.stencilSet = basicStencilSet;
-    this.viewer.stencilSet = networkStencilSet;
+    // this.viewer.stencilSet = networkStencilSet;
 
     const manualState: DiagramState = {
       stencils: [
