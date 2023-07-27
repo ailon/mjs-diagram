@@ -122,7 +122,7 @@ export class LineStylePanel extends PropertyPanelBase {
       box.isSelected = box.dataItem === this.currentStyle;
     });
 
-    if (this.onLineStyleChanged && this.currentStyle) {
+    if (this.onLineStyleChanged && this.currentStyle !== undefined) {
       this.onLineStyleChanged(this.currentStyle);
     }
   }
