@@ -63,7 +63,7 @@ export class AngledConnector extends ConnectorBase {
 
   private getPathD(): string {
     const [ending1, ending2] = this.getEndings();
-    const MIN_SEGMENT_LENGTH = 10;
+    const MIN_SEGMENT_LENGTH = 10 + this.strokeWidth;
 
     if (this.startPort !== undefined) {
       this.startLineDir = getEdgeLineDirection(this.startPort);

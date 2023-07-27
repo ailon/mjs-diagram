@@ -315,9 +315,9 @@ export class ConnectorBase {
     const width = this.arrowBaseWidth + this.strokeWidth * 2;
     const height = this.arrowBaseHeight + this.strokeWidth * 2;
     return `${offsetX - width / 2},${
-      offsetY + height - this.strokeWidth
-    } ${offsetX},${offsetY - this.strokeWidth} ${offsetX + width / 2},${
-      offsetY + height - this.strokeWidth
+      offsetY + height - this.strokeWidth / 2
+    } ${offsetX},${offsetY - this.strokeWidth / 2} ${offsetX + width / 2},${
+      offsetY + height - this.strokeWidth / 2
     }`;
   }
 
