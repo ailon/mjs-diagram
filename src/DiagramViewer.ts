@@ -122,6 +122,8 @@ export interface DiagramViewerEventMap {
  */
 export class DiagramViewer extends HTMLElement {
   private _container?: HTMLDivElement;
+  private _contentContainer?: HTMLDivElement;
+  private _canvasContainer?: HTMLDivElement;
 
   private _mainCanvas?: SVGSVGElement;
   private _groupLayer?: SVGGElement;
@@ -232,14 +234,37 @@ export class DiagramViewer extends HTMLElement {
     this.style.display = 'block';
     this.style.width = '100%';
     this.style.height = '100%';
+    this.style.position = 'relative';
 
     this._container = document.createElement('div');
-    this._container.style.position = 'relative';
     this._container.style.display = 'flex';
     this._container.style.flexDirection = 'column';
     this._container.style.width = '100%';
     this._container.style.height = '100%';
-    this._container.style.backgroundColor = '#fff';
+    this._container.style.userSelect = 'none';
+    // this._container.style.backgroundColor = 'green';
+
+    this._contentContainer = document.createElement('div');
+    this._contentContainer.style.display = 'flex';
+    this._contentContainer.style.position = 'relative';
+    this._contentContainer.style.flexGrow = '2';
+    this._contentContainer.style.flexShrink = '1';
+    this._contentContainer.style.overflow = 'hidden';
+    // this._contentContainer.style.backgroundColor = 'red';
+
+    this._container.appendChild(this._contentContainer);
+
+    this._canvasContainer = document.createElement('div');
+    this._canvasContainer.style.touchAction = 'pinch-zoom';
+    this._canvasContainer.className = 'canvas-container';
+    this._canvasContainer.style.display = 'grid';
+    this._canvasContainer.style.gridTemplateColumns = '1fr';
+    this._canvasContainer.style.flexGrow = '2';
+    this._canvasContainer.style.flexShrink = '2';
+    this._canvasContainer.style.justifyItems = 'center';
+    this._canvasContainer.style.alignItems = 'center';
+    this._canvasContainer.style.overflow = 'auto';
+    this._contentContainer.appendChild(this._canvasContainer);
 
     this._container.setAttribute('part', 'container');
 
@@ -267,6 +292,8 @@ export class DiagramViewer extends HTMLElement {
 
     this._mainCanvas.style.fontFamily = 'Helvetica, Arial, Sans-Serif';
     this._mainCanvas.style.backgroundColor = this.documentBgColor;
+    this._mainCanvas.style.filter = 'var(--i-mjsdiav-canvas-filter)';
+
 
     this._groupLayer = SvgHelper.createGroup();
     this._connectorLayer = SvgHelper.createGroup();
@@ -276,7 +303,7 @@ export class DiagramViewer extends HTMLElement {
     this._mainCanvas.appendChild(this._connectorLayer);
     this._mainCanvas.appendChild(this._objectLayer);
 
-    this._container?.appendChild(this._mainCanvas);
+    this._canvasContainer?.appendChild(this._mainCanvas);
   }
 
   private connectedCallback() {
@@ -464,6 +491,26 @@ export class DiagramViewer extends HTMLElement {
   private addStyles() {
     const styleSheet = document.createElement('style');
     styleSheet.innerHTML = `
+      * {
+        --i-mjsdiav-canvas-background-color: var(--mjsdiav-canvas-background-color, #aaa);
+        --i-mjsdiav-canvas-filter: var(--mjsdiav-canvas-filter);
+      }
+      .canvas-container {
+        background-color: var(--i-mjsdiav-canvas-background-color);
+        scrollbar-width: thin;
+      }
+      .canvas-container::-webkit-scrollbar {
+        height: 10px;
+        width: 10px;
+      }
+      .canvas-container::-webkit-scrollbar-track {
+        background-color: transparent;
+      }
+      .canvas-container::-webkit-scrollbar-thumb {
+        background-color: #444;
+        border-radius: 20px;
+        border: 2px solid #aaa;
+      }      
       .stencil-container {
         cursor: default;
       }
