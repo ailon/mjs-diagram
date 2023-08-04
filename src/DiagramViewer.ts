@@ -10,6 +10,7 @@ import {
 } from './core';
 
 import Logo from './assets/markerjs-logo-m.svg';
+import { Button, ButtonEventData, Panel, Toolbar, ToolbarBlock } from '@markerjs/mjs-toolbar';
 
 /**
  * Defines event data for the {@link DiagramViewer} events.
@@ -124,6 +125,7 @@ export class DiagramViewer extends HTMLElement {
   private _container?: HTMLDivElement;
   private _contentContainer?: HTMLDivElement;
   private _canvasContainer?: HTMLDivElement;
+  private _toolbarContainer?: HTMLDivElement;
 
   private _mainCanvas?: SVGSVGElement;
   private _groupLayer?: SVGGElement;
@@ -137,7 +139,7 @@ export class DiagramViewer extends HTMLElement {
   /**
    * Zoom level steps the interactive zoom controls go through.
    */
-  public zoomSteps = [1, 1.5, 2, 4];
+  public zoomSteps = [0.5, 0.75, 1, 1.5, 2, 4];
   private _zoomLevel = 1;
   /**
    * Gets the current zoom level of the control (1 is 100%).
@@ -150,20 +152,25 @@ export class DiagramViewer extends HTMLElement {
    */
   public set zoomLevel(value: number) {
     this._zoomLevel = value;
-    // @todo
-    // if (this.editorCanvas && this.contentDiv) {
-    //   this.editorCanvas.style.transform = `scale(${this._zoomLevel})`;
-    //   this.contentDiv.scrollTo({
-    //     left:
-    //       (this.editorCanvas.clientWidth * this._zoomLevel -
-    //         this.contentDiv.clientWidth) /
-    //       2,
-    //     top:
-    //       (this.editorCanvas.clientHeight * this._zoomLevel -
-    //         this.contentDiv.clientHeight) /
-    //       2,
-    //   });
-    // }
+    if (
+      this._canvasContainer &&
+      this._contentContainer &&
+      this._mainCanvas
+    ) {
+      this._mainCanvas.style.width = `${this.documentWidth * this.zoomLevel}px`;
+      this._mainCanvas.style.height = `${
+        this.documentHeight * this.zoomLevel
+      }px`;
+      //this._mainCanvas.style.transform = `scale(${this._zoomLevel})`;
+      this._canvasContainer.scrollTo({
+        left:
+          (this._mainCanvas.clientWidth - this._canvasContainer.clientWidth) /
+          2,
+        top:
+          (this._mainCanvas.clientHeight - this._canvasContainer.clientHeight) /
+          2,
+      });
+    }
   }
 
   private _stencilSet = basicStencilSet;
@@ -218,6 +225,10 @@ export class DiagramViewer extends HTMLElement {
 
     this.connectedCallback = this.connectedCallback.bind(this);
 
+    this.addToolbar = this.addToolbar.bind(this);
+    this.zoom = this.zoom.bind(this);
+    this.toolbarButtonClicked = this.toolbarButtonClicked.bind(this);
+
     this.attachShadow({ mode: 'open' });
   }
 
@@ -238,18 +249,19 @@ export class DiagramViewer extends HTMLElement {
 
     this._container = document.createElement('div');
     this._container.style.display = 'flex';
-    this._container.style.flexDirection = 'column';
     this._container.style.width = '100%';
     this._container.style.height = '100%';
     this._container.style.userSelect = 'none';
     // this._container.style.backgroundColor = 'green';
 
     this._contentContainer = document.createElement('div');
-    this._contentContainer.style.display = 'flex';
+    this._contentContainer.style.display = 'grid';
     this._contentContainer.style.position = 'relative';
     this._contentContainer.style.flexGrow = '2';
     this._contentContainer.style.flexShrink = '1';
     this._contentContainer.style.overflow = 'hidden';
+    this._contentContainer.style.gridTemplateRows = 'auto 60px';
+    this._contentContainer.style.gridTemplateColumns = '1fr';
     // this._contentContainer.style.backgroundColor = 'red';
 
     this._container.appendChild(this._contentContainer);
@@ -264,13 +276,103 @@ export class DiagramViewer extends HTMLElement {
     this._canvasContainer.style.justifyItems = 'center';
     this._canvasContainer.style.alignItems = 'center';
     this._canvasContainer.style.overflow = 'auto';
+    this._canvasContainer.style.gridRow = '1/3';
+    this._canvasContainer.style.gridColumn = '1';
     this._contentContainer.appendChild(this._canvasContainer);
+
+    const toolbarAreaContainer =  document.createElement('div');
+    toolbarAreaContainer.className = 'toolbar-area';
+    toolbarAreaContainer.style.display = 'flex';
+    toolbarAreaContainer.style.gridRow = '2';
+    toolbarAreaContainer.style.gridColumn = '1';
+    toolbarAreaContainer.style.justifyContent = 'center';
+    this._toolbarContainer = document.createElement('div');
+
+    toolbarAreaContainer.appendChild(this._toolbarContainer);
+    this._contentContainer.appendChild(toolbarAreaContainer);
+
 
     this._container.setAttribute('part', 'container');
 
     this.shadowRoot?.appendChild(this._container);
   }
 
+  private addToolbar() {
+    const panel = <Panel>document.createElement('mjstb-panel');
+    panel.className = 'toolbar-panel';
+    // panel.style.width = '100%';
+
+    const toolbar = new Toolbar();
+    toolbar.addEventListener('buttonclick', this.toolbarButtonClicked);
+
+    const zoomBlock = new ToolbarBlock();   
+    const zoomOutButton = new Button({
+      icon: `<svg viewBox="0 0 24 24">
+    <path fill="currentColor" d="M19,13H5V11H19V13Z" />
+</svg>`,
+      text: 'zoom out',
+      command: 'zoomout',
+    });
+    zoomBlock.appendButton(zoomOutButton);
+
+    const zoomResetButton = new Button({
+      icon: `<svg viewBox="0 0 24 24">
+    <path fill="currentColor" d="M12 5.5L10 8H14L12 5.5M18 10V14L20.5 12L18 10M6 10L3.5 12L6 14V10M14 16H10L12 18.5L14 16M21 3H3C1.9 3 1 3.9 1 5V19C1 20.1 1.9 21 3 21H21C22.1 21 23 20.1 23 19V5C23 3.9 22.1 3 21 3M21 19H3V5H21V19Z" />
+</svg>`,
+      text: 'fit',
+      command: 'zoomreset',
+    });
+    zoomBlock.appendButton(zoomResetButton);
+
+    const zoomInButton = new Button({
+      icon: `<svg viewBox="0 0 24 24">
+    <path fill="currentColor" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+</svg>`,
+      text: 'zoom in',
+      command: 'zoomin',
+    });
+    zoomBlock.appendButton(zoomInButton);
+
+    toolbar.appendBlock(zoomBlock);
+
+    panel.appendToolbar(toolbar);
+
+    this._toolbarContainer?.appendChild(panel);
+  } 
+
+  private toolbarButtonClicked(ev: CustomEvent<ButtonEventData>) {
+    switch (ev.detail.button.command) {
+      case 'zoomin': {
+        this.zoom(1);
+        break;
+      }
+      case 'zoomout': {
+        this.zoom(-1);
+        break;
+      }
+      case 'zoomreset': {
+        this.zoom(0);
+        break;
+      }
+    }
+  }
+
+  /**
+   * Zooms in or out to the supplied zoom level (1 = 100%).
+   * @param factor zoom level.
+   */
+  public zoom(factor: number): void {
+    const currentLevelIndex = this.zoomSteps.indexOf(this.zoomLevel);
+    if (factor === 0 || currentLevelIndex === -1) {
+      this.zoomLevel = 1;
+    } else if (factor > 0 && currentLevelIndex < this.zoomSteps.length - 1) {
+      this.zoomLevel = this.zoomSteps[currentLevelIndex + 1];
+    } else if (factor < 0 && currentLevelIndex > 0) {
+      this.zoomLevel = this.zoomSteps[currentLevelIndex - 1];
+    }
+  }
+
+  
   private width = 0;
   private height = 0;
 
@@ -309,6 +411,7 @@ export class DiagramViewer extends HTMLElement {
   private connectedCallback() {
     this.createLayout();
     this.addMainCanvas();
+    this.addToolbar();
     this.attachEvents();
   }
 
@@ -492,8 +595,15 @@ export class DiagramViewer extends HTMLElement {
     const styleSheet = document.createElement('style');
     styleSheet.innerHTML = `
       * {
-        --i-mjsdiav-canvas-background-color: var(--mjsdiav-canvas-background-color, #aaa);
+        --i-mjsdiav-canvas-background-color: var(--mjsdiav-canvas-background-color, #fff);
         --i-mjsdiav-canvas-filter: var(--mjsdiav-canvas-filter);
+        
+        --i-mjsdiav-tb-background-color: var(--mjsdiav-tb-background-color, #fff);
+        --i-mjsdiav-tb-border-color: var(--mjsdiav-tb-border-color, #fafafa);
+        --i-mjsdiav-tb-fore-color: var(--mjsdiav-tb-fore-color, #333);
+        --i-mjsdiav-tb-button-border-color: var(--mjsdiav-tb-button-border-color, #fff);
+        --i-mjsdiav-tb-background-color-hover: var(--mjsdiav-tb-background-color-hover, #fcfcfc);
+        --i-mjsdiav-tb-button-border-color-hover: var(--mjsdiav-tb-button-border-color-hover, #fafafa);
       }
       .canvas-container {
         background-color: var(--i-mjsdiav-canvas-background-color);
@@ -520,6 +630,42 @@ export class DiagramViewer extends HTMLElement {
       .hidden {
         opacity: 0;
       }
+
+      .toolbar-area {
+        opacity: 0;
+      }
+      .toolbar-area:hover {
+        opacity: 1;
+      }
+
+      mjstb-panel.toolbar-panel::part(panel) {
+        background-color: var(--i-mjsdiav-tb-background-color);
+        border: 2px solid var(--i-mjsdiav-tb-border-color);
+        border-radius: 5px;
+        opacity: 0.5;
+      }
+      mjstb-panel.toolbar-panel::part(panel):hover {
+        opacity: 1;
+      }
+      mjstb-panel.toolbar-panel::part(toolbar) {
+        padding: 5px;
+        justify-content: space-between;
+      }
+      mjstb-panel.toolbar-panel::part(toolbar-block) {
+      }
+      mjstb-panel.toolbar-panel::part(button) {
+        color: var(--i-mjsdiav-tb-fore-color);
+        background-color: var(--i-mjsdiav-tb-background-color);
+        width: 36px;
+        height: 36px;
+        border-radius: 3px;
+        border: 2px solid var(--i-mjsdiav-tb-button-border-color);
+      }
+      mjstb-panel.toolbar-panel::part(button):hover {
+        background-color: var(--i-mjsdiav-tb-background-color-hover);
+        border-color: var(--i-mjsdiav-tb-button-border-color-hover);
+      }
+
 
       @keyframes fade_in_animation_frames {
         from {
