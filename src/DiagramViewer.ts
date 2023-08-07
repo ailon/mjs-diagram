@@ -248,6 +248,7 @@ export class DiagramViewer extends HTMLElement {
     this.style.position = 'relative';
 
     this._container = document.createElement('div');
+    this._container.className = 'main-container';
     this._container.style.display = 'flex';
     this._container.style.width = '100%';
     this._container.style.height = '100%';
@@ -633,6 +634,9 @@ export class DiagramViewer extends HTMLElement {
 
       .toolbar-area {
         opacity: 0;
+      }
+      .main-container:hover .toolbar-area {
+        opacity: 1;
       }
       .toolbar-area:hover {
         opacity: 1;
