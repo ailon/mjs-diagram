@@ -106,6 +106,7 @@ export default [
       './core'
     ],
     plugins: [
+      nodeResolve(), 
       typescript({
         compilerOptions: {
           rootDir: './src/',
