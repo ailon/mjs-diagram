@@ -125,6 +125,7 @@ export class DiagramViewer extends HTMLElement {
   private _container?: HTMLDivElement;
   private _contentContainer?: HTMLDivElement;
   private _canvasContainer?: HTMLDivElement;
+  private _toolbarAreaContainer?: HTMLDivElement;
   private _toolbarContainer?: HTMLDivElement;
 
   private _mainCanvas?: SVGSVGElement;
@@ -225,7 +226,7 @@ export class DiagramViewer extends HTMLElement {
 
     this.connectedCallback = this.connectedCallback.bind(this);
 
-    this.addToolbar = this.addToolbar.bind(this);
+    //this.addToolbar = this.addToolbar.bind(this);
     this.zoom = this.zoom.bind(this);
     this.toolbarButtonClicked = this.toolbarButtonClicked.bind(this);
 
@@ -281,16 +282,16 @@ export class DiagramViewer extends HTMLElement {
     this._canvasContainer.style.gridColumn = '1';
     this._contentContainer.appendChild(this._canvasContainer);
 
-    const toolbarAreaContainer =  document.createElement('div');
-    toolbarAreaContainer.className = 'toolbar-area';
-    toolbarAreaContainer.style.display = 'flex';
-    toolbarAreaContainer.style.gridRow = '2';
-    toolbarAreaContainer.style.gridColumn = '1';
-    toolbarAreaContainer.style.justifyContent = 'center';
-    this._toolbarContainer = document.createElement('div');
+    this._toolbarAreaContainer =  document.createElement('div');
+    this._toolbarAreaContainer.className = 'toolbar-area';
+    this._toolbarAreaContainer.style.display = 'flex';
+    this._toolbarAreaContainer.style.gridRow = '2';
+    this._toolbarAreaContainer.style.gridColumn = '1';
+    this._toolbarAreaContainer.style.justifyContent = 'center';
+    this._contentContainer.appendChild(this._toolbarAreaContainer);
 
-    toolbarAreaContainer.appendChild(this._toolbarContainer);
-    this._contentContainer.appendChild(toolbarAreaContainer);
+    this._toolbarContainer = document.createElement('div');
+    this._toolbarAreaContainer.appendChild(this._toolbarContainer);
 
 
     this._container.setAttribute('part', 'container');
