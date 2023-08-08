@@ -21,10 +21,16 @@ see README.md and LICENSE for details
 export default [
   // types
   {
-    input: ['./src/core.ts', './src/viewer.ts', './src/editor.ts', './src/index.ts'],
+    input: [
+      './src/core.ts',
+      './src/viewer.ts',
+      './src/editor.ts',
+      './src/index.ts',
+    ],
     output: {
       dir: './dts/',
     },
+    external: ['@markerjs/mjs-toolbar'],    
     plugins: [
       del({ targets: ['dts/*', 'dist/*'] }),
       nodeResolve(),
@@ -40,32 +46,24 @@ export default [
   {
     input: './dts/core.d.ts',
     output: [{ file: './dist/core.d.ts', format: 'es' }],
-    external: [
-      /^(\.\.?\/)*editor$/,
-      /^(\.\.?\/)*viewer$/,
-    ],
+    external: [/^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/, '@markerjs/mjs-toolbar'],
     plugins: [dts()],
   },
   {
     input: './dts/viewer.d.ts',
     output: [{ file: './dist/viewer.d.ts', format: 'es' }],
-    external: [
-      /^(\.\.?\/)*core$/,
-      /^(\.\.?\/)*editor$/,
-    ],
+    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, '@markerjs/mjs-toolbar'],
     plugins: [dts()],
   },
   {
     input: './dts/editor.d.ts',
     output: [{ file: './dist/editor.d.ts', format: 'es' }],
-    external: [
-      /^(\.\.?\/)*core$/,
-      /^(\.\.?\/)*viewer$/,
-    ],
+    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*viewer$/, '@markerjs/mjs-toolbar'],
     plugins: [dts()],
   },
   {
     input: './dts/index.d.ts',
+    external: ['@markerjs/mjs-toolbar'],    
     output: [{ file: outputDir + pkg.types, format: 'es' }],
     plugins: [dts()],
   },
@@ -92,7 +90,7 @@ export default [
     ],
   },
   {
-    input: 'src/viewer.ts',
+    input: ['src/viewer.ts'],
     output: [
       {
         file: outputDir + 'viewer.js',
@@ -101,12 +99,9 @@ export default [
         banner: banner,
       },
     ],
-    external: [
-      './index',
-      './core'
-    ],
+    external: [/^(\.\.?\/)*core$/, '@markerjs/mjs-toolbar'],
     plugins: [
-      nodeResolve(), 
+      //nodeResolve(),
       typescript({
         compilerOptions: {
           rootDir: './src/',
@@ -126,16 +121,17 @@ export default [
         banner: banner,
       },
     ],
-    external: [
-      /^(\.\.?\/)*core$/
-    ],
+    external: [/^(\.\.?\/)*core$/, '@markerjs/mjs-toolbar'],
     plugins: [
-      nodeResolve(), 
+      //nodeResolve(),
       typescript({
         compilerOptions: {
           rootDir: './src/',
         },
-      }), svgo(), terser()],
+      }),
+      svgo(),
+      terser(),
+    ],
   },
 
   // mindmap
@@ -144,11 +140,7 @@ export default [
     output: {
       dir: './dts/stencilsets/mindmap/',
     },
-    external: [
-      /^(\.\.?\/)*core$/,
-      /^(\.\.?\/)*editor$/,
-      /^(\.\.?\/)*viewer$/,
-    ],
+    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
     plugins: [
       nodeResolve(),
       typescript({
@@ -163,13 +155,9 @@ export default [
   {
     input: './dts/stencilsets/mindmap/mindmap.d.ts',
     output: [{ file: './dist/stencilsets/mindmap/mindmap.d.ts', format: 'es' }],
-    external: [
-      /^(\.\.?\/)*core$/,
-      /^(\.\.?\/)*editor$/,
-      /^(\.\.?\/)*viewer$/,
-    ],
+    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
     plugins: [dts()],
-  },  
+  },
   {
     input: ['./src/stencilsets/mindmap/mindmap.ts'],
     output: [
@@ -180,16 +168,16 @@ export default [
         banner: banner,
       },
     ],
-    external: [
-      /^(\.\.?\/)*core$/,
-      /^(\.\.?\/)*editor$/,
-      /^(\.\.?\/)*viewer$/,
+    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
+    plugins: [
+      typescript({
+        compilerOptions: {
+          rootDir: './src/',
+        },
+      }),
+      svgo(),
+      terser(),
     ],
-    plugins: [typescript({
-      compilerOptions: {
-        rootDir: './src/',
-      },
-    }), svgo(), terser()],
   },
 
   // flowchart
@@ -198,11 +186,7 @@ export default [
     output: {
       dir: './dts/stencilsets/flowchart/',
     },
-    external: [
-      /^(\.\.?\/)*core$/,
-      /^(\.\.?\/)*editor$/,
-      /^(\.\.?\/)*viewer$/,
-    ],
+    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
     plugins: [
       nodeResolve(),
       typescript({
@@ -216,14 +200,12 @@ export default [
   },
   {
     input: './dts/stencilsets/flowchart/flowchart.d.ts',
-    output: [{ file: './dist/stencilsets/flowchart/flowchart.d.ts', format: 'es' }],
-    external: [
-      /^(\.\.?\/)*core$/,
-      /^(\.\.?\/)*editor$/,
-      /^(\.\.?\/)*viewer$/,
+    output: [
+      { file: './dist/stencilsets/flowchart/flowchart.d.ts', format: 'es' },
     ],
+    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
     plugins: [dts()],
-  },  
+  },
   {
     input: ['./src/stencilsets/flowchart/flowchart.ts'],
     output: [
@@ -234,16 +216,16 @@ export default [
         banner: banner,
       },
     ],
-    external: [
-      /^(\.\.?\/)*core$/,
-      /^(\.\.?\/)*editor$/,
-      /^(\.\.?\/)*viewer$/,
+    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
+    plugins: [
+      typescript({
+        compilerOptions: {
+          rootDir: './src/',
+        },
+      }),
+      svgo(),
+      terser(),
     ],
-    plugins: [typescript({
-      compilerOptions: {
-        rootDir: './src/',
-      },
-    }), svgo(), terser()],
   },
 
   // network diagram
@@ -252,11 +234,7 @@ export default [
     output: {
       dir: './dts/stencilsets/network/',
     },
-    external: [
-      /^(\.\.?\/)*core$/,
-      /^(\.\.?\/)*editor$/,
-      /^(\.\.?\/)*viewer$/,
-    ],
+    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
     plugins: [
       nodeResolve(),
       typescript({
@@ -271,13 +249,9 @@ export default [
   {
     input: './dts/stencilsets/network/network.d.ts',
     output: [{ file: './dist/stencilsets/network/network.d.ts', format: 'es' }],
-    external: [
-      /^(\.\.?\/)*core$/,
-      /^(\.\.?\/)*editor$/,
-      /^(\.\.?\/)*viewer$/,
-    ],
+    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
     plugins: [dts()],
-  },  
+  },
   {
     input: ['./src/stencilsets/network/network.ts'],
     output: [
@@ -288,16 +262,16 @@ export default [
         banner: banner,
       },
     ],
-    external: [
-      /^(\.\.?\/)*core$/,
-      /^(\.\.?\/)*editor$/,
-      /^(\.\.?\/)*viewer$/,
+    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
+    plugins: [
+      typescript({
+        compilerOptions: {
+          rootDir: './src/',
+        },
+      }),
+      svgo(),
+      terser(),
     ],
-    plugins: [typescript({
-      compilerOptions: {
-        rootDir: './src/',
-      },
-    }), svgo(), terser()],
   },
 
   // complete UMD package
@@ -312,12 +286,7 @@ export default [
         banner: banner,
       },
     ],
-    plugins: [
-      nodeResolve(),
-      typescript(),
-      svgo(),
-      terser(),
-    ],
+    plugins: [nodeResolve(), typescript(), svgo(), terser()],
   },
 
   // complete ESM package
@@ -331,15 +300,18 @@ export default [
         banner: banner,
       },
     ],
+    external: ['@markerjs/mjs-toolbar'],    
     plugins: [
-      nodeResolve(),
+      //nodeResolve(),
       typescript(),
       svgo(),
       terser(),
       generatePackageJson({
         baseContents: (pkg) => {
           pkg.scripts = {};
-          pkg.dependencies = {};
+          pkg.dependencies = {
+            "@markerjs/mjs-toolbar": "^0.2.3"
+          };
           pkg.devDependencies = {};
           return pkg;
         },
