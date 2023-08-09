@@ -244,8 +244,8 @@ export class DiagramViewer extends HTMLElement {
 
   private createLayout() {
     this.style.display = 'block';
-    this.style.width = '100%';
-    this.style.height = '100%';
+    this.style.width = this.style.width !== '' ? this.style.width : '100%';
+    this.style.height = this.style.height !== '' ? this.style.height : '100%';
     this.style.position = 'relative';
 
     this._container = document.createElement('div');
