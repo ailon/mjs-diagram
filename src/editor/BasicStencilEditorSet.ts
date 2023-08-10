@@ -3,17 +3,13 @@ import {
   RectangleTextStencil,
   CurvedConnector,
   ConnectorBase,
-  EllipseStencil,
-  DiamondStencil,
   TextStencilState,
   AngledConnector,
   LightbulbIconStencil,
-  LabelStencil,
 } from '../core';
 
 import { StencilEditorSet } from './StencilEditorSet';
 import { TextStencilEditor } from './TextStencilEditor';
-import { ConnectorBaseEditor } from './ConnectorBaseEditor';
 import { ImageStencilEditor } from './ImageStencilEditor';
 
 /**
