@@ -135,144 +135,13 @@ export default [
   },
 
   // mindmap
-  {
-    input: ['./src/stencilsets/mindmap/mindmap.ts'],
-    output: {
-      dir: './dts/stencilsets/mindmap/',
-    },
-    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
-    plugins: [
-      nodeResolve(),
-      typescript({
-        declaration: true,
-        outDir: './dts/stencilsets/mindmap/',
-        rootDir: './src/',
-        exclude: ['./test/**/*', './dts/**/*', './dist/**/*'],
-      }),
-      svgo(),
-    ],
-  },
-  {
-    input: './dts/stencilsets/mindmap/mindmap.d.ts',
-    output: [{ file: './dist/stencilsets/mindmap/mindmap.d.ts', format: 'es' }],
-    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
-    plugins: [dts()],
-  },
-  {
-    input: ['./src/stencilsets/mindmap/mindmap.ts'],
-    output: [
-      {
-        file: outputDir + 'stencilsets/mindmap/mindmap.js',
-        format: 'es',
-        sourcemap: true,
-        banner: banner,
-      },
-    ],
-    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
-    plugins: [
-      typescript({
-        compilerOptions: {
-          rootDir: './src/',
-        },
-      }),
-      svgo(),
-      terser(),
-    ],
-  },
+  ...getStencilSetBundleConfig('mindmap'),
 
   // flowchart
-  {
-    input: ['./src/stencilsets/flowchart/flowchart.ts'],
-    output: {
-      dir: './dts/stencilsets/flowchart/',
-    },
-    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
-    plugins: [
-      nodeResolve(),
-      typescript({
-        declaration: true,
-        outDir: './dts/stencilsets/flowchart/',
-        rootDir: './src/',
-        exclude: ['./test/**/*', './dts/**/*', './dist/**/*'],
-      }),
-      svgo(),
-    ],
-  },
-  {
-    input: './dts/stencilsets/flowchart/flowchart.d.ts',
-    output: [
-      { file: './dist/stencilsets/flowchart/flowchart.d.ts', format: 'es' },
-    ],
-    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
-    plugins: [dts()],
-  },
-  {
-    input: ['./src/stencilsets/flowchart/flowchart.ts'],
-    output: [
-      {
-        file: outputDir + 'stencilsets/flowchart/flowchart.js',
-        format: 'es',
-        sourcemap: true,
-        banner: banner,
-      },
-    ],
-    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
-    plugins: [
-      typescript({
-        compilerOptions: {
-          rootDir: './src/',
-        },
-      }),
-      svgo(),
-      terser(),
-    ],
-  },
+  ...getStencilSetBundleConfig('flowchart'),
 
   // network diagram
-  {
-    input: ['./src/stencilsets/network/network.ts'],
-    output: {
-      dir: './dts/stencilsets/network/',
-    },
-    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
-    plugins: [
-      nodeResolve(),
-      typescript({
-        declaration: true,
-        outDir: './dts/stencilsets/network/',
-        rootDir: './src/',
-        exclude: ['./test/**/*', './dts/**/*', './dist/**/*'],
-      }),
-      svgo(),
-    ],
-  },
-  {
-    input: './dts/stencilsets/network/network.d.ts',
-    output: [{ file: './dist/stencilsets/network/network.d.ts', format: 'es' }],
-    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
-    plugins: [dts()],
-  },
-  {
-    input: ['./src/stencilsets/network/network.ts'],
-    output: [
-      {
-        file: outputDir + 'stencilsets/network/network.js',
-        format: 'es',
-        sourcemap: true,
-        banner: banner,
-      },
-    ],
-    external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
-    plugins: [
-      typescript({
-        compilerOptions: {
-          rootDir: './src/',
-        },
-      }),
-      svgo(),
-      terser(),
-    ],
-  },
+  ...getStencilSetBundleConfig('network'),
 
   // complete UMD package
   {
@@ -332,3 +201,52 @@ export default [
     ],
   },
 ];
+
+function getStencilSetBundleConfig(name) {
+  return [
+    {
+      input: [`./src/stencilsets/${name}/${name}.ts`],
+      output: {
+        dir: `./dts/stencilsets/${name}/`,
+      },
+      external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
+      plugins: [
+        nodeResolve(),
+        typescript({
+          declaration: true,
+          outDir: `./dts/stencilsets/${name}/`,
+          rootDir: './src/',
+          exclude: ['./test/**/*', './dts/**/*', './dist/**/*'],
+        }),
+        svgo(),
+      ],
+    },
+    {
+      input: `./dts/stencilsets/${name}/${name}.d.ts`,
+      output: [{ file: `./dist/stencilsets/${name}/${name}.d.ts`, format: 'es' }],
+      external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
+      plugins: [dts()],
+    },
+    {
+      input: [`./src/stencilsets/${name}/${name}.ts`],
+      output: [
+        {
+          file: outputDir + `stencilsets/${name}/${name}.js`,
+          format: 'es',
+          sourcemap: true,
+          banner: banner,
+        },
+      ],
+      external: [/^(\.\.?\/)*core$/, /^(\.\.?\/)*editor$/, /^(\.\.?\/)*viewer$/],
+      plugins: [
+        typescript({
+          compilerOptions: {
+            rootDir: './src/',
+          },
+        }),
+        svgo(),
+        terser(),
+      ],
+    },
+  ]
+}
