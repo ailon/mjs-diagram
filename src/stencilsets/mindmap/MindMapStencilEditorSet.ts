@@ -1,25 +1,15 @@
-import { StencilEditorSet, TextStencilEditor, ConnectorBaseEditor } from '../../editor';
-import { LabelStencil, TextStencilState } from '../../core';
+import { StencilEditorSet, TextStencilEditor } from '../../editor';
+import { TextStencilState } from '../../core';
 
 import { mindMapStencilSet } from './MindMapStencilSet';
-import { CentralTopicStencil } from './stencils/CentralTopicStencil';
-import { SubTopicStencil } from './stencils/SubTopicStencil';
-import { ItemStencil } from './stencils/ItemStencil';
 import { MindMapConnector } from './connectors/MindMapConnector';
 
 /**
  * Mind Map editor set.
  */
 const mindMapStencilEditorSet = new StencilEditorSet('mindmap', mindMapStencilSet);
-mindMapStencilEditorSet.stencilEditorTypes.set(CentralTopicStencil, TextStencilEditor);
-mindMapStencilEditorSet.stencilEditorTypes.set(SubTopicStencil, TextStencilEditor);
-mindMapStencilEditorSet.stencilEditorTypes.set(ItemStencil, TextStencilEditor);
-mindMapStencilEditorSet.stencilEditorTypes.set(LabelStencil, TextStencilEditor);
-
-mindMapStencilEditorSet.connectorEditorTypes.set(
-  MindMapConnector,
-  ConnectorBaseEditor
-);
+mindMapStencilEditorSet.displayName = 'Mind map';
+mindMapStencilEditorSet.defaultStencilEditor = TextStencilEditor;
 
 mindMapStencilEditorSet.availableConnectorTypes = [
   MindMapConnector,

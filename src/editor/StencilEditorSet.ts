@@ -66,6 +66,8 @@ export class StencilEditorSet implements IStencilEditorSet {
   public stencilSet: IStencilSet;
   public displayName?: string;
   public defaultStringSet?: StringSet;
+  public defaultStencilEditor: typeof StencilBaseEditor = StencilBaseEditor;
+  public defaultConnectorEditor: typeof ConnectorBaseEditor = ConnectorBaseEditor;
 
   public stencilEditorTypes: Map<typeof StencilBase, typeof StencilBaseEditor>;
   public connectorEditorTypes: Map<typeof ConnectorBase, typeof ConnectorBaseEditor>;
@@ -89,16 +91,52 @@ export class StencilEditorSet implements IStencilEditorSet {
 
     this.getStencilEditor = this.getStencilEditor.bind(this);
     this.getConnectorEditor = this.getConnectorEditor.bind(this);
+    this.addStencilEditor = this.addStencilEditor.bind(this);
+    this.addConnectorEditor = this.addConnectorEditor.bind(this);
     
     this.stencilEditorTypes = new Map<typeof StencilBase, typeof StencilBaseEditor>();
     this.connectorEditorTypes = new Map<typeof ConnectorBase, typeof ConnectorBaseEditor>();
   }
 
+  /**
+   * Returns an editor type for the provided stencil type.
+   * @param stencilType stencil type.
+   * @returns if specified returns a custom editor type for the supplied stencil type, 
+   * otherwise returns the default editor type for this stencil editor set.
+   */
   public getStencilEditor(stencilType: typeof StencilBase): typeof StencilBaseEditor {
-    return this.stencilEditorTypes.get(stencilType) ?? StencilBaseEditor;
+    return this.stencilEditorTypes.get(stencilType) ?? this.defaultStencilEditor;
   }
 
+  /**
+   * Returns an editor type for the provided connector type.
+   * @param connectorType connector type.
+   * @returns if specified returns a custom editor type for the supplied connector type, 
+   * otherwise returns the default editor type for this stencil editor set.
+   */
   public getConnectorEditor(connectorType: typeof ConnectorBase): typeof ConnectorBaseEditor {
-    return this.connectorEditorTypes.get(connectorType) ?? ConnectorBaseEditor;
+    return this.connectorEditorTypes.get(connectorType) ?? this.defaultConnectorEditor;
+  }
+
+  /**
+   * Adds an editor type for one or more stencil types.
+   * @param editorType editor type.
+   * @param stencilTypes list of stencil types to be edited by this editor.
+   */
+  public addStencilEditor(editorType: typeof StencilBaseEditor, ...stencilTypes: (typeof StencilBase)[]) {
+    stencilTypes.forEach(st => {
+      this.stencilEditorTypes.set(st, editorType);
+    });
+  }
+
+  /**
+   * Adds an editor type for one or more connector types.
+   * @param editorType editor type.
+   * @param connectorTypes list of connector types to be edited by this editor.
+   */
+  public addConnectorEditor(editorType: typeof ConnectorBaseEditor, ...connectorTypes: (typeof ConnectorBase)[]) {
+    connectorTypes.forEach(ct => {
+      this.connectorEditorTypes.set(ct, editorType);
+    });
   }
 }

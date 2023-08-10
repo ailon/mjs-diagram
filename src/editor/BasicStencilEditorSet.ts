@@ -21,23 +21,13 @@ import { ImageStencilEditor } from './ImageStencilEditor';
  * diagrams with the {@link core!basicStencilSet}.
  */
 const basicStencilEditorSet = new StencilEditorSet('core', basicStencilSet);
+basicStencilEditorSet.displayName = 'Basic stencil set';
+basicStencilEditorSet.defaultStencilEditor = TextStencilEditor;
 basicStencilEditorSet.stencilEditorTypes.set(
   RectangleTextStencil,
   TextStencilEditor
 );
-basicStencilEditorSet.stencilEditorTypes.set(EllipseStencil, TextStencilEditor);
-basicStencilEditorSet.stencilEditorTypes.set(DiamondStencil, TextStencilEditor);
-basicStencilEditorSet.stencilEditorTypes.set(LabelStencil, TextStencilEditor);
-basicStencilEditorSet.stencilEditorTypes.set(LightbulbIconStencil, ImageStencilEditor);
-
-basicStencilEditorSet.connectorEditorTypes.set(
-  CurvedConnector,
-  ConnectorBaseEditor
-);
-basicStencilEditorSet.connectorEditorTypes.set(
-  AngledConnector,
-  ConnectorBaseEditor
-);
+basicStencilEditorSet.addStencilEditor(ImageStencilEditor, LightbulbIconStencil);
 
 basicStencilEditorSet.availableConnectorTypes = [
   ConnectorBase,
