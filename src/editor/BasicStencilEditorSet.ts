@@ -1,16 +1,17 @@
 import {
   basicStencilSet,
-  RectangleTextStencil,
   CurvedConnector,
   ConnectorBase,
   TextStencilState,
   AngledConnector,
   LightbulbIconStencil,
+  CustomImageStencil,
 } from '../core';
 
 import { StencilEditorSet } from './StencilEditorSet';
 import { TextStencilEditor } from './TextStencilEditor';
 import { ImageStencilEditor } from './ImageStencilEditor';
+import { CustomImageStencilEditor } from './CustomImageStencilEditor';
 
 /**
  * Basic stencil editor set sets up editing capabilities for creating
@@ -19,11 +20,8 @@ import { ImageStencilEditor } from './ImageStencilEditor';
 const basicStencilEditorSet = new StencilEditorSet('core', basicStencilSet);
 basicStencilEditorSet.displayName = 'Basic stencil set';
 basicStencilEditorSet.defaultStencilEditor = TextStencilEditor;
-basicStencilEditorSet.stencilEditorTypes.set(
-  RectangleTextStencil,
-  TextStencilEditor
-);
 basicStencilEditorSet.addStencilEditor(ImageStencilEditor, LightbulbIconStencil);
+basicStencilEditorSet.addStencilEditor(CustomImageStencilEditor, CustomImageStencil);
 
 basicStencilEditorSet.availableConnectorTypes = [
   ConnectorBase,

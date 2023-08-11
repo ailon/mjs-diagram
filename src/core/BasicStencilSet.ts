@@ -7,6 +7,7 @@ import { StencilSet } from './StencilSet';
 import { RectangleTextStencil } from './RectangleTextStencil';
 import { LightbulbIconStencil } from './LightbulbIconStencil';
 import { LabelStencil } from './LabelStencil';
+import { CustomImageStencil } from './CustomImageStencil';
 
 /**
  * Basic stencil set includes all the core stencils and connectors
@@ -38,7 +39,11 @@ basicStencilSet.stencilTypes.push(
   {
     stencilType: LightbulbIconStencil,
     displayName: 'Lightbulb',
-  }
+  },
+  {
+    stencilType: CustomImageStencil,
+    displayName: 'Custom image',
+  },
   // },{
   //   stencilType: TextStencil,
   //   displayName: 'Text box',

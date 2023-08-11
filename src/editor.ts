@@ -53,6 +53,7 @@ export { StencilEditorProperties } from './editor/StencilEditorProperties';
 export { ConnectorEditorProperties } from './editor/ConnectorEditorProperties';
 export { TextStencilEditor } from './editor/TextStencilEditor';
 export { ImageStencilEditor } from './editor/ImageStencilEditor';
+export { CustomImageStencilEditor } from './editor/CustomImageStencilEditor';
 
 export { TextBlockEditor, TextChangedHandler } from './editor/TextBlockEditor';
 export { ResizeGrip, GripLocation } from './editor/ResizeGrip';
