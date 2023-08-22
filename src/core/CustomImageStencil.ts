@@ -19,7 +19,7 @@ export class CustomImageStencil extends ImageStencil {
     this.setImageSrc = this.setImageSrc.bind(this);
   }
 
-  public setImageSrc(imageSrc: string) {
+  public setImageSrc(imageSrc?: string) {
     this.imageSrc = imageSrc;
   }
 }

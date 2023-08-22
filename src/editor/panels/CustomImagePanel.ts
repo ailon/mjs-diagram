@@ -8,7 +8,7 @@ export class CustomImagePanel extends PropertyPanelBase {
 
   public onImageChanged?: ImageChangeHandler;
 
-  private imagePreview?: HTMLImageElement;
+  private imagePreview?: HTMLDivElement;
   private imageFileSelector?: HTMLInputElement;
 
   constructor(
@@ -34,16 +34,26 @@ export class CustomImagePanel extends PropertyPanelBase {
     this.imageFileSelector.type = 'file';
     this.imageFileSelector.accept = 'image/gif, image/jpeg, image/png';
     this.imageFileSelector.style.visibility = 'hidden';
+    this.imageFileSelector.style.width = '0px';
+    this.imageFileSelector.style.height = '0px';
     this.imageFileSelector.addEventListener('change', this.imageFileSelected)
     panelDiv.appendChild(this.imageFileSelector);
 
-    this.imagePreview = document.createElement('img');
+    this.imagePreview = document.createElement('div');
+    this.imagePreview.style.display = 'flex';
+    this.imagePreview.style.alignItems = 'center';
+    this.imagePreview.style.justifyContent = 'center';
     this.imagePreview.style.width = '200px';
-    //this.imagePreview.style.height = '200px';
+    this.imagePreview.style.height = '200px';
     this.imagePreview.style.border = '1px solid var(--i-mjsdiae-accent-color)';
     this.imagePreview.style.margin = '5px auto';
     this.imagePreview.title = this.language.getString('image') ?? 'image';
-    this.imagePreview.src = this.currentImageSrc ?? '';
+    if (this.currentImageSrc !== undefined) {
+      this.imagePreview.style.backgroundImage = `url(${this.currentImageSrc})`;
+    } else {
+      this.imagePreview.innerText = this.language.getString('click-to-select') ?? 'click to select image';
+    }
+    this.imagePreview.style.backgroundSize = 'contain';
     this.imagePreview.addEventListener('click', () => this.imageFileSelector?.click());
     panelDiv.appendChild(this.imagePreview);
 
@@ -57,7 +67,8 @@ export class CustomImagePanel extends PropertyPanelBase {
         reader.addEventListener('load', ev => {
           if (ev.target?.result && typeof ev.target.result === 'string') {
             if (this.imagePreview) {
-              this.imagePreview.src = ev.target.result;
+              this.imagePreview.style.backgroundImage = `url(${ev.target.result})`;
+              this.imagePreview.innerText = '';
             }
             this.setImageSrc(ev.target.result);
           }
