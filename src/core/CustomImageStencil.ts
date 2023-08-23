@@ -9,6 +9,16 @@ export class CustomImageStencil extends ImageStencil {
 
   protected static DEFAULT_TEXT = 'Image';
 
+  protected static getPathD(width: number, height: number): string {
+    const result = `M 0 0 
+      H ${width} 
+      V ${height} 
+      H 0 
+      V 0 Z`;
+
+    return result;
+  }
+
   public static getThumbnail(width: number, height: number): SVGSVGElement {
     const rectWidth = width * 0.9;
     const rectHeight = Math.min(height * 0.9, rectWidth * 0.4);
@@ -29,6 +39,9 @@ export class CustomImageStencil extends ImageStencil {
     super(iid, container, settings);
 
     this.defaultSize = { width: 100, height: 100 };
+
+    this._fillColor = 'transparent';
+    this._strokeColor = 'transparent';
 
     this.setImageSrc = this.setImageSrc.bind(this);
   }
