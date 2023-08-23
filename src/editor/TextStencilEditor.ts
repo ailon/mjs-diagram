@@ -57,6 +57,9 @@ export class TextStencilEditor extends StencilBaseEditor {
     this.textPanel.onColorChanged = (<TextStencil>this._stencil).setColor;
     this.textPanel.onFontFamilyChanged = (<TextStencil>this._stencil).setFont;
     this.textPanel.onFontSizeChanged = (<TextStencil>this._stencil).setFontSize;
+
+    // causes text editor to open before the creation is finished
+    this._suppressStencilCreateEvent = true;
   }
 
   public get propertyPanels(): PropertyPanelBase[] {
@@ -144,10 +147,11 @@ export class TextStencilEditor extends StencilBaseEditor {
   }
 
   public create(point: IPoint): void {
-    this._suppressStencilCreateEvent = true;
     super.create(point);
     this.setSize();
-    this.showTextEditor();
+    if (this._suppressStencilCreateEvent) {
+      this.showTextEditor();
+    }
     this.setFont(this.settings.getFontFamily(this.stencil.typeName));
     this.setColor(this.settings.getColor(this.stencil.typeName, 'text'));
   }

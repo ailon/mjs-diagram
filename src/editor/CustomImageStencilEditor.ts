@@ -30,6 +30,8 @@ export class CustomImageStencilEditor extends TextStencilEditor {
       (<CustomImageStencil>this._stencil).labelLocation
     )
     this.labelLocationPanel.onLabelLocationChanged = (<CustomImageStencil>this._stencil).setLabelLocation;
+
+    this._suppressStencilCreateEvent = false;
   }
 
   public get propertyPanels(): PropertyPanelBase[] {
