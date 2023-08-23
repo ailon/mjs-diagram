@@ -34,6 +34,10 @@ export {
   Port,
   PortLocation,
   SvgHelper,
+  CustomImageStencil,
+  ImageStencilState,
+  ImageType,
+  TextLabelLocation
 } from './core';
 export {
   DiagramViewer,

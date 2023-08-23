@@ -1,7 +1,7 @@
 import { SvgHelper } from './SvgHelper';
 import { DiagramSettings } from './DiagramSettings';
 import { TextStencil } from './TextStencil';
-import { ImageStencilState, ImageType } from './ImageStencilState';
+import { ImageStencilState, ImageType, TextLabelLocation } from './ImageStencilState';
 
 /**
  * Base stencil type for stencils defined by a drawing or a raster image.
@@ -65,6 +65,8 @@ export class ImageStencil extends TextStencil {
    * Natural (real) height of the image.
    */
   protected naturalHeight = 24;
+
+  public labelLocation: TextLabelLocation = 'bottom';
 
   // protected SVGImage?: SVGSVGElement | SVGImageElement = SvgHelper.createImage([
   //   [
@@ -209,13 +211,19 @@ export class ImageStencil extends TextStencil {
         ['stroke-dasharray', this.strokeDasharray],
       ]);
     }
-  }  
+  }
+
+  public setLabelLocation(location: TextLabelLocation) {
+    this.labelLocation = location;
+    // @todo: implement logic
+  }
 
   public getState(): ImageStencilState {
     const result: ImageStencilState = Object.assign(
       {
         imageType: this.imageType,
-        imageSrc: this.imageSrc
+        imageSrc: this.imageSrc,
+        labelLocation: this.labelLocation
       },
       super.getState()
     );
@@ -230,6 +238,9 @@ export class ImageStencil extends TextStencil {
     }
     if (imgState.imageSrc !== undefined) {
       this.imageSrc = imgState.imageSrc;
+    }
+    if (imgState.labelLocation !== undefined) {
+      this.labelLocation = imgState.labelLocation;
     }
     super.restoreState(state);
   }
