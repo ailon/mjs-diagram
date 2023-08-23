@@ -1,7 +1,11 @@
 import { SvgHelper } from './SvgHelper';
 import { DiagramSettings } from './DiagramSettings';
 import { TextStencil } from './TextStencil';
-import { ImageStencilState, ImageType, TextLabelLocation } from './ImageStencilState';
+import {
+  ImageStencilState,
+  ImageType,
+  TextLabelLocation,
+} from './ImageStencilState';
 
 /**
  * Base stencil type for stencils defined by a drawing or a raster image.
@@ -48,9 +52,7 @@ export class ImageStencil extends TextStencil {
     this._imageSrc = value;
     if (this.SVGImage && this.imageType === 'bitmap' && value !== undefined) {
       this._isImageSet = true;
-      SvgHelper.setAttributes(this.SVGImage,
-        [['href', value]]
-      );
+      SvgHelper.setAttributes(this.SVGImage, [['href', value]]);
       this.setTextBoundingBox();
     }
   }
@@ -77,7 +79,7 @@ export class ImageStencil extends TextStencil {
 
   /**
    * {@inheritDoc core!StencilBase.constructor}
-   */    
+   */
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     super(iid, container, settings);
 
@@ -85,6 +87,7 @@ export class ImageStencil extends TextStencil {
     this.adjustImage = this.adjustImage.bind(this);
     this.setTextBoundingBox = this.setTextBoundingBox.bind(this);
     this.textSizeChanged = this.textSizeChanged.bind(this);
+    this.setLabelLocation = this.setLabelLocation.bind(this);
   }
 
   private _textBlockChangeProcessed = false;
@@ -99,22 +102,51 @@ export class ImageStencil extends TextStencil {
 
   protected setTextBoundingBox(): void {
     if (this._isImageSet) {
-      this.textBoundingBox.x = this.padding;
-      this.textBoundingBox.width = this.width - this.padding * 2;
-      if (
-        this.textBlock &&
-        this.textBlock.textSize !== undefined &&
-        this.textBlock.textSize.height > 0
-      ) {
-        this.textBoundingBox.y =
-          this.height - this.padding - this.textBlock.textSize.height;
-      } else {
-        this.textBoundingBox.y = this.height - this.padding - 30;
+      switch (this.labelLocation) {
+        case 'top':
+        case 'bottom': {
+          this.textBoundingBox.x = this.padding;
+          this.textBoundingBox.width = this.width - this.padding * 2;
+          if (
+            this.textBlock &&
+            this.textBlock.textSize !== undefined &&
+            this.textBlock.textSize.height > 0
+          ) {
+            this.textBoundingBox.y =
+              this.labelLocation === 'top'
+                ? this.padding
+                : this.height - this.padding - this.textBlock.textSize.height;
+            this.textBoundingBox.height = this.textBlock.textSize.height;
+          } else {
+            this.textBoundingBox.y =
+              this.labelLocation === 'top'
+                ? this.padding
+                : this.height - this.padding - 30;
+            this.textBoundingBox.height =
+              this.height - this.padding - this.textBoundingBox.y;
+          }
+          break;
+        }
+        case 'left':
+        case 'right': {
+          this.textBoundingBox.y = this.padding;
+          this.textBoundingBox.width = (this.width - this.padding * 2) * 0.75;
+          this.textBoundingBox.x =
+            this.labelLocation === 'left'
+              ? this.padding
+              : this.width - this.padding - this.textBoundingBox.width;
+          this.textBoundingBox.height = this.height - this.padding * 2;
+          break;
+        }
+        case 'hidden': {
+          this.textBoundingBox.x = 0;
+          this.textBoundingBox.y = 0;
+          this.textBoundingBox.width = 0;
+          this.textBoundingBox.height = 0;
+          break;
+        }
       }
-      this.textBoundingBox.height =
-        this.height - this.padding - this.textBoundingBox.y;
       this.textBlock.boundingBox = this.textBoundingBox;
-
       this.adjustImage();
     } else {
       super.setTextBoundingBox();
@@ -145,9 +177,7 @@ export class ImageStencil extends TextStencil {
     } else {
       this.imageType = 'bitmap';
       this._isImageSet = this._imageSrc !== undefined;
-      this.SVGImage = SvgHelper.createImage([
-        ['href', this._imageSrc ?? '']
-      ])
+      this.SVGImage = SvgHelper.createImage([['href', this._imageSrc ?? '']]);
     }
   }
 
@@ -165,7 +195,6 @@ export class ImageStencil extends TextStencil {
           ['stroke-dasharray', this.strokeDasharray],
         ]);
         // } else if (this.imageType === 'bitmap') {
-          
       }
       this.adjustImage();
       this.visual.appendChild(this.SVGImage);
@@ -175,11 +204,61 @@ export class ImageStencil extends TextStencil {
 
   public adjustImage(): void {
     if (this.SVGImage !== undefined) {
-      this.SVGImage.setAttribute('width', `${this.width}px`);
-      if (this.textBlock && this.textBlock.text !== '') {
-        this.SVGImage.setAttribute('height', `${this.textBoundingBox.y}px`);
-      } else {
-        this.SVGImage.setAttribute('height', `${this.height}px`);
+      switch (this.labelLocation) {
+        case 'bottom': {
+          this.SVGImage.setAttribute('x', `${this.padding}px`);
+          this.SVGImage.setAttribute('y', `${this.padding}px`);
+          this.SVGImage.setAttribute('width', `${this.width - this.padding * 2}px`);
+          if (this.textBlock && this.textBlock.text !== '') {
+            this.SVGImage.setAttribute('height', `${this.textBoundingBox.y - this.padding}px`);
+          } else {
+            this.SVGImage.setAttribute('height', `${this.height - this.padding}px`);
+          }
+          break;
+        }
+        case 'top': {
+          this.SVGImage.setAttribute('x', `${this.padding}px`);
+          this.SVGImage.setAttribute('y', `${this.textBoundingBox.bottom + this.padding}px`);
+          this.SVGImage.setAttribute('width', `${this.width - this.padding * 2}px`);
+          this.SVGImage.setAttribute(
+            'height',
+            `${this.height - this.padding * 2 - this.textBoundingBox.height}px`
+          );
+          break;
+        }
+        case 'left':
+        case 'right': {
+          if (this.labelLocation === 'right') {
+            this.SVGImage.setAttribute('x', `${this.padding}px`);
+          } else {
+            this.SVGImage.setAttribute(
+              'x',
+              `${this.padding + (this.width - this.padding * 2) * 0.75}px`
+            );
+          }
+          this.SVGImage.setAttribute('y', `${this.padding}px`);
+          this.SVGImage.setAttribute(
+            'height',
+            `${this.height - this.padding * 2}px`
+          );
+          this.SVGImage.setAttribute(
+            'width',
+            `${(this.width - this.padding * 2) * 0.25}px`
+          );
+          break;
+        }
+        case 'hidden': {
+          this.SVGImage.setAttribute('x', `${this.padding}px`);
+          this.SVGImage.setAttribute('y', `${this.padding}px`);
+          this.SVGImage.setAttribute(
+            'width',
+            `${this.width - this.padding * 2}px`
+          );
+          this.SVGImage.setAttribute(
+            'height',
+            `${this.height - this.padding * 2}px`
+          );
+        }
       }
     }
   }
@@ -215,7 +294,14 @@ export class ImageStencil extends TextStencil {
 
   public setLabelLocation(location: TextLabelLocation) {
     this.labelLocation = location;
-    // @todo: implement logic
+    if (this.textBlock) {
+      if (this.labelLocation === 'hidden') {
+        this.textBlock.textElement.style.visibility = 'hidden';
+      } else {
+        this.textBlock.textElement.style.visibility = '';
+      }
+    }
+    this.setTextBoundingBox();
   }
 
   public getState(): ImageStencilState {
@@ -223,7 +309,7 @@ export class ImageStencil extends TextStencil {
       {
         imageType: this.imageType,
         imageSrc: this.imageSrc,
-        labelLocation: this.labelLocation
+        labelLocation: this.labelLocation,
       },
       super.getState()
     );
@@ -244,5 +330,4 @@ export class ImageStencil extends TextStencil {
     }
     super.restoreState(state);
   }
-
 }
