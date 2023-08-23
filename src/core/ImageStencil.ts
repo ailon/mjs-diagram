@@ -130,7 +130,7 @@ export class ImageStencil extends TextStencil {
         case 'left':
         case 'right': {
           this.textBoundingBox.y = this.padding;
-          this.textBoundingBox.width = (this.width - this.padding * 2) * 0.75;
+          this.textBoundingBox.width = (this.width - this.padding * 2) * 0.65;
           this.textBoundingBox.x =
             this.labelLocation === 'left'
               ? this.padding
@@ -233,7 +233,7 @@ export class ImageStencil extends TextStencil {
           } else {
             this.SVGImage.setAttribute(
               'x',
-              `${this.padding + (this.width - this.padding * 2) * 0.75}px`
+              `${this.padding + (this.width - this.padding * 2) * 0.65}px`
             );
           }
           this.SVGImage.setAttribute('y', `${this.padding}px`);
@@ -243,7 +243,7 @@ export class ImageStencil extends TextStencil {
           );
           this.SVGImage.setAttribute(
             'width',
-            `${(this.width - this.padding * 2) * 0.25}px`
+            `${(this.width - this.padding * 2) * 0.35}px`
           );
           break;
         }
