@@ -54,6 +54,8 @@ export class CustomImagePanel extends PropertyPanelBase {
       this.imagePreview.innerText = this.language.getString('click-to-select') ?? 'click to select image';
     }
     this.imagePreview.style.backgroundSize = 'contain';
+    this.imagePreview.style.backgroundRepeat = 'no-repeat';
+    this.imagePreview.style.backgroundPosition = 'center';
     this.imagePreview.addEventListener('click', () => this.imageFileSelector?.click());
     panelDiv.appendChild(this.imagePreview);
 
