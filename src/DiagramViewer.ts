@@ -288,6 +288,7 @@ export class DiagramViewer extends HTMLElement {
     this._toolbarAreaContainer.style.gridRow = '2';
     this._toolbarAreaContainer.style.gridColumn = '1';
     this._toolbarAreaContainer.style.justifyContent = 'center';
+    this._toolbarAreaContainer.style.marginBottom = '10px';
     this._contentContainer.appendChild(this._toolbarAreaContainer);
 
     this._toolbarContainer = document.createElement('div');
