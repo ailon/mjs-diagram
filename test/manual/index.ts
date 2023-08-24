@@ -19,7 +19,10 @@ import { ConnectorEventData, DiagramViewerEventData, StencilEventData } from '..
 import { ConnectorEditorEventData, DiagramEditorEventData, StencilEditorEventData } from '../../src/DiagramEditor';
 import lt_core_strings from '../../src/editor/lang/lt';
 import lt_flowchart_strings from '../../src/stencilsets/flowchart/lang/lt';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { networkStencilSet, networkStencilEditorSet } from '../../src/stencilsets/network/network';
+import { orgchartStencilEditorSet } from '../../src/stencilsets/orgchart/OrgchartStencilEditorSet';
+import { orgchartStencilSet } from '../../src/stencilsets/orgchart/OrgchartStencilSet';
 
 export * from './../../src/index';
 
@@ -164,7 +167,8 @@ export class Experiments {
       console.log(`editor connector enter ${(<ConnectorEditorEventData>ev.detail).connectorEditor.isSelected}`);
     });
     
-    this.editor.stencilEditorSet = basicStencilEditorSet;
+    this.editor.stencilEditorSet = orgchartStencilEditorSet;
+    // this.editor.stencilEditorSet = basicStencilEditorSet;
     // this.editor.stencilEditorSet = flowchartStencilEditorSet;
     // this.editor.stencilEditorSet = mindMapStencilEditorSet;
     // this.editor.stencilEditorSet = networkStencilEditorSet;
@@ -221,7 +225,8 @@ export class Experiments {
     });
 
     // this.viewer.stencilSet = flowchartStencilSet;
-    this.viewer.stencilSet = basicStencilSet;
+    this.viewer.stencilSet = orgchartStencilSet;
+    // this.viewer.stencilSet = basicStencilSet;
     // this.viewer.stencilSet = networkStencilSet;
 
     const manualState: DiagramState = {

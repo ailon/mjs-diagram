@@ -143,6 +143,9 @@ export default [
   // network diagram
   ...getStencilSetBundleConfig('network'),
 
+  // orgchart
+  ...getStencilSetBundleConfig('orgchart'),
+
   // complete UMD package
   {
     input: ['src/index.ts'],

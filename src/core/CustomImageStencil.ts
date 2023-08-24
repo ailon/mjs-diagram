@@ -48,5 +48,6 @@ export class CustomImageStencil extends ImageStencil {
 
   public setImageSrc(imageSrc?: string) {
     this.imageSrc = imageSrc;
+    // console.log(imageSrc);
   }
 }

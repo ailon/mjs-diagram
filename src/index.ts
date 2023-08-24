@@ -37,7 +37,7 @@ export {
   CustomImageStencil,
   ImageStencilState,
   ImageType,
-  TextLabelLocation
+  TextLabelLocation,
 } from './core';
 export {
   DiagramViewer,
@@ -143,3 +143,11 @@ export {
   networkStencilEditorSet,
   networkStencilSet,
 } from './stencilsets/network/network';
+
+export {
+  OrganizationStencil,
+  PersonStencil,
+  TeamStencil,
+  orgchartStencilEditorSet,
+  orgchartStencilSet,
+} from './stencilsets/orgchart/orgchart';

@@ -42,7 +42,7 @@ basicStencilSet.stencilTypes.push(
   },
   {
     stencilType: CustomImageStencil,
-    displayName: 'Custom image',
+    displayName: 'Image',
   },
   // },{
   //   stencilType: TextStencil,
