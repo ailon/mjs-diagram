@@ -50,9 +50,14 @@ export class ImageStencil extends TextStencil {
   }
   public set imageSrc(value) {
     this._imageSrc = value;
-    if (this.SVGImage && this.imageType === 'bitmap' && value !== undefined) {
-      this._isImageSet = true;
-      SvgHelper.setAttributes(this.SVGImage, [['href', value]]);
+    if (this.SVGImage && this.imageType === 'bitmap') {
+      if (value !== undefined) {
+        this._isImageSet = true;
+        SvgHelper.setAttributes(this.SVGImage, [['href', value]]);
+      } else {
+        this._isImageSet = false;
+        SvgHelper.setAttributes(this.SVGImage, [['href', '']]);
+      }
       this.setTextBoundingBox();
     }
   }
