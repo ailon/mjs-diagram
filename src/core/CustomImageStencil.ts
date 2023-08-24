@@ -38,11 +38,6 @@ export class CustomImageStencil extends ImageStencil {
   constructor(iid: number, container: SVGGElement, settings: DiagramSettings) {
     super(iid, container, settings);
 
-    this.defaultSize = { width: 100, height: 100 };
-
-    this._fillColor = 'transparent';
-    this._strokeColor = 'transparent';
-
     this.setImageSrc = this.setImageSrc.bind(this);
   }
 
