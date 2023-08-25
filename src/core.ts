@@ -19,6 +19,7 @@ export { ImageStencil } from './core/ImageStencil';
 export { LightbulbIconStencil } from './core/LightbulbIconStencil';
 export { LabelStencil } from './core/LabelStencil';
 export { CustomImageStencil } from './core/CustomImageStencil';
+export { BitmapImageStencil } from './core/BitmapImageStencil';
 export { ImageStencilState, ImageType, TextLabelLocation } from './core/ImageStencilState';
 
 export { ConnectorBase, ArrowType } from './core/ConnectorBase';

@@ -38,6 +38,7 @@ export {
   ImageStencilState,
   ImageType,
   TextLabelLocation,
+  BitmapImageStencil
 } from './core';
 export {
   DiagramViewer,
