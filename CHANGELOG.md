@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-beta.7] - 2023-08-25
+### Added
+- Organizational chart stencilset (`orgchart`)
+- `CustomImageStencil` to serve as base class for image based stencils
+- `BitamImageStencil` for adding generic custom bitmap images with a caption
+- [Editor] text label location panel (`LabelLocationPanel`)
+- [Editor] default stencil and connector editor types to stencil editor sets and methods to add an editor for multiple stencil/connector types at once
+- [Editor] `CustomImageStencilEditor` for editing image stencils
+
+### Fixed
+- impossible to size the components via css
+- [Viewer] toolbar covering horizontal scrollbar
+
+### Changed
+- production build script to simplify build of stencil sets
+
 ## [1.0.0-beta.6] - 2023-08-08
 ### Changed
 - build process to treat mjs-toolbar as external depency. Previous setup caused errors when toolbar was used in both editor and viewer and both were on the same page.
@@ -187,6 +203,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial public release.
 
+[1.0.0-beta.7]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-beta.7
 [1.0.0-beta.6]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-beta.6
 [1.0.0-beta.5]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-beta.5
 [1.0.0-beta.4]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-beta.4
