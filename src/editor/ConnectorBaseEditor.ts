@@ -192,7 +192,7 @@ export class ConnectorBaseEditor {
     this.lineStylePanel.onLineStyleChanged = this.connector.setStrokeDasharray;
 
     this.lineWidthPanel = new LineStylePanel(
-      this._language.getString('toolbox-linestyle-title') ?? 'Line width',
+      this._language.getString('toolbox-linewidth-title') ?? 'Line width',
       this._language,
       'stroke-width',
       this.settings.getStrokeWidths(this.connector.typeName),

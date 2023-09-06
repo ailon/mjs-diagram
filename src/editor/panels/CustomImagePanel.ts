@@ -57,7 +57,7 @@ export class CustomImagePanel extends PropertyPanelBase {
     this.selectMessageLabel = document.createElement('span');
     this.selectMessageLabel.style.width = '100%';
     this.selectMessageLabel.style.textAlign = 'center';
-    this.selectMessageLabel.innerText = this.language.getString('click-to-select') ?? 'click to select image';
+    this.selectMessageLabel.innerText = this.language.getString('toolbox-click-to-select-image') ?? 'click to select image';
 
     this.imagePreview = document.createElement('div');
     this.imagePreview.appendChild(this.removeButton);
@@ -69,7 +69,7 @@ export class CustomImagePanel extends PropertyPanelBase {
     this.imagePreview.style.height = '200px';
     this.imagePreview.style.border = '1px solid var(--i-mjsdiae-accent-color)';
     this.imagePreview.style.margin = '5px auto';
-    this.imagePreview.title = this.language.getString('image') ?? 'image';
+    this.imagePreview.title = this.language.getString('toolbox-image-title') ?? 'image';
     if (this.currentImageSrc !== undefined) {
       this.imagePreview.style.backgroundImage = `url(${this.currentImageSrc})`;
       this.removeButton.style.display = '';

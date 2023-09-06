@@ -112,7 +112,7 @@ export class AlignPanel extends PropertyPanelBase {
 
     const bottomButton = getButton(
       '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M22 22H2V20H22V22M10 2H7V18H10V2M17 8H14V18H17V8Z" /></svg>',
-      this.language.getString('toolbox-align-right') ?? 'Right'
+      this.language.getString('toolbox-align-bottom') ?? 'Bottom'
     );
     bottomButton.addEventListener('click', () => this.verticalAlignmentClicked('bottom'));
     vPanel.appendChild(bottomButton);
