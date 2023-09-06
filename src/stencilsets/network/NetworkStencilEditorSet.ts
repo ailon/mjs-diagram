@@ -1,11 +1,13 @@
 import {
   AngledArrowConnector,
   ArrowConnector,
+  BitmapImageStencil,
   CurvedArrowConnector,
   LabelStencil,
   RectangleTextStencil,
 } from '../../core';
 import {
+  CustomImageStencilEditor,
   ImageStencilEditor,
   StencilEditorSet,
   TextStencilEditor,
@@ -22,6 +24,7 @@ const networkStencilEditorSet = new StencilEditorSet(
 networkStencilEditorSet.displayName = 'Network Diagram';
 networkStencilEditorSet.defaultStencilEditor = ImageStencilEditor;
 networkStencilEditorSet.addStencilEditor(TextStencilEditor, LabelStencil, RectangleTextStencil);
+networkStencilEditorSet.addStencilEditor(CustomImageStencilEditor, BitmapImageStencil);
 
 networkStencilEditorSet.availableConnectorTypes = [
   ArrowConnector,

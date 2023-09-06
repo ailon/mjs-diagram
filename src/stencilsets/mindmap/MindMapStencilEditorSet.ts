@@ -1,5 +1,5 @@
-import { StencilEditorSet, TextStencilEditor } from '../../editor';
-import { TextStencilState } from '../../core';
+import { CustomImageStencilEditor, StencilEditorSet, TextStencilEditor } from '../../editor';
+import { BitmapImageStencil, TextStencilState } from '../../core';
 
 import { mindMapStencilSet } from './MindMapStencilSet';
 import { MindMapConnector } from './connectors/MindMapConnector';
@@ -10,6 +10,7 @@ import { MindMapConnector } from './connectors/MindMapConnector';
 const mindMapStencilEditorSet = new StencilEditorSet('mindmap', mindMapStencilSet);
 mindMapStencilEditorSet.displayName = 'Mind map';
 mindMapStencilEditorSet.defaultStencilEditor = TextStencilEditor;
+mindMapStencilEditorSet.addStencilEditor(CustomImageStencilEditor, BitmapImageStencil);
 
 mindMapStencilEditorSet.availableConnectorTypes = [
   MindMapConnector,

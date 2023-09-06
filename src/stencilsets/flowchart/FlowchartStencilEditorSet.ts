@@ -1,11 +1,11 @@
 import { flowchartStencilSet } from './FlowchartStencilSet';
 
-import { ArrowConnector } from '../../core';
+import { ArrowConnector, BitmapImageStencil } from '../../core';
 import { CurvedArrowConnector } from '../../core';
 import { TextStencilState } from '../../core';
 import { AngledArrowConnector } from '../../core';
 
-import { StencilEditorSet } from '../../editor';
+import { CustomImageStencilEditor, StencilEditorSet } from '../../editor';
 import { TextStencilEditor } from '../../editor';
 import { ConnectorBaseEditor } from '../../editor';
 
@@ -18,6 +18,8 @@ import { StringSet } from '../../editor';
 const flowchartStencilEditorSet = new StencilEditorSet('flowchart', flowchartStencilSet);
 flowchartStencilEditorSet.displayName = 'Flowchart';
 flowchartStencilEditorSet.defaultStencilEditor = TextStencilEditor;
+flowchartStencilEditorSet.addStencilEditor(CustomImageStencilEditor, BitmapImageStencil);
+
 flowchartStencilEditorSet.defaultConnectorEditor = ConnectorBaseEditor;
 flowchartStencilEditorSet.defaultStringSet = new StringSet(en_flowchart_strings);
 flowchartStencilEditorSet.availableConnectorTypes = [

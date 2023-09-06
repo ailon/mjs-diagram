@@ -1,4 +1,4 @@
-import { AngledArrowConnector, ArrowConnector, CurvedArrowConnector, LabelStencil, RectangleTextStencil, StencilSet } from "../../core";
+import { AngledArrowConnector, ArrowConnector, BitmapImageStencil, CurvedArrowConnector, LabelStencil, RectangleTextStencil, StencilSet } from "../../core";
 
 import { NotebookStencil } from "./stencils/NotebookStencil";
 import { DesktopStencil } from "./stencils/DesktopStencil";
@@ -79,6 +79,10 @@ networkStencilSet.stencilTypes.push(
   {
     stencilType: RectangleTextStencil,
     displayName: 'Text box',
+  },  
+  {
+    stencilType: BitmapImageStencil,
+    displayName: 'Custom image',
   },  
 );
 
