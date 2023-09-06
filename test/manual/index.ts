@@ -140,11 +140,11 @@ export class Experiments {
   public setup(): void {
     this.editor = <DiagramEditor>document.getElementById('mjsDia');
 
-    this.editor.language.addStrings('core', 'lt', lt_core_strings);
-    this.editor.language.addStrings('core', 'ua', [['toolbox-shape-title','Властивості фігури']]);
+    this.editor.languageManager.addStrings('core', 'lt', lt_core_strings);
+    this.editor.languageManager.addStrings('core', 'ua', [['toolbox-shape-title','Властивості фігури']]);
 
-    this.editor.language.addStrings(flowchartStencilEditorSet.id, 'lt', lt_flowchart_strings);
-    this.editor.language.defaultLang = 'lt';
+    this.editor.languageManager.addStrings(flowchartStencilEditorSet.id, 'lt', lt_flowchart_strings);
+    this.editor.language = 'lt';
 
     this.editor.addEventListener('editorinit', () => {
       console.log('editor init');
