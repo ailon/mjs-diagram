@@ -210,7 +210,7 @@ export class TextBlock {
 
       setTimeout(() => {
         this.positionText(this);
-      }, 10);
+      }, 100);
     }
   }
 
