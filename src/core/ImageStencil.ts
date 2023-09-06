@@ -227,7 +227,7 @@ export class ImageStencil extends TextStencil {
           this.SVGImage.setAttribute('width', `${this.width - this.padding * 2}px`);
           this.SVGImage.setAttribute(
             'height',
-            `${this.height - this.padding * 2 - this.textBoundingBox.height}px`
+            `${this.height - this.padding * 2 - this.textBoundingBox.height - this.padding}px`
           );
           break;
         }
