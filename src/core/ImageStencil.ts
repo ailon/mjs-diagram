@@ -93,6 +93,7 @@ export class ImageStencil extends TextStencil {
     this.setTextBoundingBox = this.setTextBoundingBox.bind(this);
     this.textSizeChanged = this.textSizeChanged.bind(this);
     this.setLabelLocation = this.setLabelLocation.bind(this);
+    this.toggleLabelVisibility = this.toggleLabelVisibility.bind(this);
   }
 
   private _textBlockChangeProcessed = false;
@@ -209,6 +210,7 @@ export class ImageStencil extends TextStencil {
 
   public adjustImage(): void {
     if (this.SVGImage !== undefined) {
+      this.toggleLabelVisibility();
       switch (this.labelLocation) {
         case 'bottom': {
           this.SVGImage.setAttribute('x', `${this.padding}px`);
@@ -299,6 +301,11 @@ export class ImageStencil extends TextStencil {
 
   public setLabelLocation(location: TextLabelLocation) {
     this.labelLocation = location;
+    this.toggleLabelVisibility();
+    this.setTextBoundingBox();
+  }
+
+  private toggleLabelVisibility() {
     if (this.textBlock) {
       if (this.labelLocation === 'hidden') {
         this.textBlock.textElement.style.visibility = 'hidden';
@@ -306,7 +313,6 @@ export class ImageStencil extends TextStencil {
         this.textBlock.textElement.style.visibility = '';
       }
     }
-    this.setTextBoundingBox();
   }
 
   public getState(): ImageStencilState {
