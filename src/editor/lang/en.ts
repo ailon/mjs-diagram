@@ -51,8 +51,6 @@ const strings: [string, string][] = [
   
   ['toolbox-widthshort-label', 'W:'],
   ['toolbox-heightshort-label', 'H:'],
-  
-  ['toolbox-arrowtype-title', 'Arrow type'],
 ];
 
 export default strings;
