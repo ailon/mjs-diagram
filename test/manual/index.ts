@@ -19,6 +19,9 @@ import { ConnectorEventData, DiagramViewerEventData, StencilEventData } from '..
 import { ConnectorEditorEventData, DiagramEditorEventData, StencilEditorEventData } from '../../src/DiagramEditor';
 import lt_core_strings from '../../src/editor/lang/lt';
 import lt_flowchart_strings from '../../src/stencilsets/flowchart/lang/lt';
+import lt_mindmap_strings from '../../src/stencilsets/mindmap/lang/lt';
+import lt_network_strings from '../../src/stencilsets/network/lang/lt';
+import lt_orgchart_strings from '../../src/stencilsets/orgchart/lang/lt';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { networkStencilSet, networkStencilEditorSet } from '../../src/stencilsets/network/network';
 import { orgchartStencilEditorSet } from '../../src/stencilsets/orgchart/OrgchartStencilEditorSet';
@@ -144,6 +147,9 @@ export class Experiments {
     this.editor.languageManager.addStrings('core', 'ua', [['toolbox-shape-title','Властивості фігури']]);
 
     this.editor.languageManager.addStrings(flowchartStencilEditorSet.id, 'lt', lt_flowchart_strings);
+    this.editor.languageManager.addStrings(mindMapStencilEditorSet.id, 'lt', lt_mindmap_strings);
+    this.editor.languageManager.addStrings(networkStencilEditorSet.id, 'lt', lt_network_strings);
+    this.editor.languageManager.addStrings(orgchartStencilEditorSet.id, 'lt', lt_orgchart_strings);
     this.editor.language = 'lt';
 
     this.editor.addEventListener('editorinit', () => {
@@ -167,10 +173,10 @@ export class Experiments {
       console.log(`editor connector enter ${(<ConnectorEditorEventData>ev.detail).connectorEditor.isSelected}`);
     });
     
-    // this.editor.stencilEditorSet = orgchartStencilEditorSet;
+    this.editor.stencilEditorSet = orgchartStencilEditorSet;
     // this.editor.stencilEditorSet = basicStencilEditorSet;
     // this.editor.stencilEditorSet = flowchartStencilEditorSet;
-    this.editor.stencilEditorSet = mindMapStencilEditorSet;
+    // this.editor.stencilEditorSet = mindMapStencilEditorSet;
     // this.editor.stencilEditorSet = networkStencilEditorSet;
 
     this.editor.settings.setContextColor('ArrowConnector', 'stroke', 'red');
@@ -225,10 +231,10 @@ export class Experiments {
     });
 
     // this.viewer.stencilSet = flowchartStencilSet;
-    // this.viewer.stencilSet = orgchartStencilSet;
+    this.viewer.stencilSet = orgchartStencilSet;
     // this.viewer.stencilSet = basicStencilSet;
     // this.viewer.stencilSet = networkStencilSet;
-    this.viewer.stencilSet = mindMapStencilSet;
+    // this.viewer.stencilSet = mindMapStencilSet;
 
     const manualState: DiagramState = {
       stencils: [

@@ -6,6 +6,9 @@ const strings: [string, string][] = [
   ['IOStencil-displayname', 'Įvestis/Išvestis'],
   ['TerminalStencil-displayname', 'Paleidimas/Stabdymas'],
 
+  ['LabelStencil-displayname', 'Tekstas'],
+  ['BitmapImageStencil-displayname', 'Paveiksliukas'],
+
   ['ArrowConnector-displayname', 'Srauto linija'],
   ['CurvedArrowConnector-displayname', 'Srauto kreivė'],
 ];

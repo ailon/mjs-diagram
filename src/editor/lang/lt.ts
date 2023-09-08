@@ -51,6 +51,13 @@ const strings: [string, string][] = [
 
   ['toolbox-widthshort-label', 'P:'],
   ['toolbox-heightshort-label', 'A:'],
+
+  ['RectangleTextStencil-displayname', 'Teksto langelis'],
+  ['EllipseStencil-displayname', 'Elipsė'],
+  ['DiamondStencil-displayname', 'Rombas'],
+  ['LabelStencil-displayname', 'Tekstas'],
+  ['LightbulbIconStencil-displayname', 'Lemputė'],
+  ['BitmapImageStencil-displayname', 'Paveiksliukas'],
 ];
 
 export default strings;

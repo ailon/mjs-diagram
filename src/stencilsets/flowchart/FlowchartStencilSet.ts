@@ -49,7 +49,7 @@ flowchartStencilSet.connectorTypes.push(
   },
   {
     connectorType: AngledArrowConnector,
-    displayName: 'Angles Flowline',
+    displayName: 'Angled Flowline',
   }
 );
 

@@ -6,6 +6,9 @@ const strings: [string, string][] = [
   ['IOStencil-displayname', 'Input/Output'],
   ['TerminalStencil-displayname', 'Terminal'],
 
+  ['LabelStencil-displayname', 'Label'],
+  ['BitmapImageStencil-displayname', 'Image'],
+
   ['ArrowConnector-displayname', 'Flowline'],
   ['CurvedArrowConnector-displayname', 'Flow curve'],
 ];
