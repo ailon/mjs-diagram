@@ -44,21 +44,6 @@ export class EditorSettings extends DiagramSettings {
   }
 
   /**
-   * Sets contextual color setting value.
-   * @param context setting group (stencil or connector type, etc.)
-   * @param type type of color (text, stroke, fill, etc.)
-   * @param color string color value.
-   */
-  public setContextColor(context: string, type: ColorType, color: string) {
-    let contextColors = this._colors.get(context);
-    if (contextColors === undefined) {
-      contextColors = new Map();
-      this._colors.set(context, contextColors);
-    }
-    contextColors.set(type, color);
-  }
-
-  /**
    * Default colors for text.
    */
   public defaultTextColorSet = new ColorSet(

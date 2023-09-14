@@ -101,6 +101,21 @@ export class DiagramSettings {
   }
 
   /**
+   * Sets contextual color setting value.
+   * @param context setting group (stencil or connector type, etc.)
+   * @param type type of color (text, stroke, fill, etc.)
+   * @param color string color value.
+   */
+  public setContextColor(context: string, type: ColorType, color: string) {
+    let contextColors = this._colors.get(context);
+    if (contextColors === undefined) {
+      contextColors = new Map();
+      this._colors.set(context, contextColors);
+    }
+    contextColors.set(type, color);
+  }
+
+  /**
    * Default stroke dash array.
    * 
    * @see MDN [stroke-dasharray](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray) 
