@@ -1,7 +1,5 @@
 # MJS Diagram &mdash; add interactive diagrams and diagramming to your web apps
 
-*Note: MJS Diagram is in the preview state and under heavy development. Things may change before the stable release, including possible breaking changes.*
-
 MJS Diagram is a set of web components for creating and dislplaying interactive diagrams, such as Flowcharts, Mind Maps, Network Diagrams, and other.
 
 MJS Diagram is extensible and enables you to add your own diagram types.
@@ -28,7 +26,7 @@ To add a **diagram editor** to your web app follow these steps:
 1. Add or import required modules (`@markerjs/mjs-diagram/core`, `@markerjs/mjs-diagram/editor`, and a stencil set (diagram type)).
 2. Add a diagram editor web component to your page.
 3. Assign a stencil set (diagram type).
-4. Setup an event hander for the `saveclick` event to process the results.
+4. Setup an event handler for the `saveclick` event to process the results.
 
 ### Here's a simple example:
 
