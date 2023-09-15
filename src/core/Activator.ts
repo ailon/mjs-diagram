@@ -4,6 +4,7 @@
  */
 export class Activator {
   private static keys: Map<string, string> = new Map<string, string>();
+  private static keyAddListeners: Array<() => void> = new Array<() => void>();
 
   /**
    * Add a license key
@@ -12,6 +13,28 @@ export class Activator {
    */
   public static addKey(product: string, key: string): void {
     Activator.keys.set(product, key);
+    Activator.keyAddListeners.forEach(listener => {
+      listener();
+    });
+  }
+
+  /**
+   * Add a function to be called when license key is added.
+   * @param listener 
+   */
+  public static addKeyAddListener(listener: () => void) {
+    Activator.keyAddListeners.push(listener);
+  }
+
+  /**
+   * Remove a function called when key is added.
+   * @param listener 
+   */
+  public static removeKeyAddListener(listener: () => void) {
+    const li = Activator.keyAddListeners.indexOf(listener);
+    if (li > -1) {
+      Activator.keyAddListeners.splice(li, 1);
+    }
   }
 
   /**

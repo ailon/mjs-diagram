@@ -13,7 +13,7 @@ import { mindMapStencilEditorSet } from '../../src/stencilsets/mindmap/MindMapSt
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { DiagramViewer } from '../../src/viewer';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ArrowConnector, basicStencilSet, DiagramState } from '../../src/core';
+import { Activator, ArrowConnector, basicStencilSet, DiagramState } from '../../src/core';
 import { ColorSet } from "../../src/editor/ColorSet";
 import { ConnectorEventData, DiagramViewerEventData, StencilEventData } from '../../src/DiagramViewer';
 import { ConnectorEditorEventData, DiagramEditorEventData, StencilEditorEventData } from '../../src/DiagramEditor';
@@ -141,6 +141,10 @@ export class Experiments {
   viewer?: DiagramViewer;
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public setup(): void {
+
+    Activator.addKey("MJSDE", "MJSDE-F723-M800-2102");
+    Activator.addKey("MJSDV", "MJSDV-F273-M945-1090");
+    
     this.editor = <DiagramEditor>document.getElementById('mjsDia');
 
     this.editor.languageManager.addStrings('core', 'lt', lt_core_strings);
@@ -173,7 +177,7 @@ export class Experiments {
       console.log(`editor connector enter ${(<ConnectorEditorEventData>ev.detail).connectorEditor.isSelected}`);
     });
     
-    this.editor.stencilEditorSet = orgchartStencilEditorSet;
+    // this.editor.stencilEditorSet = orgchartStencilEditorSet;
     // this.editor.stencilEditorSet = basicStencilEditorSet;
     // this.editor.stencilEditorSet = flowchartStencilEditorSet;
     // this.editor.stencilEditorSet = mindMapStencilEditorSet;

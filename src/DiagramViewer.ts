@@ -186,15 +186,7 @@ export class DiagramViewer extends HTMLElement {
    */
   public set stencilSet(value) {
     this._stencilSet = value;
-    if (!Activator.isLicensed('MJSDV')) {
-      // NOTE:
-      // before removing this call please consider supporting marker.js
-      // by visiting https://markerjs.com/ for details
-      // thank you!
-      this.addLogo();
-    } else {
-      this.removeLogo();
-    }
+    this.toggleLogo();
   }
 
   /**
@@ -217,6 +209,7 @@ export class DiagramViewer extends HTMLElement {
     this.clientToLocalCoordinates = this.clientToLocalCoordinates.bind(this);
     this.addStyles = this.addStyles.bind(this);
 
+    this.toggleLogo = this.toggleLogo.bind(this);
     this.addLogo = this.addLogo.bind(this);
     this.removeLogo = this.removeLogo.bind(this);
     this.positionLogo = this.positionLogo.bind(this);
@@ -412,6 +405,7 @@ export class DiagramViewer extends HTMLElement {
   }
 
   private connectedCallback() {
+    Activator.addKeyAddListener(this.toggleLogo);
     this.createLayout();
     this.addMainCanvas();
     this.addToolbar();
@@ -864,6 +858,18 @@ export class DiagramViewer extends HTMLElement {
    * thank you!
    */
   private _logoUI?: HTMLElement;
+  private toggleLogo() {
+    if (!Activator.isLicensed('MJSDV')) {
+      // NOTE:
+      // before removing this call please consider supporting marker.js
+      // by visiting https://markerjs.com/ for details
+      // thank you!
+      this.addLogo();
+    } else {
+      this.removeLogo();
+    }
+  }
+
   private addLogo() {
     if (this._logoUI !== undefined) {
       this._container?.removeChild(this._logoUI);
@@ -897,8 +903,12 @@ export class DiagramViewer extends HTMLElement {
   }
 
   private removeLogo() {
-    if (this._logoUI !== undefined) {
-      this._container?.removeChild(this._logoUI);
+    if (
+      this._container &&
+      this._logoUI !== undefined &&
+      this._container.contains(this._logoUI)
+    ) {
+      this._container.removeChild(this._logoUI);
     }
   }
 

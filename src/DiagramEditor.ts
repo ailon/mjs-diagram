@@ -21,7 +21,11 @@ import { UndoRedoManager } from './editor/UndoRedoManager';
 import { ConnectorTypePanel } from './editor/panels/ConnectorTypePanel';
 import { ConnectorBaseState } from './core/ConnectorBaseState';
 import { NewStencilPanel } from './editor/panels/NewStencilPanel';
-import { AlignPanel, VerticalAlignment, HorizontalAlignment } from './editor/panels/AlignPanel';
+import {
+  AlignPanel,
+  VerticalAlignment,
+  HorizontalAlignment,
+} from './editor/panels/AlignPanel';
 import { StencilEditorSet } from './editor';
 
 import Logo from './assets/markerjs-logo-m.svg';
@@ -35,7 +39,7 @@ import { ArrangePanel, ArrangementType } from './editor/panels/ArrangePanel';
 
 /**
  * Diagram editor operation mode:
- * 
+ *
  * - `select` - editor primarily treats pointer events for stencil/connector selection
  * - `connect` - editor primarily treats pointer events for connecting stencils
  */
@@ -59,7 +63,7 @@ export interface DiagramEditorEventMap {
   diagramload: CustomEvent<DiagramEditorEventData>;
   /**
    * Diagram state changed.
-   * 
+   *
    * Fired on every stencil/connector creation, edit, deletion.
    */
   statechange: CustomEvent<DiagramEditorEventData>;
@@ -76,7 +80,7 @@ export interface DiagramEditorEventMap {
    */
   stencilclick: CustomEvent<StencilEditorEventData>;
   /**
-   * Pointer entered connector space. 
+   * Pointer entered connector space.
    */
   connectorpointerenter: CustomEvent<ConnectorEditorEventData>;
   /**
@@ -91,7 +95,7 @@ export interface DiagramEditorEventMap {
 
 /**
  * Defines the data object for the editor's render event.
- * 
+ *
  * @see {@link editor!DiagramEditorEventMap.saveclick}
  */
 export interface RenderEventData {
@@ -103,8 +107,8 @@ export interface RenderEventData {
 
 /**
  * Defines the data object for {@link DiagramEditor} level events.
- * 
- * @see 
+ *
+ * @see
  * - {@link DiagramEditorEventMap.editorinit}
  * - {@link DiagramEditorEventMap.diagramload}
  * - {@link DiagramEditorEventMap.statechange}
@@ -118,8 +122,8 @@ export interface DiagramEditorEventData {
 
 /**
  * Defines the data object for stencil related events.
- * 
- * @see 
+ *
+ * @see
  * - {@link DiagramEditorEventMap.stencilpointerenter}
  * - {@link DiagramEditorEventMap.stencilpointerleave}
  * - {@link DiagramEditorEventMap.stencilclick}
@@ -137,7 +141,7 @@ export interface StencilEditorEventData {
 
 /**
  * Defines the data object for connector releated events.
- * 
+ *
  * @see
  * - {@link DiagramEditorEventMap.connectorpointerenter}
  * - {@link DiagramEditorEventMap.connectorpointerleave}
@@ -156,40 +160,40 @@ export interface ConnectorEditorEventData {
 
 /**
  * DiagramEditor is the main diagram editing web component of the MJS Diagram library.
- * 
+ *
  * You add an instance of DiagramEditor to your page to enable diagram editing.
- * 
+ *
  * You can add it in your HTML markup as a custom element with something like this:
- * 
+ *
  * ```html
  * <mjs-diagram-editor id="mjsDiaEditor"></mjs-diagram-editor>
  * ```
- * 
+ *
  * Or you can add it in code.
- * 
+ *
  * One important thing to set when the component loads is the {@link editor!StencilEditorSet} you want to use.
- * 
+ *
  * Here we add a Flowchart stencil set:
- * 
+ *
  * ```ts
  * let editor = document.getElementById('mjsDiaEditor');
  * editor.stencilEditorSet = flowchartStencilEditorSet;
  * ```
- * 
+ *
  * You may want to add a previously saved state via the {@link DiagramEditor#restoreState}.
- * 
- * Finally, you most probably want to handle the {@link editor!DiagramEditorEventMap.saveclick} event 
+ *
+ * Finally, you most probably want to handle the {@link editor!DiagramEditorEventMap.saveclick} event
  * to store the editing results:
- * 
+ *
  * ```ts
  * editor.addEventListener('saveclick', (ev) => {
  *   // process state (represents the created diagram)
  *   console.log(ev.detail.state);
  * });
- * ``` 
- * 
+ * ```
+ *
  * @see
- * Check out MJS Diagram [docs](https://markerjs.com/docs/diagram/getting-started) 
+ * Check out MJS Diagram [docs](https://markerjs.com/docs/diagram/getting-started)
  * and [demos](https://markerjs.com/demos/diagram/getting-started/) for more details.
  */
 export class DiagramEditor extends HTMLElement {
@@ -293,7 +297,7 @@ export class DiagramEditor extends HTMLElement {
   }
   /**
    * Sets the current stencil editor set.
-   * 
+   *
    * @remarks
    * Note that all the current edits are lost when new stencil set is set.
    */
@@ -322,7 +326,7 @@ export class DiagramEditor extends HTMLElement {
 
   /**
    * Editor settings.
-   * 
+   *
    * Control available colors, font families, etc. through this property.
    */
   public readonly settings: EditorSettings = new EditorSettings();
@@ -408,6 +412,7 @@ export class DiagramEditor extends HTMLElement {
     this.applyStencilSet = this.applyStencilSet.bind(this);
     this.setupPanels = this.setupPanels.bind(this);
 
+    this.toggleLogo = this.toggleLogo.bind(this);
     this.addLogo = this.addLogo.bind(this);
     this.removeLogo = this.removeLogo.bind(this);
     this.positionLogo = this.positionLogo.bind(this);
@@ -451,14 +456,16 @@ export class DiagramEditor extends HTMLElement {
         ) ?? st.displayName;
     });
     this._newStencilPanel = new NewStencilPanel(
-      this.languageManager.getString('toolbox-newstencil-title') ?? 'Create new',
+      this.languageManager.getString('toolbox-newstencil-title') ??
+        'Create new',
       this.languageManager,
       this._stencilEditorSet.stencilSet.stencilTypes
     );
     this._newStencilPanel.onCreateNewStencil = this.createNewStencil;
 
     this._documentBackgroundPanel = new ColorPickerPanel(
-      this.languageManager.getString('toolbox-bgcolor-title') ?? 'Background color',
+      this.languageManager.getString('toolbox-bgcolor-title') ??
+        'Background color',
       this.languageManager,
       this.settings.defaultBackgroundColorSet,
       this.settings.defaultBackgroundColor
@@ -466,7 +473,8 @@ export class DiagramEditor extends HTMLElement {
     this._documentBackgroundPanel.onColorChanged = this.setDocumentBgColor;
 
     this._documentDimensionsPanel = new DimensionsPanel(
-      this.languageManager.getString('toolbox-docsize-title') ?? 'Document size',
+      this.languageManager.getString('toolbox-docsize-title') ??
+        'Document size',
       this.languageManager,
       this.documentWidth,
       this.documentHeight
@@ -475,14 +483,14 @@ export class DiagramEditor extends HTMLElement {
 
     this._alignPanel = new AlignPanel(
       this.languageManager.getString('toolbox-align-title') ?? 'Align',
-      this.languageManager,
+      this.languageManager
     );
     this._alignPanel.onHorizontalAlignmentClicked = this.alignHorizontally;
     this._alignPanel.onVerticalAlignmentClicked = this.alignVertically;
 
     this._arrangePanel = new ArrangePanel(
       this.languageManager.getString('toolbox-arrange-title') ?? 'Arrange',
-      this.languageManager,
+      this.languageManager
     );
     this._arrangePanel.onArrangeClicked = this.arrange;
   }
@@ -737,10 +745,13 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private addToolbar() {
-    if (this._toolbarContainer && this._toolbarContainer.childElementCount > 0) {
+    if (
+      this._toolbarContainer &&
+      this._toolbarContainer.childElementCount > 0
+    ) {
       this._toolbarContainer.innerHTML = '';
     }
-    
+
     const panel = <Panel>document.createElement('mjstb-panel');
     panel.className = 'toolbar-panel';
     panel.style.width = '100%';
@@ -823,7 +834,8 @@ export class DiagramEditor extends HTMLElement {
         <path fill="currentColor" d="M6 2C4.89 2 4 2.9 4 4V20C4 21.11 4.89 22 6 22H12V20H6V4H13V9H18V12H20V8L14 2M18 14C17.87 14 17.76 14.09 17.74 14.21L17.55 15.53C17.25 15.66 16.96 15.82 16.7 16L15.46 15.5C15.35 15.5 15.22 15.5 15.15 15.63L14.15 17.36C14.09 17.47 14.11 17.6 14.21 17.68L15.27 18.5C15.25 18.67 15.24 18.83 15.24 19C15.24 19.17 15.25 19.33 15.27 19.5L14.21 20.32C14.12 20.4 14.09 20.53 14.15 20.64L15.15 22.37C15.21 22.5 15.34 22.5 15.46 22.5L16.7 22C16.96 22.18 17.24 22.35 17.55 22.47L17.74 23.79C17.76 23.91 17.86 24 18 24H20C20.11 24 20.22 23.91 20.24 23.79L20.43 22.47C20.73 22.34 21 22.18 21.27 22L22.5 22.5C22.63 22.5 22.76 22.5 22.83 22.37L23.83 20.64C23.89 20.53 23.86 20.4 23.77 20.32L22.7 19.5C22.72 19.33 22.74 19.17 22.74 19C22.74 18.83 22.73 18.67 22.7 18.5L23.76 17.68C23.85 17.6 23.88 17.47 23.82 17.36L22.82 15.63C22.76 15.5 22.63 15.5 22.5 15.5L21.27 16C21 15.82 20.73 15.65 20.42 15.53L20.23 14.21C20.22 14.09 20.11 14 20 14M19 17.5C19.83 17.5 20.5 18.17 20.5 19C20.5 19.83 19.83 20.5 19 20.5C18.16 20.5 17.5 19.83 17.5 19C17.5 18.17 18.17 17.5 19 17.5Z" />
   </svg>`,
       text:
-        this.languageManager.getString('toolbar-document-setup') ?? 'document setup',
+        this.languageManager.getString('toolbar-document-setup') ??
+        'document setup',
       command: 'document-setup',
     });
     createBlock.appendButton(documentSetupButton);
@@ -860,7 +872,8 @@ export class DiagramEditor extends HTMLElement {
     <path fill="currentColor" d="M8 13C6.14 13 4.59 14.28 4.14 16H2V18H4.14C4.59 19.72 6.14 21 8 21S11.41 19.72 11.86 18H22V16H11.86C11.41 14.28 9.86 13 8 13M8 19C6.9 19 6 18.1 6 17C6 15.9 6.9 15 8 15S10 15.9 10 17C10 18.1 9.1 19 8 19M19.86 6C19.41 4.28 17.86 3 16 3S12.59 4.28 12.14 6H2V8H12.14C12.59 9.72 14.14 11 16 11S19.41 9.72 19.86 8H22V6H19.86M16 9C14.9 9 14 8.1 14 7C14 5.9 14.9 5 16 5S18 5.9 18 7C18 8.1 17.1 9 16 9Z" />
 </svg>`,
       text:
-        this.languageManager.getString('toolbar-properties') ?? 'toggle properties',
+        this.languageManager.getString('toolbar-properties') ??
+        'toggle properties',
       command: 'properties',
     });
     settingsBlock.appendButton(toolboxToggleButton);
@@ -901,19 +914,19 @@ export class DiagramEditor extends HTMLElement {
       panels.forEach((p) => {
         if (this._currentToolboxPanels.indexOf(p) < 0) {
           this._currentToolboxPanels.push(p);
-          this.addToolboxPanel(p)
+          this.addToolboxPanel(p);
         }
       });
-    // } else if (
-    //   this._currentToolboxPanels.length === 1 &&
-    //   this._currentToolboxPanels[0] === this._newStencilPanel
-    // ) {
-    //   // already showing new stencil panel
-    // } else {
-    //   this._toolboxPanel.innerHTML = '';
-    //   this._currentToolboxPanels = [this._newStencilPanel];
-    //   this._newStencilPanel.deselectType();
-    //   this.addToolboxPanel(this._newStencilPanel);
+      // } else if (
+      //   this._currentToolboxPanels.length === 1 &&
+      //   this._currentToolboxPanels[0] === this._newStencilPanel
+      // ) {
+      //   // already showing new stencil panel
+      // } else {
+      //   this._toolboxPanel.innerHTML = '';
+      //   this._currentToolboxPanels = [this._newStencilPanel];
+      //   this._newStencilPanel.deselectType();
+      //   this.addToolboxPanel(this._newStencilPanel);
     } else {
       this._toolboxPanel.innerHTML = '';
       this._currentToolboxPanels = [];
@@ -925,15 +938,18 @@ export class DiagramEditor extends HTMLElement {
       let removed = false;
       panels.forEach((p) => {
         if (this._currentToolboxPanels.indexOf(p) > -1) {
-          this._currentToolboxPanels.splice(this._currentToolboxPanels.indexOf(p), 1);
+          this._currentToolboxPanels.splice(
+            this._currentToolboxPanels.indexOf(p),
+            1
+          );
           removed = true;
         }
       });
       if (removed) {
         this._toolboxPanel.innerHTML = '';
-        this._currentToolboxPanels.forEach(p => {
+        this._currentToolboxPanels.forEach((p) => {
           this.addToolboxPanel(p);
-        })
+        });
       }
     } else {
       this._toolboxPanel.innerHTML = '';
@@ -1158,7 +1174,8 @@ export class DiagramEditor extends HTMLElement {
     this._mainCanvas.style.gridRowStart = '1';
     this._mainCanvas.style.pointerEvents = 'auto';
     this._mainCanvas.style.backgroundColor = this.documentBgColor;
-    this._mainCanvas.style.filter = 'drop-shadow(2px 2px 8px var(--i-mjsdiae-panel-border-color))';
+    this._mainCanvas.style.filter =
+      'drop-shadow(2px 2px 8px var(--i-mjsdiae-panel-border-color))';
     this._mainCanvas.style.margin = '10px';
     //this._mainCanvas.style.transform = `scale(${this._zoomLevel})`;
 
@@ -1228,6 +1245,7 @@ export class DiagramEditor extends HTMLElement {
 
   private connectedCallback() {
     this.languageManager.addStrings('core', 'en', en_core_strings);
+    Activator.addKeyAddListener(this.toggleLogo);
     this.createLayout();
     this.addToolbar();
     this.addToolbox();
@@ -1252,15 +1270,7 @@ export class DiagramEditor extends HTMLElement {
     ) {
       this.restoreState(this._stencilEditorSet.newDocumentTemplate);
     }
-    if (!Activator.isLicensed('MJSDE')) {
-      // NOTE:
-      // before removing this call please consider supporting marker.js
-      // by visiting https://markerjs.com/ for details
-      // thank you!
-      this.addLogo();
-    } else {
-      this.removeLogo();
-    }
+    this.toggleLogo();
   }
 
   private attachEvents() {
@@ -1655,9 +1665,7 @@ export class DiagramEditor extends HTMLElement {
       const hitEditor = this.getHitEditor(ev.target);
       if (this._currentHitEditor !== hitEditor) {
         // hovered editor changed
-        if (
-          this._currentHitEditor !== undefined /*&& !this.isDragging*/
-        ) {
+        if (this._currentHitEditor !== undefined /*&& !this.isDragging*/) {
           this.mode = 'select';
           if (this._currentHitEditor.state === 'connect') {
             this._currentHitEditor.switchConnectModeOff();
@@ -1978,7 +1986,7 @@ export class DiagramEditor extends HTMLElement {
   }
 
   /**
-   * Selects a stencil. If there already is a selected stencil then the 
+   * Selects a stencil. If there already is a selected stencil then the
    * supplied stencil is added to the selection.
    * @param stencilEditor stencil editor to select.
    */
@@ -2007,7 +2015,7 @@ export class DiagramEditor extends HTMLElement {
   }
 
   /**
-   * Removes the supplied stencil editor from selection. If no stencil editor is supplied, 
+   * Removes the supplied stencil editor from selection. If no stencil editor is supplied,
    * all selected stencils are unselected.
    * @param stencilEditor stencil editor to select.
    */
@@ -2445,6 +2453,18 @@ export class DiagramEditor extends HTMLElement {
    *
    * thank you!
    */
+  private toggleLogo() {
+    if (!Activator.isLicensed('MJSDE')) {
+      // NOTE:
+      // before removing this call please consider supporting marker.js
+      // by visiting https://markerjs.com/ for details
+      // thank you!
+      this.addLogo();
+    } else {
+      this.removeLogo();
+    }
+  }
+
   private addLogo() {
     if (this._logoUI !== undefined) {
       this._contentContainer?.removeChild(this._logoUI);
@@ -2478,8 +2498,12 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private removeLogo() {
-    if (this._logoUI !== undefined) {
-      this._contentContainer?.removeChild(this._logoUI);
+    if (
+      this._contentContainer &&
+      this._logoUI !== undefined &&
+      this._contentContainer.contains(this._logoUI)
+    ) {
+      this._contentContainer.removeChild(this._logoUI);
     }
   }
 
@@ -2496,44 +2520,54 @@ export class DiagramEditor extends HTMLElement {
   private alignHorizontally(alignment: HorizontalAlignment) {
     if (this._selectedStencilEditors.length > 0) {
       if (this._selectedStencilEditors.length > 1) {
-        switch(alignment) {
+        switch (alignment) {
           case 'left': {
             const x = this._selectedStencilEditors[0].stencil.left;
             for (let i = 1; i < this._selectedStencilEditors.length; i++) {
-              this._selectedStencilEditors[i].moveStencilTo(x);  
+              this._selectedStencilEditors[i].moveStencilTo(x);
             }
             break;
           }
           case 'center': {
-            const centerX = this._selectedStencilEditors[0].stencil.left + this._selectedStencilEditors[0].stencil.width / 2;
+            const centerX =
+              this._selectedStencilEditors[0].stencil.left +
+              this._selectedStencilEditors[0].stencil.width / 2;
             for (let i = 1; i < this._selectedStencilEditors.length; i++) {
-              const x = centerX - this._selectedStencilEditors[i].stencil.width / 2;
-              this._selectedStencilEditors[i].moveStencilTo(x);  
+              const x =
+                centerX - this._selectedStencilEditors[i].stencil.width / 2;
+              this._selectedStencilEditors[i].moveStencilTo(x);
             }
             break;
           }
           case 'right': {
-            const rightX = this._selectedStencilEditors[0].stencil.left + this._selectedStencilEditors[0].stencil.width;
+            const rightX =
+              this._selectedStencilEditors[0].stencil.left +
+              this._selectedStencilEditors[0].stencil.width;
             for (let i = 1; i < this._selectedStencilEditors.length; i++) {
               const x = rightX - this._selectedStencilEditors[i].stencil.width;
-              this._selectedStencilEditors[i].moveStencilTo(x);  
+              this._selectedStencilEditors[i].moveStencilTo(x);
             }
             break;
           }
         }
       } else {
-        switch(alignment) {
+        switch (alignment) {
           case 'left': {
             this._selectedStencilEditors[0].moveStencilTo(this.PAGE_MARGIN);
             break;
           }
           case 'center': {
-            const x = this.documentWidth / 2 - this._selectedStencilEditors[0].stencil.width / 2;
+            const x =
+              this.documentWidth / 2 -
+              this._selectedStencilEditors[0].stencil.width / 2;
             this._selectedStencilEditors[0].moveStencilTo(x);
             break;
           }
           case 'right': {
-            const x = this.documentWidth - this.PAGE_MARGIN - this._selectedStencilEditors[0].stencil.width;
+            const x =
+              this.documentWidth -
+              this.PAGE_MARGIN -
+              this._selectedStencilEditors[0].stencil.width;
             this._selectedStencilEditors[0].moveStencilTo(x);
             break;
           }
@@ -2544,7 +2578,7 @@ export class DiagramEditor extends HTMLElement {
   private alignVertically(alignment: VerticalAlignment) {
     if (this._selectedStencilEditors.length > 0) {
       if (this._selectedStencilEditors.length > 1) {
-        switch(alignment) {
+        switch (alignment) {
           case 'top': {
             const y = this._selectedStencilEditors[0].stencil.top;
             for (let i = 1; i < this._selectedStencilEditors.length; i++) {
@@ -2553,35 +2587,49 @@ export class DiagramEditor extends HTMLElement {
             break;
           }
           case 'middle': {
-            const middleX = this._selectedStencilEditors[0].stencil.top + this._selectedStencilEditors[0].stencil.height / 2;
+            const middleX =
+              this._selectedStencilEditors[0].stencil.top +
+              this._selectedStencilEditors[0].stencil.height / 2;
             for (let i = 1; i < this._selectedStencilEditors.length; i++) {
-              const y = middleX - this._selectedStencilEditors[i].stencil.height / 2;
-              this._selectedStencilEditors[i].moveStencilTo(undefined, y);  
+              const y =
+                middleX - this._selectedStencilEditors[i].stencil.height / 2;
+              this._selectedStencilEditors[i].moveStencilTo(undefined, y);
             }
             break;
           }
           case 'bottom': {
-            const bottomY = this._selectedStencilEditors[0].stencil.top + this._selectedStencilEditors[0].stencil.height;
+            const bottomY =
+              this._selectedStencilEditors[0].stencil.top +
+              this._selectedStencilEditors[0].stencil.height;
             for (let i = 1; i < this._selectedStencilEditors.length; i++) {
-              const y = bottomY - this._selectedStencilEditors[i].stencil.height;
-              this._selectedStencilEditors[i].moveStencilTo(undefined, y);  
+              const y =
+                bottomY - this._selectedStencilEditors[i].stencil.height;
+              this._selectedStencilEditors[i].moveStencilTo(undefined, y);
             }
             break;
           }
         }
       } else {
-        switch(alignment) {
+        switch (alignment) {
           case 'top': {
-            this._selectedStencilEditors[0].moveStencilTo(undefined, this.PAGE_MARGIN);
+            this._selectedStencilEditors[0].moveStencilTo(
+              undefined,
+              this.PAGE_MARGIN
+            );
             break;
           }
           case 'middle': {
-            const y = this.documentHeight / 2 - this._selectedStencilEditors[0].stencil.height / 2;
+            const y =
+              this.documentHeight / 2 -
+              this._selectedStencilEditors[0].stencil.height / 2;
             this._selectedStencilEditors[0].moveStencilTo(undefined, y);
             break;
           }
           case 'bottom': {
-            const y = this.documentHeight - this.PAGE_MARGIN - this._selectedStencilEditors[0].stencil.height;
+            const y =
+              this.documentHeight -
+              this.PAGE_MARGIN -
+              this._selectedStencilEditors[0].stencil.height;
             this._selectedStencilEditors[0].moveStencilTo(undefined, y);
             break;
           }
@@ -2591,8 +2639,13 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private arrange(arrangement: ArrangementType) {
-    if (this._objectLayer !== undefined && this._currentStencilEditor !== undefined) {
-      const currentStencilIndex = this._stencilEditors.indexOf(this._currentStencilEditor);
+    if (
+      this._objectLayer !== undefined &&
+      this._currentStencilEditor !== undefined
+    ) {
+      const currentStencilIndex = this._stencilEditors.indexOf(
+        this._currentStencilEditor
+      );
       let currentContainerIndex = -1;
       const currentContainer = this._currentStencilEditor.container;
       for (let i = 0; i < this._objectLayer.children.length; i++) {
@@ -2603,31 +2656,41 @@ export class DiagramEditor extends HTMLElement {
       }
 
       if (currentStencilIndex > -1 && currentContainerIndex > -1) {
-        switch(arrangement) {
+        switch (arrangement) {
           case 'front': {
-            if (currentStencilIndex < (this._stencilEditors.length - 1)) {
+            if (currentStencilIndex < this._stencilEditors.length - 1) {
               this._stencilEditors.splice(currentStencilIndex, 1);
               this._stencilEditors.push(this._currentStencilEditor);
             }
-            if (currentContainerIndex < (this._objectLayer.children.length - 1)) {
+            if (currentContainerIndex < this._objectLayer.children.length - 1) {
               this._objectLayer.removeChild(currentContainer);
               this._objectLayer.appendChild(currentContainer);
             }
             break;
           }
           case 'forward': {
-            if (currentStencilIndex < (this._stencilEditors.length - 1)) {
+            if (currentStencilIndex < this._stencilEditors.length - 1) {
               this._stencilEditors.splice(currentStencilIndex, 1);
-              if (currentStencilIndex < (this._stencilEditors.length - 1)) {
-                this._stencilEditors.splice(currentStencilIndex + 1, 0, this._currentStencilEditor);
+              if (currentStencilIndex < this._stencilEditors.length - 1) {
+                this._stencilEditors.splice(
+                  currentStencilIndex + 1,
+                  0,
+                  this._currentStencilEditor
+                );
               } else {
                 this._stencilEditors.push(this._currentStencilEditor);
               }
             }
-            if (currentContainerIndex < (this._objectLayer.children.length - 1)) {
+            if (currentContainerIndex < this._objectLayer.children.length - 1) {
               this._objectLayer.removeChild(currentContainer);
-              if (currentContainerIndex < (this._objectLayer.children.length - 1)) {
-                this._objectLayer.insertBefore(currentContainer, this._objectLayer.children[currentContainerIndex + 1]);
+              if (
+                currentContainerIndex <
+                this._objectLayer.children.length - 1
+              ) {
+                this._objectLayer.insertBefore(
+                  currentContainer,
+                  this._objectLayer.children[currentContainerIndex + 1]
+                );
               } else {
                 this._objectLayer.appendChild(currentContainer);
               }
@@ -2637,11 +2700,18 @@ export class DiagramEditor extends HTMLElement {
           case 'backward': {
             if (currentStencilIndex > 0) {
               this._stencilEditors.splice(currentStencilIndex, 1);
-              this._stencilEditors.splice(currentStencilIndex - 1, 0, this._currentStencilEditor);
+              this._stencilEditors.splice(
+                currentStencilIndex - 1,
+                0,
+                this._currentStencilEditor
+              );
             }
             if (currentContainerIndex > 0) {
               this._objectLayer.removeChild(currentContainer);
-              this._objectLayer.insertBefore(currentContainer, this._objectLayer.children[currentContainerIndex - 1]);
+              this._objectLayer.insertBefore(
+                currentContainer,
+                this._objectLayer.children[currentContainerIndex - 1]
+              );
             }
             break;
           }
@@ -2652,13 +2722,15 @@ export class DiagramEditor extends HTMLElement {
             }
             if (currentContainerIndex > 0) {
               this._objectLayer.removeChild(currentContainer);
-              this._objectLayer.insertBefore(currentContainer, this._objectLayer.firstChild);
+              this._objectLayer.insertBefore(
+                currentContainer,
+                this._objectLayer.firstChild
+              );
             }
             break;
           }
         }
       }
-
     }
   }
 }
