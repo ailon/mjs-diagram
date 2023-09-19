@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2023-09-19
+### Added
+- custom image stencil added to all stencilsets
+- more default colors
+
+### Changed
+- updated English strings
+- updated Lithuanian translation
+- moved `setContextColor()` from `EditorSettings` to `DiagramSettings` (needed for setting contextual defaults in Viewer)
+
+### Fixed
+- missing padding in image stencils with label at the top
+- hidden image label wasn't hidden on load
+- [Viewer] text incorrectly positioned on the first stencil in viewer
+- [Editor] language change wasn't reflected in the toolbar
+- [Editor] removed toolbar's debug console output
+
 ## [1.0.0-beta.7] - 2023-08-25
 ### Added
 - Organizational chart stencilset (`orgchart`)
@@ -203,6 +220,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial public release.
 
+[1.0.0]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0
 [1.0.0-beta.7]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-beta.7
 [1.0.0-beta.6]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-beta.6
 [1.0.0-beta.5]: https://github.com/ailon/mjs-diagram/releases/tag/v1.0.0-beta.5
