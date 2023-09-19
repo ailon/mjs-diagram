@@ -47,25 +47,47 @@ export class EditorSettings extends DiagramSettings {
    * Default colors for text.
    */
   public defaultTextColorSet = new ColorSet(
+    'black',
+    'white',
     'red',
-    'orange',
     'yellow',
     'green',
     'blue',
-    'black',
-    'white',
+    '#3b82f6',
+    '#0ea5e9',
+    '#a855f7',
+    '#d946ef',
+    '#10b981',
+    '#84cc16',
+    '#f59e0b',
+    '#f97316',
+    '#ef4444',
+    '#fda4af',
+    '#64748b',
+    '#e5e7eb'
   );
   /**
    * Default stroke (line, outline) color set.
    */
   public defaultStrokeColorSet = new ColorSet(
+    'black',
+    'white',
     'red',
-    'orange',
     'yellow',
     'green',
     'blue',
-    'black',
-    'white',
+    '#3b82f6',
+    '#0ea5e9',
+    '#a855f7',
+    '#d946ef',
+    '#10b981',
+    '#84cc16',
+    '#f59e0b',
+    '#f97316',
+    '#ef4444',
+    '#fda4af',
+    '#64748b',
+    '#e5e7eb'
   );
   /**
    * Default fill color set.
@@ -75,6 +97,25 @@ export class EditorSettings extends DiagramSettings {
     '#ffcccc',
     '#ccffcc',
     '#ccccff',
+    '#fef08a',
+    '#fed7aa',
+    'black',
+    'white',
+    'red',
+    'yellow',
+    'green',
+    'blue',
+    '#0ea5e9',
+    '#a855f7',
+    '#d946ef',
+    '#10b981',
+    '#84cc16',
+    '#f59e0b',
+    '#f97316',
+    '#ef4444',
+    '#fda4af',
+    '#64748b',
+    '#e5e7eb',
     'transparent'
   );
   /**
@@ -85,7 +126,26 @@ export class EditorSettings extends DiagramSettings {
     '#cccccc',
     '#ffcccc',
     '#ccffcc',
-    '#ccccff'
+    '#ccccff',
+    '#fef08a',
+    '#fed7aa',
+    'black',
+    'red',
+    'yellow',
+    'green',
+    'blue',
+    '#0ea5e9',
+    '#a855f7',
+    '#d946ef',
+    '#10b981',
+    '#84cc16',
+    '#f59e0b',
+    '#f97316',
+    '#ef4444',
+    '#fda4af',
+    '#64748b',
+    '#e5e7eb',
+    'transparent'
   );
 
   private _colorSets: Map<string, Map<ColorType, ColorSet>> = new Map();

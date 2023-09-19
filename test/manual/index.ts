@@ -142,9 +142,6 @@ export class Experiments {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public setup(): void {
 
-    Activator.addKey("MJSDE", "MJSDE-F723-M800-2102");
-    Activator.addKey("MJSDV", "MJSDV-F273-M945-1090");
-    
     this.editor = <DiagramEditor>document.getElementById('mjsDia');
 
     this.editor.languageManager.addStrings('core', 'lt', lt_core_strings);
@@ -179,7 +176,7 @@ export class Experiments {
     
     // this.editor.stencilEditorSet = orgchartStencilEditorSet;
     // this.editor.stencilEditorSet = basicStencilEditorSet;
-    // this.editor.stencilEditorSet = flowchartStencilEditorSet;
+    this.editor.stencilEditorSet = flowchartStencilEditorSet;
     // this.editor.stencilEditorSet = mindMapStencilEditorSet;
     // this.editor.stencilEditorSet = networkStencilEditorSet;
 
