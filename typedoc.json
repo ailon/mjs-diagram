@@ -6,6 +6,7 @@
     "src/stencilsets/flowchart/flowchart.ts",
     "src/stencilsets/mindmap/mindmap.ts",
     "src/stencilsets/network/network.ts",
+    "src/stencilsets/orgchart/orgchart.ts",
   ],
   "excludeExternals": true,
   "excludePrivate": true,
