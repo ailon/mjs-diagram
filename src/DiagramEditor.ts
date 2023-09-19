@@ -5,37 +5,41 @@ import {
   ToolbarBlock,
   ButtonEventData,
 } from '@markerjs/mjs-toolbar';
+import {
+  ConnectorBase,
+  IPoint,
+  DiagramState,
+  StencilBase,
+  SvgHelper,
+  Port,
+  Activator,
+  ConnectorBaseState,
+} from './core';
+
 import { basicStencilEditorSet } from './editor/BasicStencilEditorSet';
-import { ConnectorBase } from './core/ConnectorBase';
 import { ConnectorBaseEditor } from './editor/ConnectorBaseEditor';
-import { DiagramState } from './core/DiagramState';
-import { IPoint } from './core/IPoint';
 import { PortConnector } from './editor/PortConnector';
 import { PropertyPanelBase } from './editor/panels/PropertyPanelBase';
-import { StencilBase } from './core/StencilBase';
 import { StencilBaseEditor } from './editor/StencilBaseEditor';
-import { SvgHelper } from './core/SvgHelper';
-import { Port } from './core/Port';
 import { Renderer } from './editor/Renderer';
 import { UndoRedoManager } from './editor/UndoRedoManager';
 import { ConnectorTypePanel } from './editor/panels/ConnectorTypePanel';
-import { ConnectorBaseState } from './core/ConnectorBaseState';
 import { NewStencilPanel } from './editor/panels/NewStencilPanel';
 import {
   AlignPanel,
   VerticalAlignment,
   HorizontalAlignment,
 } from './editor/panels/AlignPanel';
-import { StencilEditorSet } from './editor';
+import { StencilEditorSet } from './editor/StencilEditorSet';
 
-import Logo from './assets/markerjs-logo-m.svg';
-import { Activator } from './core/Activator';
 import { ColorPickerPanel } from './editor/panels/ColorPickerPanel';
 import { DimensionsPanel } from './editor/panels/DimensionsPanel';
 import { EditorSettings } from './editor/EditorSettings';
 import { Language } from './editor/Language';
 import en_core_strings from './editor/lang/en';
 import { ArrangePanel, ArrangementType } from './editor/panels/ArrangePanel';
+
+import Logo from './assets/markerjs-logo-m.svg';
 
 /**
  * Diagram editor operation mode:
