@@ -68,21 +68,21 @@ export class AlignPanel extends PropertyPanelBase {
     panelDiv.appendChild(hPanel);
 
     const leftButton = getButton(
-      '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M4 22H2V2H4V22M22 7H6V10H22V7M16 14H6V17H16V14Z" /></svg>',
+      '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M4 22H2V2H4V22M22 7H6V10H22V7M16 14H6V17H16V14Z" /></svg>',
       this.language.getString('toolbox-align-left') ?? 'Left'
     );
     leftButton.addEventListener('click', () => this.horizontalAlignmentClicked('left'));
     hPanel.appendChild(leftButton);
 
     const centerButton = getButton(
-      '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M11 2H13V7H21V10H13V14H18V17H13V22H11V17H6V14H11V10H3V7H11V2Z" /></svg>',
+      '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M11 2H13V7H21V10H13V14H18V17H13V22H11V17H6V14H11V10H3V7H11V2Z" /></svg>',
       this.language.getString('toolbox-align-center') ?? 'Center'
     );
     centerButton.addEventListener('click', () => this.horizontalAlignmentClicked('center'));
     hPanel.appendChild(centerButton);
 
     const rightButton = getButton(
-      '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M20 2H22V22H20V2M2 10H18V7H2V10M8 17H18V14H8V17Z" /></svg>',
+      '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M20 2H22V22H20V2M2 10H18V7H2V10M8 17H18V14H8V17Z" /></svg>',
       this.language.getString('toolbox-align-right') ?? 'Right'
     );
     rightButton.addEventListener('click', () => this.horizontalAlignmentClicked('right'));
@@ -97,21 +97,21 @@ export class AlignPanel extends PropertyPanelBase {
     panelDiv.appendChild(vPanel);
 
     const topButton = getButton(
-      '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M22 2V4H2V2H22M7 22H10V6H7V22M14 16H17V6H14V16Z" /></svg>',
+      '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M22 2V4H2V2H22M7 22H10V6H7V22M14 16H17V6H14V16Z" /></svg>',
       this.language.getString('toolbox-align-top') ?? 'Top'
     );
     topButton.addEventListener('click', () => this.verticalAlignmentClicked('top'));
     vPanel.appendChild(topButton);
 
     const middleButton = getButton(
-      '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M22 11H17V6H14V11H10V3H7V11H1.8V13H7V21H10V13H14V18H17V13H22V11Z" /></svg>',
+      '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M22 11H17V6H14V11H10V3H7V11H1.8V13H7V21H10V13H14V18H17V13H22V11Z" /></svg>',
       this.language.getString('toolbox-align-middle') ?? 'Middle'
     );
     middleButton.addEventListener('click', () => this.verticalAlignmentClicked('middle'));
     vPanel.appendChild(middleButton);
 
     const bottomButton = getButton(
-      '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M22 22H2V20H22V22M10 2H7V18H10V2M17 8H14V18H17V8Z" /></svg>',
+      '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M22 22H2V20H22V22M10 2H7V18H10V2M17 8H14V18H17V8Z" /></svg>',
       this.language.getString('toolbox-align-bottom') ?? 'Bottom'
     );
     bottomButton.addEventListener('click', () => this.verticalAlignmentClicked('bottom'));

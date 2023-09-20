@@ -101,7 +101,7 @@ export class FontPanel extends PropertyPanelBase {
     smallerFontButton.style.width = '24px';
     smallerFontButton.style.height = '24px';
     smallerFontButton.style.padding = '3px';
-    smallerFontButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M5.12,14L7.5,7.67L9.87,14M6.5,5L1,19H3.25L4.37,16H10.62L11.75,19H14L8.5,5H6.5M18,17L23,11.93L21.59,10.5L19,13.1V7H17V13.1L14.41,10.5L13,11.93L18,17Z" /></svg>';
+    smallerFontButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="24" height="24"><path d="M5.12,14L7.5,7.67L9.87,14M6.5,5L1,19H3.25L4.37,16H10.62L11.75,19H14L8.5,5H6.5M18,17L23,11.93L21.59,10.5L19,13.1V7H17V13.1L14.41,10.5L13,11.93L18,17Z" /></svg>';
     smallerFontButton.title = this.language.getString('toolbox-decreasefontsize-title') ?? 'decrease font size';
     smallerFontButton.addEventListener('click', () => this.setFontSize(-1));
     sizePanel.appendChild(smallerFontButton);
@@ -112,7 +112,7 @@ export class FontPanel extends PropertyPanelBase {
     largerFontButton.style.width = '24px';
     largerFontButton.style.height = '24px';
     largerFontButton.style.padding = '3px';
-    largerFontButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M5.12,14L7.5,7.67L9.87,14M6.5,5L1,19H3.25L4.37,16H10.62L11.75,19H14L8.5,5H6.5M18,7L13,12.07L14.41,13.5L17,10.9V17H19V10.9L21.59,13.5L23,12.07L18,7Z" /></svg>';
+    largerFontButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="24" height="24"><path d="M5.12,14L7.5,7.67L9.87,14M6.5,5L1,19H3.25L4.37,16H10.62L11.75,19H14L8.5,5H6.5M18,7L13,12.07L14.41,13.5L17,10.9V17H19V10.9L21.59,13.5L23,12.07L18,7Z" /></svg>';
     largerFontButton.title = this.language.getString('toolbox-increasefontsize-title') ?? 'increase font size';
     largerFontButton.addEventListener('click', () => this.setFontSize(+1));
     sizePanel.appendChild(largerFontButton);

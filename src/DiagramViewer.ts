@@ -303,7 +303,7 @@ export class DiagramViewer extends HTMLElement {
 
     const zoomBlock = new ToolbarBlock();   
     const zoomOutButton = new Button({
-      icon: `<svg viewBox="0 0 24 24">
+      icon: `<svg width="24" height="24" viewBox="0 0 24 24">
     <path fill="currentColor" d="M19,13H5V11H19V13Z" />
 </svg>`,
       text: 'zoom out',
@@ -312,7 +312,7 @@ export class DiagramViewer extends HTMLElement {
     zoomBlock.appendButton(zoomOutButton);
 
     const zoomResetButton = new Button({
-      icon: `<svg viewBox="0 0 24 24">
+      icon: `<svg width="24" height="24" viewBox="0 0 24 24">
     <path fill="currentColor" d="M12 5.5L10 8H14L12 5.5M18 10V14L20.5 12L18 10M6 10L3.5 12L6 14V10M14 16H10L12 18.5L14 16M21 3H3C1.9 3 1 3.9 1 5V19C1 20.1 1.9 21 3 21H21C22.1 21 23 20.1 23 19V5C23 3.9 22.1 3 21 3M21 19H3V5H21V19Z" />
 </svg>`,
       text: 'fit',
@@ -321,7 +321,7 @@ export class DiagramViewer extends HTMLElement {
     zoomBlock.appendButton(zoomResetButton);
 
     const zoomInButton = new Button({
-      icon: `<svg viewBox="0 0 24 24">
+      icon: `<svg width="24" height="24" viewBox="0 0 24 24">
     <path fill="currentColor" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
 </svg>`,
       text: 'zoom in',
