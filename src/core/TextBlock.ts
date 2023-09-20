@@ -1,4 +1,4 @@
-import { FontSize } from "./FontSize";
+import { FontSize } from './FontSize';
 import { SvgHelper } from './SvgHelper';
 
 /**
@@ -7,7 +7,7 @@ import { SvgHelper } from './SvgHelper';
 export class TextBlock {
   /**
    * Fired when text size changes.
-   * 
+   *
    * @group Events
    */
   public onTextSizeChanged?: (textBlock: TextBlock) => void;
@@ -170,9 +170,9 @@ export class TextBlock {
   private setupTextElement() {
     this._textElement.style.fontSize = `${this.fontSize.value}${this.fontSize.units}`;
     this._textElement.style.textAnchor = 'middle';
-    this._textElement.style.dominantBaseline = 'text-before-edge';
-    this._textElement.transform.baseVal.appendItem(SvgHelper.createTransform()); // translate transorm
-    this._textElement.transform.baseVal.appendItem(SvgHelper.createTransform()); // scale transorm
+    //this._textElement.style.dominantBaseline = 'text-before-edge';
+    // this._textElement.transform.baseVal.appendItem(SvgHelper.createTransform()); // translate transorm
+    // this._textElement.transform.baseVal.appendItem(SvgHelper.createTransform()); // scale transorm
 
     this._labelBackground.style.stroke = '#aaa';
     this._labelBackground.style.strokeDasharray = '2 2';
@@ -184,7 +184,7 @@ export class TextBlock {
    * Renders text within the text block according to its settings.
    */
   public renderText() {
-    const LINE_SIZE = `${this.fontSize.value}${this.fontSize.units}`;
+    const LINE_SIZE = '1em'; // `${this.fontSize.value}${this.fontSize.units}`;
 
     if (this._textElement) {
       while (this._textElement.lastChild) {
@@ -232,21 +232,29 @@ export class TextBlock {
 
   /**
    * Positions the text within the text block.
-   * @param textBlock 
+   * @param textBlock
    */
   public positionText(textBlock?: TextBlock) {
     const self = textBlock === undefined ? this : textBlock;
-    const LINE_SIZE = `${this.fontSize.value}${this.fontSize.units}`;
+    const LINE_SIZE = '1em'; //`${this.fontSize.value}${this.fontSize.units}`;
 
     self.applyFontStyles();
 
     self._textSize = self._textElement.getBBox();
     const centerX =
       self.boundingBox.x + self.boundingBox.width / 2 + self.offsetX;
+
+    const noOfLines = self._textElement.childNodes.length;
+    const lineHeight = self._textSize.height / noOfLines;
+    // arbitrary approximation for correct vertical alignment
+    const autoOffset =
+      noOfLines > 1 ? -(lineHeight * (noOfLines - 2)) / 2 : lineHeight / 3;
+
     const centerY =
       self.boundingBox.y +
-      self.boundingBox.height / 2 -
-      self._textSize.height / 2 +
+      self.boundingBox.height / 2 +
+      // - self._textSize.height / 2
+      autoOffset +
       self.offsetY;
 
     self._textElement.childNodes.forEach((ts, lineno) => {
@@ -259,12 +267,21 @@ export class TextBlock {
     SvgHelper.setAttributes(self._textElement, [['x', `${centerX}`]]);
     SvgHelper.setAttributes(self._textElement, [['y', `${centerY}`]]);
 
+    self._textSize = self._textElement.getBBox();
     const bgPadding = 1.2;
     SvgHelper.setAttributes(self.labelBackground, [
       ['width', (self._textSize.width * bgPadding).toString()],
       ['height', (self._textSize.height * bgPadding).toString()],
       ['x', (centerX - (self._textSize.width * bgPadding) / 2).toString()],
-      ['y', (centerY - (self._textSize.height / 2) * (bgPadding - 1) * 2).toString()],
+      [
+        'y',
+        (
+          self._textSize.y - bgPadding
+          // centerY -
+          // (self._textSize.height / 2) * (bgPadding - 1) * 2
+          // - lineHeight / 2
+        ).toString(),
+      ],
     ]);
 
     if (self.onTextSizeChanged) {

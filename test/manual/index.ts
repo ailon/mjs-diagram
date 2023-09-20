@@ -251,7 +251,7 @@ export class Experiments {
           iid: 2,
           left: 300,
           top: 140,
-          text: 'What\'s up?'
+          text: `What's up?\nYou!`
         }
       ],
       connectors: [
