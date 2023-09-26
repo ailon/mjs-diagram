@@ -10,7 +10,13 @@ import {
 } from './core';
 
 import Logo from './assets/markerjs-logo-m.svg';
-import { Button, ButtonEventData, Panel, Toolbar, ToolbarBlock } from '@markerjs/mjs-toolbar';
+import {
+  Button,
+  ButtonEventData,
+  Panel,
+  Toolbar,
+  ToolbarBlock,
+} from '@markerjs/mjs-toolbar';
 
 /**
  * Defines event data for the {@link DiagramViewer} events.
@@ -89,36 +95,41 @@ export interface DiagramViewerEventMap {
 }
 
 /**
+ * Describes desired auto-scaling behavior.
+ */
+export type AutoScaleDirection = 'none' | 'down' | 'up' | 'both';
+
+/**
  * DiagramViewer is the main diagram viewing web component of the MJS Diagram library.
- * 
- * You add an instance of DiagramViewer to your page to display dynamic and interactive diagrams 
+ *
+ * You add an instance of DiagramViewer to your page to display dynamic and interactive diagrams
  * created either with {@link editor!DiagramEditor} or in code.
- * 
+ *
  * You can add it in your HTML markup as a custom element with something like this:
- * 
+ *
  * ```html
  * <mjs-diagram-viewer id="mjsDiaViewer"></mjs-diagram-viewer>
  * ```
- * 
+ *
  * Or you can add it in code.
- * 
+ *
  * One important thing to set when the component loads is the {@link core!StencilSet} you want to use.
- * 
+ *
  * Here we add a Flowchart stencil set:
- * 
+ *
  * ```ts
  * let viewer = document.getElementById('mjsDiaViewer');
  * viewer.stencilSet = flowchartStencilSet;
  * ```
- * 
+ *
  * You display previously saved or created state by passing it to the {@link DiagramViewer.show} method.
- * 
+ *
  * ```ts
  * viewer.show(myState);
  * ```
- * 
+ *
  * @see
- * Check out MJS Diagram [docs](https://markerjs.com/docs/diagram/getting-started) 
+ * Check out MJS Diagram [docs](https://markerjs.com/docs/diagram/getting-started)
  * and [demos](https://markerjs.com/demos/diagram/getting-started/) for more details.
  */
 export class DiagramViewer extends HTMLElement {
@@ -137,6 +148,8 @@ export class DiagramViewer extends HTMLElement {
 
   private _connectors: ConnectorBase[] = [];
 
+  private _resizeObserver?: ResizeObserver;
+
   /**
    * Zoom level steps the interactive zoom controls go through.
    */
@@ -153,11 +166,7 @@ export class DiagramViewer extends HTMLElement {
    */
   public set zoomLevel(value: number) {
     this._zoomLevel = value;
-    if (
-      this._canvasContainer &&
-      this._contentContainer &&
-      this._mainCanvas
-    ) {
+    if (this._canvasContainer && this._contentContainer && this._mainCanvas) {
       this._mainCanvas.style.width = `${this.documentWidth * this.zoomLevel}px`;
       this._mainCanvas.style.height = `${
         this.documentHeight * this.zoomLevel
@@ -172,6 +181,23 @@ export class DiagramViewer extends HTMLElement {
           2,
       });
     }
+  }
+
+  private _autoScaling: AutoScaleDirection = 'down';
+  /**
+   * Configures auto-scaling behavior.
+   *
+   * - `none` - no auto-scaling
+   * - `down` (default) - auto-scales the diagram down when it doesn't fit into the control
+   * - `up` - auto-scales the diagram to the largest size fitting into the control but not smaller than 100%
+   * - `both` - keeps diagram at maximum size that fits into the control
+   */
+  public get autoScaling(): AutoScaleDirection {
+    return this._autoScaling;
+  }
+  public set autoScaling(value) {
+    this._autoScaling = value;
+    this.autoScale();
   }
 
   private _stencilSet = basicStencilSet;
@@ -223,13 +249,16 @@ export class DiagramViewer extends HTMLElement {
     this.zoom = this.zoom.bind(this);
     this.toolbarButtonClicked = this.toolbarButtonClicked.bind(this);
 
+    this.setupResizeObserver = this.setupResizeObserver.bind(this);
+    this.autoScale = this.autoScale.bind(this);
+
     this.attachShadow({ mode: 'open' });
   }
 
   private _iid = 0;
   /**
    * Returns a new internal object identifier.
-   * @returns 
+   * @returns
    */
   public getNewIId(): number {
     return ++this._iid;
@@ -275,7 +304,7 @@ export class DiagramViewer extends HTMLElement {
     this._canvasContainer.style.gridColumn = '1';
     this._contentContainer.appendChild(this._canvasContainer);
 
-    this._toolbarAreaContainer =  document.createElement('div');
+    this._toolbarAreaContainer = document.createElement('div');
     this._toolbarAreaContainer.className = 'toolbar-area';
     this._toolbarAreaContainer.style.display = 'flex';
     this._toolbarAreaContainer.style.gridRow = '2';
@@ -286,7 +315,6 @@ export class DiagramViewer extends HTMLElement {
 
     this._toolbarContainer = document.createElement('div');
     this._toolbarAreaContainer.appendChild(this._toolbarContainer);
-
 
     this._container.setAttribute('part', 'container');
 
@@ -301,7 +329,7 @@ export class DiagramViewer extends HTMLElement {
     const toolbar = new Toolbar();
     toolbar.addEventListener('buttonclick', this.toolbarButtonClicked);
 
-    const zoomBlock = new ToolbarBlock();   
+    const zoomBlock = new ToolbarBlock();
     const zoomOutButton = new Button({
       icon: `<svg width="24" height="24" viewBox="0 0 24 24">
     <path fill="currentColor" d="M19,13H5V11H19V13Z" />
@@ -334,7 +362,7 @@ export class DiagramViewer extends HTMLElement {
     panel.appendToolbar(toolbar);
 
     this._toolbarContainer?.appendChild(panel);
-  } 
+  }
 
   private toolbarButtonClicked(ev: CustomEvent<ButtonEventData>) {
     switch (ev.detail.button.command) {
@@ -347,7 +375,11 @@ export class DiagramViewer extends HTMLElement {
         break;
       }
       case 'zoomreset': {
-        this.zoom(0);
+        if (this.zoomLevel === 1) {
+          this.autoScale();
+        } else {
+          this.zoom(0);
+        }
         break;
       }
     }
@@ -368,7 +400,29 @@ export class DiagramViewer extends HTMLElement {
     }
   }
 
-  
+  /**
+   * Scales the diagram inside the viewer according to the {@link autoScaling} setting.
+   */
+  public autoScale(): void {
+    if (this.autoScaling !== 'none' && this._container) {
+      if (
+        this.autoScaling === 'both' ||
+        (this._container.clientWidth > this.documentWidth &&
+          this._container.clientHeight > this.documentHeight &&
+          this.autoScaling === 'up') ||
+        ((this._container.clientWidth < this.documentWidth ||
+          this._container.clientHeight < this.documentHeight) &&
+          this.autoScaling === 'down')
+      ) {
+        // 2% margin to avoid flickering scrollbars
+        this.zoomLevel = Math.min(
+          (this._container.clientWidth * 0.98) / this.documentWidth,
+          (this._container.clientHeight * 0.98) / this.documentHeight
+        );
+      }
+    }
+  }
+
   private width = 0;
   private height = 0;
 
@@ -391,7 +445,6 @@ export class DiagramViewer extends HTMLElement {
     this._mainCanvas.style.fontFamily = 'Helvetica, Arial, Sans-Serif';
     this._mainCanvas.style.backgroundColor = this.documentBgColor;
     this._mainCanvas.style.filter = 'var(--i-mjsdiav-canvas-filter)';
-
 
     this._groupLayer = SvgHelper.createGroup();
     this._connectorLayer = SvgHelper.createGroup();
@@ -417,6 +470,7 @@ export class DiagramViewer extends HTMLElement {
   }
 
   private attachEvents() {
+    this.setupResizeObserver();
     this._mainCanvas?.addEventListener('pointerdown', this.onPointerDown);
     this._mainCanvas?.addEventListener('pointerup', this.onStencilPointerUp);
     // @todo
@@ -436,6 +490,9 @@ export class DiagramViewer extends HTMLElement {
   }
 
   private detachEvents() {
+    if (this._resizeObserver && this._container) {
+      this._resizeObserver.unobserve(this._container);
+    }
     this._mainCanvas?.removeEventListener('pointerdown', this.onPointerDown);
     this._mainCanvas?.removeEventListener(
       'pointerdown',
@@ -455,6 +512,15 @@ export class DiagramViewer extends HTMLElement {
     // @todo
     // window.removeEventListener('resize', this.onWindowResize);
     // window.removeEventListener('keyup', this.onKeyUp);
+  }
+
+  private setupResizeObserver() {
+    if (window.ResizeObserver && this._container) {
+      this._resizeObserver = new ResizeObserver(() => {
+        this.autoScale();
+      });
+      this._resizeObserver.observe(this._container);
+    }
   }
 
   private clientToLocalCoordinates(x: number, y: number): IPoint {
@@ -744,11 +810,11 @@ export class DiagramViewer extends HTMLElement {
 
   /**
    * Displays a previously saved diagram.
-   * 
+   *
    * @remarks
-   * Make sure to set the correct corresponding {@link DiagramViewer.stencilSet} before 
+   * Make sure to set the correct corresponding {@link DiagramViewer.stencilSet} before
    * calling `show()`.
-   * 
+   *
    * @param state diagram configration object.
    */
   public show(state: DiagramState): void {
