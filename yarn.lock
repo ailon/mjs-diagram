@@ -150,10 +150,10 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@markerjs/mjs-toolbar@^0.2.4":
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/@markerjs/mjs-toolbar/-/mjs-toolbar-0.2.4.tgz#9067a7b1ce4059cbaafdf46ddf91accf6539c370"
-  integrity sha512-LHr159ehsCEAHLOYPxO+aNHcw6c3+auZF8MKJi+GbVLwgjmSrhnHADT1AI5B0jLUm2J0OC4lgrg6g0jSKBZ72w==
+"@markerjs/mjs-toolbar@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@markerjs/mjs-toolbar/-/mjs-toolbar-0.3.0.tgz#2e1ca2d21b297bbe04ac7c5bae9fc6b142bbea02"
+  integrity sha512-aGjXkfcGcCaTfwW6zAEtlM+fZpjPPafRkWzsMC+SPb3GDyFgcOOpubTN3Dl84SHiB9YAxIvjHlkhk7y/4mYJNQ==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
