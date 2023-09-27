@@ -321,6 +321,8 @@ export class DiagramEditor extends HTMLElement {
 
   private _toolboxPanel!: HTMLDivElement;
 
+  private _toolbar?: Toolbar;
+
   // @todo why protected?
   protected _manipulationStartX = 0;
   protected _manipulationStartY = 0;
@@ -426,6 +428,8 @@ export class DiagramEditor extends HTMLElement {
     this.alignHorizontally = this.alignHorizontally.bind(this);
     this.alignVertically = this.alignVertically.bind(this);
     this.arrange = this.arrange.bind(this);
+
+    this.hideToolbarButtons = this.hideToolbarButtons.bind(this);
 
     this.attachShadow({ mode: 'open' });
 
@@ -760,8 +764,8 @@ export class DiagramEditor extends HTMLElement {
     panel.className = 'toolbar-panel';
     panel.style.width = '100%';
 
-    const toolbar = new Toolbar();
-    toolbar.addEventListener('buttonclick', this.toolbarButtonClicked);
+    this._toolbar = new Toolbar();
+    this._toolbar.addEventListener('buttonclick', this.toolbarButtonClicked);
 
     const actionBlock = new ToolbarBlock();
     const createBlock = new ToolbarBlock();
@@ -880,12 +884,12 @@ export class DiagramEditor extends HTMLElement {
     });
     settingsBlock.appendButton(toolboxToggleButton);
 
-    toolbar.appendBlock(actionBlock);
-    toolbar.appendBlock(createBlock);
-    toolbar.appendBlock(zoomBlock);
-    toolbar.appendBlock(settingsBlock);
+    this._toolbar.appendBlock(actionBlock);
+    this._toolbar.appendBlock(createBlock);
+    this._toolbar.appendBlock(zoomBlock);
+    this._toolbar.appendBlock(settingsBlock);
 
-    panel.appendToolbar(toolbar);
+    panel.appendToolbar(this._toolbar);
 
     this._toolbarContainer?.appendChild(panel);
   }
@@ -2182,6 +2186,35 @@ export class DiagramEditor extends HTMLElement {
     options?: boolean | AddEventListenerOptions | undefined
   ): void {
     super.addEventListener(type, listener, options);
+  }
+
+  /**
+   * Hides toolbar buttons for provided commands.
+   * 
+   * Available buttons/commands:
+   * 
+   * `select`, `delete`, `save`, `undo`, `redo`, `add`, `connect`, `document-setup`,
+   * `zoomout`, `zoomin`, `zoomreset`, `properties`.
+   * 
+   * This method can be used to both remove buttons to preserve space and simplify
+   * user experience by removing unnecessary functions and to remove access to 
+   * certain functions. For example, you may constantly auto-save the diagram in your
+   * code so the `save` button isn't necessary and misleading.
+   * 
+   * @param commands list of commands
+   * 
+   * @example
+   * The code below hides `zoomreset` and `redo` buttons.
+   * 
+   * ```typescript
+   * editor.hideToolbarButtons('zoomreset', 'redo');
+   * ```
+   * @since 1.1.0
+   */
+  public hideToolbarButtons(...commands: string[]) {
+    if (this._toolbar !== undefined) {
+      commands.forEach(command => this._toolbar?.hideButtonsByCommand(command));
+    }
   }
 
   /**

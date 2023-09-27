@@ -197,6 +197,8 @@ export class Experiments {
       });
     });
 
+    this.editor.hideToolbarButtons('zoomreset', 'redo');
+
     document
       .getElementById('restoreStateButton')
       ?.addEventListener('click', () => {
