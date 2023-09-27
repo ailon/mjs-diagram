@@ -96,6 +96,7 @@ export interface DiagramViewerEventMap {
 
 /**
  * Describes desired auto-scaling behavior.
+ * @since 1.1.0
  */
 export type AutoScaleDirection = 'none' | 'down' | 'up' | 'both';
 
@@ -191,6 +192,8 @@ export class DiagramViewer extends HTMLElement {
    * - `down` (default) - auto-scales the diagram down when it doesn't fit into the control
    * - `up` - auto-scales the diagram to the largest size fitting into the control but not smaller than 100%
    * - `both` - keeps diagram at maximum size that fits into the control
+   * 
+   * @since 1.1.0
    */
   public get autoScaling(): AutoScaleDirection {
     return this._autoScaling;
@@ -402,6 +405,7 @@ export class DiagramViewer extends HTMLElement {
 
   /**
    * Scales the diagram inside the viewer according to the {@link autoScaling} setting.
+   * @since 1.1.0
    */
   public autoScale(): void {
     if (this.autoScaling !== 'none' && this._container) {
