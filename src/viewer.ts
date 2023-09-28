@@ -35,6 +35,7 @@ export {
   ConnectorEventData,
   DiagramViewerEventData,
   StencilEventData,
+  AutoScaleDirection,
 } from './DiagramViewer';
 
 if (

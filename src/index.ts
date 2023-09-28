@@ -46,6 +46,7 @@ export {
   DiagramViewerEventData,
   DiagramViewerEventMap,
   StencilEventData,
+  AutoScaleDirection,
 } from './viewer';
 export {
   DiagramEditor,

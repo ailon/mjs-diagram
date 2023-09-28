@@ -207,6 +207,8 @@ export class Experiments {
 
     this.viewer = <DiagramViewer>document.getElementById('mjsDiaView');
 
+    this.viewer.autoScaling = 'both';
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     this.viewer.addEventListener('viewerinit', (ev) => {
       console.log('viewer init');
