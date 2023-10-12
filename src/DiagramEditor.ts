@@ -215,6 +215,8 @@ export class DiagramEditor extends HTMLElement {
 
   private mode: DiagramEditorMode = 'select';
 
+  private _isInitialized = false;
+
   private _mainCanvas?: SVGSVGElement;
   private _groupLayer?: SVGGElement;
   private _connectorLayer?: SVGGElement;
@@ -312,11 +314,6 @@ export class DiagramEditor extends HTMLElement {
       this.languageManager.addStrings(value.id, 'en', value.defaultStringSet);
     }
     this.applyStencilSet();
-    this.dispatchEvent(
-      new CustomEvent<DiagramEditorEventData>('editorinit', {
-        detail: { editor: this },
-      })
-    );
   }
 
   private _toolboxPanel!: HTMLDivElement;
@@ -1263,6 +1260,7 @@ export class DiagramEditor extends HTMLElement {
     this.initOverlay();
     this.initUiLayer();
     this.attachEvents();
+    this._isInitialized = true;
     this.applyStencilSet();
   }
 
@@ -1271,16 +1269,24 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private applyStencilSet() {
-    this.addToolboxPanels();
-    this.setupPanels();
-    this.addToolboxPanels([this._newStencilPanel]);
-    if (
-      this._stencilEditorSet !== undefined &&
-      this._stencilEditorSet.newDocumentTemplate !== undefined
-    ) {
-      this.restoreState(this._stencilEditorSet.newDocumentTemplate);
+    if (this._isInitialized) {
+      this.addToolboxPanels();
+      this.setupPanels();
+      this.addToolboxPanels([this._newStencilPanel]);
+      if (
+        this._stencilEditorSet !== undefined &&
+        this._stencilEditorSet.newDocumentTemplate !== undefined
+      ) {
+        this.restoreState(this._stencilEditorSet.newDocumentTemplate);
+      }
+      this.toggleLogo();
+
+      this.dispatchEvent(
+        new CustomEvent<DiagramEditorEventData>('editorinit', {
+          detail: { editor: this },
+        })
+      );
     }
-    this.toggleLogo();
   }
 
   private attachEvents() {
