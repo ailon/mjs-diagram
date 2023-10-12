@@ -34,6 +34,14 @@ export interface IConnectorProperties {
  */
 export interface IStencilSet {
   /**
+   * Stencil set identifier
+   */
+  id: string;
+  /**
+   * Stencil set display name
+   */
+  displayName: string;
+  /**
    * Stencil types available in the stencil set.
    */
   stencilTypes: IStencilProperties[];
@@ -60,13 +68,18 @@ export interface IStencilSet {
  * that make sense in the context of a particular diagram type.
  */
 export class StencilSet implements IStencilSet {
+  public id: string;
+  public displayName: string;
   public stencilTypes: IStencilProperties[];
   public connectorTypes: IConnectorProperties[];
 
   /**
    * Creates a new `StencilSet`.
    */
-  constructor() {
+  constructor(id: string, displayName?: string) {
+    this.id = id;
+    this.displayName = displayName ?? id;
+    
     this.stencilTypes = [];
     this.connectorTypes = []
 

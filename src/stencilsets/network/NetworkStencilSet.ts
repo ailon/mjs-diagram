@@ -17,7 +17,7 @@ import { UserStencil } from "./stencils/UserStencil";
 /**
  * Network diagram stencil and connectors.
  */
-const networkStencilSet = new StencilSet();
+const networkStencilSet = new StencilSet('network', 'Network diagram');
 networkStencilSet.stencilTypes.push(
   {
     stencilType: NotebookStencil,

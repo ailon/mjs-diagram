@@ -11,7 +11,7 @@ import { StencilSet } from '../../core';
 /**
  * Stencils and connectors for Flowchart diagrams.
  */
-const flowchartStencilSet = new StencilSet();
+const flowchartStencilSet = new StencilSet('flowchart', 'Flow chart');
 flowchartStencilSet.stencilTypes.push(
   {
     stencilType: ProcessStencil,

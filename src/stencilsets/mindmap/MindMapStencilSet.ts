@@ -8,7 +8,7 @@ import { SubTopicStencil } from './stencils/SubTopicStencil';
 /**
  * Mind Map related stencils and connectors.
  */
-const mindMapStencilSet = new StencilSet();
+const mindMapStencilSet = new StencilSet('mindmap', 'Mind Map');
 mindMapStencilSet.stencilTypes.push(
   {
     stencilType: CentralTopicStencil,

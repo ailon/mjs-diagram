@@ -14,7 +14,7 @@ import { BitmapImageStencil } from './BitmapImageStencil';
  * available in MJS Diagram that are not special to any particular
  * diagram type.
  */
-const basicStencilSet = new StencilSet();
+const basicStencilSet = new StencilSet('core', 'Basic diagram');
 basicStencilSet.stencilTypes.push(
   // {
   //   stencilType: StencilBase,

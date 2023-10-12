@@ -6,7 +6,7 @@ import { TeamStencil } from "./stencils/TeamStencil";
 /**
  * Organizational chart stencils and connectors.
  */
-const orgchartStencilSet = new StencilSet();
+const orgchartStencilSet = new StencilSet('orgchart', 'Org chart');
 orgchartStencilSet.stencilTypes.push(
   {
     stencilType: OrganizationStencil,
