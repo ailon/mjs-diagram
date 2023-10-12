@@ -1014,4 +1014,28 @@ export class DiagramViewer extends HTMLElement {
   ): void {
     super.addEventListener(type, listener, options);
   }
+
+  removeEventListener<T extends keyof DiagramViewerEventMap>(
+    // the event name, a key of DiagramEditorEventMap
+    type: T,
+
+    // the listener, using a value of DiagramEditorEventMap
+    listener: (this: DiagramViewer, ev: DiagramViewerEventMap[T]) => void,
+
+    // any options
+    options?: boolean | EventListenerOptions
+  ): void;
+  removeEventListener<K extends keyof HTMLElementEventMap>(
+    type: K,
+    listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => void,
+    options?: boolean | EventListenerOptions | undefined
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions | undefined
+  ): void {
+    super.removeEventListener(type, listener, options);
+  }
+
 }
