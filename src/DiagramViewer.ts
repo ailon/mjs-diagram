@@ -223,6 +223,23 @@ export class DiagramViewer extends HTMLElement {
    */
   public readonly settings: DiagramSettings = new DiagramSettings();
 
+  private _toolbarVisible = true;
+  /**
+   * Returns whether toolbar is visible (enabled)
+   */
+  public get toolbarVisible() {
+    return this._toolbarVisible;
+  }
+  /**
+   * Sets whether toolbar is visible (enabled)
+   */
+  public set toolbarVisible(value) {
+    this._toolbarVisible = value;
+    if (this._toolbarContainer !== undefined) {
+      this._toolbarContainer.style.display = value ? '' : 'none';
+    }
+  }
+
   /**
    * Creates a new instance of the Diagram Viewer.
    */
@@ -364,7 +381,10 @@ export class DiagramViewer extends HTMLElement {
 
     panel.appendToolbar(toolbar);
 
-    this._toolbarContainer?.appendChild(panel);
+    if (this._toolbarContainer !== undefined) {
+      this._toolbarContainer.style.display = this.toolbarVisible ? '' : 'none';
+      this._toolbarContainer.appendChild(panel);
+    }
   }
 
   private toolbarButtonClicked(ev: CustomEvent<ButtonEventData>) {

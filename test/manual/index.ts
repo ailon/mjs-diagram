@@ -241,6 +241,8 @@ export class Experiments {
     // this.viewer.stencilSet = networkStencilSet;
     // this.viewer.stencilSet = mindMapStencilSet;
 
+    this.viewer.toolbarVisible = false;
+
     const manualState: DiagramState = {
       stencils: [
         <TextStencilState>{
