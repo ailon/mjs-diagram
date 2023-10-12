@@ -192,7 +192,7 @@ export class DiagramViewer extends HTMLElement {
    * - `down` (default) - auto-scales the diagram down when it doesn't fit into the control
    * - `up` - auto-scales the diagram to the largest size fitting into the control but not smaller than 100%
    * - `both` - keeps diagram at maximum size that fits into the control
-   * 
+   *
    * @since 1.1.0
    */
   public get autoScaling(): AutoScaleDirection {
@@ -226,18 +226,40 @@ export class DiagramViewer extends HTMLElement {
   private _toolbarVisible = true;
   /**
    * Returns whether toolbar is visible (enabled)
+   *
+   * @since 1.2.0
    */
   public get toolbarVisible() {
     return this._toolbarVisible;
   }
   /**
    * Sets whether toolbar is visible (enabled)
+   *
+   * @since 1.2.0
    */
   public set toolbarVisible(value) {
     this._toolbarVisible = value;
     if (this._toolbarContainer !== undefined) {
       this._toolbarContainer.style.display = value ? '' : 'none';
     }
+  }
+
+  private _loadAnimationEnabled = true;
+  /**
+   * Returns whether diagram stencils should fade in after loading
+   *
+   * @since 1.2.0
+   */
+  public get loadAnimationEnabled() {
+    return this._loadAnimationEnabled;
+  }
+  /**
+   * Sets whether diagram stencils should fade in after loading
+   *
+   * @since 1.2.0
+   */
+  public set loadAnimationEnabled(value) {
+    this._loadAnimationEnabled = value;
   }
 
   /**
@@ -872,15 +894,19 @@ export class DiagramViewer extends HTMLElement {
         const sp = this._stencilSet.getStencilProperties(stencilState.typeName);
         if (sp !== undefined) {
           const stencil = this.addNewStencil(sp.stencilType);
-          stencil.container.classList.add('hidden');
-          stencil.container.addEventListener('animationend', () => {
-            stencil.container.classList.remove('hidden', 'fade-in');
-          });
+          if (this.loadAnimationEnabled) {
+            stencil.container.classList.add('hidden');
+            stencil.container.addEventListener('animationend', () => {
+              stencil.container.classList.remove('hidden', 'fade-in');
+            });
+          }
           stencil.restoreState(stencilState);
           this._stencils.push(stencil);
-          setTimeout(() => {
-            stencil.container.classList.add('fade-in');
-          }, index * 250);
+          if (this.loadAnimationEnabled) {
+            setTimeout(() => {
+              stencil.container.classList.add('fade-in');
+            }, index * 250);
+          }
         }
       });
     }
@@ -909,13 +935,15 @@ export class DiagramViewer extends HTMLElement {
 
             if (startPort && endPort) {
               const connector = this.addNewConnector(cp.connectorType);
-              connector.container.classList.add('hidden');
-              connector.container.addEventListener('animationend', () => {
-                connector.container.classList.remove(
-                  'hidden',
-                  'connector-fade-in'
-                );
-              });
+              if (this.loadAnimationEnabled) {
+                connector.container.classList.add('hidden');
+                connector.container.addEventListener('animationend', () => {
+                  connector.container.classList.remove(
+                    'hidden',
+                    'connector-fade-in'
+                  );
+                });
+              }
               connector.restoreState(conState, {
                 startStencil: startStencil,
                 startPort: startPort,
@@ -925,9 +953,11 @@ export class DiagramViewer extends HTMLElement {
               this._connectors.push(connector);
               startPort.connectors.push(connector);
               endPort.connectors.push(connector);
-              setTimeout(() => {
-                connector.container.classList.add('connector-fade-in');
-              }, this._stencils.length * 250 + index * 50);
+              if (this.loadAnimationEnabled) {
+                setTimeout(() => {
+                  connector.container.classList.add('connector-fade-in');
+                }, this._stencils.length * 250 + index * 50);
+              }
             }
           }
         }
@@ -1057,5 +1087,4 @@ export class DiagramViewer extends HTMLElement {
   ): void {
     super.removeEventListener(type, listener, options);
   }
-
 }

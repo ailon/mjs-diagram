@@ -242,6 +242,7 @@ export class Experiments {
     // this.viewer.stencilSet = mindMapStencilSet;
 
     this.viewer.toolbarVisible = false;
+    this.viewer.loadAnimationEnabled = false;
 
     const manualState: DiagramState = {
       stencils: [
