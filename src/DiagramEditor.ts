@@ -351,6 +351,8 @@ export class DiagramEditor extends HTMLElement {
     return this.languageManager.defaultLang;
   }
 
+  private _resizeObserver?: ResizeObserver;
+
   /**
    * Creates the new instance of the editor.
    */
@@ -430,6 +432,8 @@ export class DiagramEditor extends HTMLElement {
     this.arrange = this.arrange.bind(this);
 
     this.hideToolbarButtons = this.hideToolbarButtons.bind(this);
+
+    this.setupResizeObserver = this.setupResizeObserver.bind(this);
 
     this.attachShadow({ mode: 'open' });
 
@@ -1280,6 +1284,7 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private attachEvents() {
+    this.setupResizeObserver();
     this._mainCanvas?.addEventListener('pointerdown', this.onCanvasPointerDown);
     this._mainCanvas?.addEventListener('pointermove', this.onCanvasPointerMove);
     this._mainCanvas?.addEventListener('pointerup', this.onCanvasPointerUp);
@@ -1300,6 +1305,10 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private detachEvents() {
+    if (this._resizeObserver && this._container) {
+      this._resizeObserver.unobserve(this._container);
+    }
+
     this._mainCanvas?.removeEventListener(
       'pointerdown',
       this.onCanvasPointerDown
@@ -1321,6 +1330,15 @@ export class DiagramEditor extends HTMLElement {
     // @todo
     // window.removeEventListener('resize', this.onWindowResize);
     // window.removeEventListener('keyup', this.onKeyUp);
+  }
+
+  private setupResizeObserver() {
+    if (window.ResizeObserver && this._container) {
+      this._resizeObserver = new ResizeObserver(() => {
+        this.positionLogo();
+      });
+      this._resizeObserver.observe(this._container);
+    }
   }
 
   private touchPoints = 0;

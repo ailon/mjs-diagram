@@ -522,6 +522,7 @@ export class DiagramViewer extends HTMLElement {
     if (window.ResizeObserver && this._container) {
       this._resizeObserver = new ResizeObserver(() => {
         this.autoScale();
+        this.positionLogo();
       });
       this._resizeObserver.observe(this._container);
     }
