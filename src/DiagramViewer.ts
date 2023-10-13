@@ -227,6 +227,7 @@ export class DiagramViewer extends HTMLElement {
   /**
    * Returns whether toolbar is visible (enabled)
    *
+   * @default true
    * @since 1.2.0
    */
   public get toolbarVisible() {
@@ -248,6 +249,7 @@ export class DiagramViewer extends HTMLElement {
   /**
    * Returns whether diagram stencils should fade in after loading
    *
+   * @default true
    * @since 1.2.0
    */
   public get loadAnimationEnabled() {
