@@ -1041,6 +1041,14 @@ export class DiagramViewer extends HTMLElement {
       this._logoUI.style.top = `${
         this._container.offsetHeight - this._logoUI.clientHeight - 20
       }px`;
+
+      // hide in "mini" sizes
+      const miniMode = this._container.clientWidth < 300 || this._container.clientHeight < 250;
+      if (miniMode) {
+        this._logoUI.style.display = 'none'
+      } else {
+        this._logoUI.style.display = 'inline-block';
+      }
     }
   }
 
