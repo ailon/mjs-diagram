@@ -31,16 +31,4 @@ export class TerminalStencil extends RectangleTextStencil {
 
     this.disablePorts('bottomleft', 'topleft', 'bottomright', 'topright');
   }
-
-  protected setTextBoundingBox() {
-    super.setTextBoundingBox();
-
-    const rectWidth = this.width - this.height;
-    const rectHeight = this.height;
-
-    this.textBoundingBox.x = (this.width - rectWidth) / 2 + this.padding;
-    this.textBoundingBox.y = (this.height - rectHeight) / 2 + this.padding;
-    this.textBoundingBox.width = rectWidth - this.padding * 2;
-    this.textBoundingBox.height = rectHeight - this.padding * 2;
-  }
 }

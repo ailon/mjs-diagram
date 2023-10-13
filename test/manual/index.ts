@@ -174,8 +174,8 @@ export class Experiments {
       console.log(`editor connector enter ${(<ConnectorEditorEventData>ev.detail).connectorEditor.isSelected}`);
     });
     
-    this.editor.stencilEditorSet = orgchartStencilEditorSet;
-    // this.editor.stencilEditorSet = basicStencilEditorSet;
+    // this.editor.stencilEditorSet = orgchartStencilEditorSet;
+    this.editor.stencilEditorSet = basicStencilEditorSet;
     // this.editor.stencilEditorSet = flowchartStencilEditorSet;
     // this.editor.stencilEditorSet = mindMapStencilEditorSet;
     // this.editor.stencilEditorSet = networkStencilEditorSet;

@@ -35,8 +35,8 @@ export class DiamondStencil extends RectangleTextStencil {
     const angle = Math.atan(this.width !== 0 ? (this.height / 2) / (this.width / 2) : 1);
     const side = Math.sqrt(Math.pow(this.width / 2, 2) + Math.pow(this.height / 2, 2));
 
-    const rectWidth = Math.cos(angle) * side;
-    const rectHeight = Math.sin(angle) * side;
+    const rectWidth = Math.cos(angle) * side * 1.4; // increase size to a more reasonable fit
+    const rectHeight = Math.sin(angle) * side * 1.4;
 
     this.textBoundingBox.x = (this.width - rectWidth) / 2 + this.padding;
     this.textBoundingBox.y = (this.height - rectHeight) / 2 + this.padding;

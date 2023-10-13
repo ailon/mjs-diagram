@@ -93,7 +93,7 @@ export class TextStencil extends StencilBase {
   /**
    * Text padding from the bounding box.
    */
-  protected padding = 5;
+  protected padding = 2;
 
   /**
    * Text's bounding box where text should fit and/or be anchored to.

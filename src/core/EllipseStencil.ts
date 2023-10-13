@@ -33,8 +33,8 @@ export class EllipseStencil extends RectangleTextStencil {
   protected setTextBoundingBox() {
     super.setTextBoundingBox();
 
-    const rectWidth = this.width / 2 * Math.sqrt(2);
-    const rectHeight = this.height / 2 * Math.sqrt(2);
+    const rectWidth = this.width / 2 * Math.sqrt(2) * 1.4;
+    const rectHeight = this.height / 2 * Math.sqrt(2) * 1.4;
 
     this.textBoundingBox.x = (this.width - rectWidth) / 2 + this.padding;
     this.textBoundingBox.y = (this.height - rectHeight) / 2 + this.padding;

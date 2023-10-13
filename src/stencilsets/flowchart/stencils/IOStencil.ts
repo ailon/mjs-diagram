@@ -30,7 +30,7 @@ export class IOStencil extends RectangleTextStencil {
   protected setTextBoundingBox() {
     super.setTextBoundingBox();
 
-    const rectWidth = this.width * 0.6;
+    const rectWidth = this.width * 0.8;
     const rectHeight = this.height;
 
     this.textBoundingBox.x = (this.width - rectWidth) / 2 + this.padding;
