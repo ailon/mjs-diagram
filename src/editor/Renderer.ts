@@ -55,7 +55,8 @@ export class Renderer {
                 diagramImage.viewBox.baseVal.width.toString() +
                 ' ' +
                 diagramImage.viewBox.baseVal.height.toString()
-            );            
+            );
+            diagramImageCopy.style.backgroundColor = diagramImage.style.backgroundColor;
             diagramImageCopy.innerHTML = diagramImage.innerHTML;
 
             // hide editing controls
@@ -97,7 +98,7 @@ export class Renderer {
                 }
                 DOMURL.revokeObjectURL(url);
     
-                const result = canvas.toDataURL(this.imageType, this.imageQuality);
+                const result = canvas.toDataURL(this.imageType, this.imageQuality ?? 1);
                 resolve(result);
             };
     
