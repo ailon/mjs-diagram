@@ -1910,6 +1910,7 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private onKeyUp(ev: KeyboardEvent) {
+    // console.log(ev.key);
     if (document.activeElement === this) {
       if (ev.key === 'Delete' || ev.key === 'Backspace') {
         this.deleteSelected();
@@ -1919,6 +1920,9 @@ export class DiagramEditor extends HTMLElement {
         } else if (this.mode === 'connect') {
           this.switchConnectModeOff();
         }
+      } else if (ev.key === 'Escape') {
+        this.deselectStencil();
+        this.deselectCurrentConnector();
       }
     }
   }
