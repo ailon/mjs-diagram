@@ -4,7 +4,7 @@ const strings: [string, string][] = [
   ['toolbar-save', 'išsaugoti'],
   ['toolbar-undo', 'atšaukti'],
   ['toolbar-redo', 'pakartoti'],
-  ['toolbar-add', 'pridėti šabloną'],
+  ['toolbar-add', 'pridėti šabloną [N]'],
   ['toolbar-document-setup', 'dokumento savybės'],
   ['toolbar-zoomin', 'priartinti'],
   ['toolbar-zoomreset', 'atstatyti mastelį'],

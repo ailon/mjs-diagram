@@ -4,7 +4,7 @@ const strings: [string, string][] = [
   ['toolbar-save', 'save'],
   ['toolbar-undo', 'undo'],
   ['toolbar-redo', 'redo'],
-  ['toolbar-add', 'add a stencil'],
+  ['toolbar-add', 'add a stencil [N]'],
   ['toolbar-document-setup', 'document properties'],
   ['toolbar-zoomin', 'zoom in'],
   ['toolbar-zoomreset', 'reset zoom'],

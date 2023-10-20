@@ -1923,6 +1923,8 @@ export class DiagramEditor extends HTMLElement {
       } else if (ev.key === 'Escape') {
         this.deselectStencil();
         this.deselectCurrentConnector();
+      } else if (ev.key.toUpperCase() === 'N') {
+        this.showAddPanel();
       }
     }
   }
