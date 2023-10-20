@@ -1,6 +1,6 @@
 const strings: [string, string][] = [
   ['toolbar-select', 'select'],
-  ['toolbar-delete', 'delete'],
+  ['toolbar-delete', 'delete [Del]'],
   ['toolbar-save', 'save'],
   ['toolbar-undo', 'undo'],
   ['toolbar-redo', 'redo'],
@@ -10,7 +10,7 @@ const strings: [string, string][] = [
   ['toolbar-zoomreset', 'reset zoom'],
   ['toolbar-zoomout', 'zoom out'],
   ['toolbar-properties', 'toggle toolbox'],
-  ['toolbar-connect', 'connect'],
+  ['toolbar-connect', 'connect [C]'],
   
   ['toolbox-shape-title', 'Shape properties'],
   ['toolbox-linecolor-title', 'Line color'],

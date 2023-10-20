@@ -1,6 +1,6 @@
 const strings: [string, string][] = [
   ['toolbar-select', 'pasirinkti'],
-  ['toolbar-delete', 'ištrinti'],
+  ['toolbar-delete', 'ištrinti [Del]'],
   ['toolbar-save', 'išsaugoti'],
   ['toolbar-undo', 'atšaukti'],
   ['toolbar-redo', 'pakartoti'],
@@ -10,7 +10,7 @@ const strings: [string, string][] = [
   ['toolbar-zoomreset', 'atstatyti mastelį'],
   ['toolbar-zoomout', 'nutolinti'],
   ['toolbar-properties', 'perjungti įrankių juostą'],
-  ['toolbar-connect', 'sujungti'],
+  ['toolbar-connect', 'sujungti [C]'],
 
   ['toolbox-shape-title', 'Figūros savybės'],
   ['toolbox-linecolor-title', 'Linijos spalva'],
