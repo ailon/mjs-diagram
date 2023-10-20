@@ -462,10 +462,9 @@ export class DiagramViewer extends HTMLElement {
           this._container.clientHeight < this.documentHeight) &&
           this.autoScaling === 'down')
       ) {
-        // 2% margin to avoid flickering scrollbars
         this.zoomLevel = Math.min(
-          (this._container.clientWidth * 0.98) / this.documentWidth,
-          (this._container.clientHeight * 0.98) / this.documentHeight
+          this._container.clientWidth / this.documentWidth,
+          this._container.clientHeight / this.documentHeight
         );
       }
     }
