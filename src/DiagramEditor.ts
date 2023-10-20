@@ -373,6 +373,7 @@ export class DiagramEditor extends HTMLElement {
     this.onPointerUp = this.onPointerUp.bind(this);
     this.onPointerOut = this.onPointerOut.bind(this);
     this.toolbarButtonClicked = this.toolbarButtonClicked.bind(this);
+    this.onKeyUp = this.onKeyUp.bind(this);
 
     this.toggleConnectMode = this.toggleConnectMode.bind(this);
     this.switchToConnectMode = this.switchToConnectMode.bind(this);
@@ -1305,9 +1306,9 @@ export class DiagramEditor extends HTMLElement {
     window.addEventListener('pointercancel', this.onPointerOut);
     window.addEventListener('pointerout', this.onPointerOut);
     window.addEventListener('pointerleave', this.onPointerUp);
+    window.addEventListener('keyup', this.onKeyUp);
     // @todo
     // window.addEventListener('resize', this.onWindowResize);
-    // window.addEventListener('keyup', this.onKeyUp);
   }
 
   private detachEvents() {
@@ -1333,9 +1334,9 @@ export class DiagramEditor extends HTMLElement {
     window.removeEventListener('pointercancel', this.onPointerOut);
     window.removeEventListener('pointerout', this.onPointerOut);
     window.removeEventListener('pointerleave', this.onPointerUp);
+    window.removeEventListener('keyup', this.onKeyUp);
     // @todo
     // window.removeEventListener('resize', this.onWindowResize);
-    // window.removeEventListener('keyup', this.onKeyUp);
   }
 
   private setupResizeObserver() {
@@ -1900,6 +1901,12 @@ export class DiagramEditor extends HTMLElement {
   private onPointerOut(/*ev: PointerEvent*/) {
     if (this.touchPoints > 0) {
       this.touchPoints--;
+    }
+  }
+
+  private onKeyUp(ev: KeyboardEvent) {
+    if (ev.key === 'Delete' || ev.key === 'Backspace') {
+      this.deleteSelected();
     }
   }
 
