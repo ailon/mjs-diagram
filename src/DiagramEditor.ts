@@ -1291,6 +1291,11 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private attachEvents() {
+    // needed to distinguish when the element is in focus (active)
+    if (!this.hasAttribute('tabindex')) {
+      this.setAttribute('tabindex', '0');
+    }
+
     this.setupResizeObserver();
     this._mainCanvas?.addEventListener('pointerdown', this.onCanvasPointerDown);
     this._mainCanvas?.addEventListener('pointermove', this.onCanvasPointerMove);
@@ -1905,8 +1910,16 @@ export class DiagramEditor extends HTMLElement {
   }
 
   private onKeyUp(ev: KeyboardEvent) {
-    if (ev.key === 'Delete' || ev.key === 'Backspace') {
-      this.deleteSelected();
+    if (document.activeElement === this) {
+      if (ev.key === 'Delete' || ev.key === 'Backspace') {
+        this.deleteSelected();
+      } else if (ev.key.toUpperCase() === 'C') {
+        if (this.mode === 'select') {
+          this.switchToConnectMode();
+        } else if (this.mode === 'connect') {
+          this.switchConnectModeOff();
+        }
+      }
     }
   }
 
@@ -2244,22 +2257,22 @@ export class DiagramEditor extends HTMLElement {
 
   /**
    * Hides toolbar buttons for provided commands.
-   * 
+   *
    * Available buttons/commands:
-   * 
+   *
    * `select`, `delete`, `save`, `undo`, `redo`, `add`, `connect`, `document-setup`,
    * `zoomout`, `zoomin`, `zoomreset`, `properties`.
-   * 
+   *
    * This method can be used to both remove buttons to preserve space and simplify
-   * user experience by removing unnecessary functions and to remove access to 
+   * user experience by removing unnecessary functions and to remove access to
    * certain functions. For example, you may constantly auto-save the diagram in your
    * code so the `save` button isn't necessary and misleading.
-   * 
+   *
    * @param commands list of commands
-   * 
+   *
    * @example
    * The code below hides `zoomreset` and `redo` buttons.
-   * 
+   *
    * ```typescript
    * editor.hideToolbarButtons('zoomreset', 'redo');
    * ```
@@ -2267,7 +2280,9 @@ export class DiagramEditor extends HTMLElement {
    */
   public hideToolbarButtons(...commands: string[]) {
     if (this._toolbar !== undefined) {
-      commands.forEach(command => this._toolbar?.hideButtonsByCommand(command));
+      commands.forEach((command) =>
+        this._toolbar?.hideButtonsByCommand(command)
+      );
     }
   }
 
