@@ -172,7 +172,6 @@ export class DiagramViewer extends HTMLElement {
       this._mainCanvas.style.height = `${
         this.documentHeight * this.zoomLevel
       }px`;
-      //this._mainCanvas.style.transform = `scale(${this._zoomLevel})`;
       this._canvasContainer.scrollTo({
         left:
           (this._mainCanvas.clientWidth - this._canvasContainer.clientWidth) /
@@ -462,9 +461,10 @@ export class DiagramViewer extends HTMLElement {
           this._container.clientHeight < this.documentHeight) &&
           this.autoScaling === 'down')
       ) {
+        const clientRect = this._container.getBoundingClientRect();
         this.zoomLevel = Math.min(
-          this._container.clientWidth / this.documentWidth,
-          this._container.clientHeight / this.documentHeight
+          clientRect.width / this.documentWidth,
+          clientRect.height / this.documentHeight
         );
       }
     }
