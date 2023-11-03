@@ -8,6 +8,7 @@ import { RectangleTextStencil } from './RectangleTextStencil';
 import { LightbulbIconStencil } from './LightbulbIconStencil';
 import { LabelStencil } from './LabelStencil';
 import { BitmapImageStencil } from './BitmapImageStencil';
+import { AngledConnector } from './AngledConnector';
 
 /**
  * Basic stencil set includes all the core stencils and connectors
@@ -78,6 +79,10 @@ basicStencilSet.connectorTypes.push(
   {
     connectorType: CurvedConnector,
     displayName: 'Curved connector',
+  },
+  {
+    connectorType: AngledConnector,
+    displayName: 'Angled connector',
   }
 );
 
