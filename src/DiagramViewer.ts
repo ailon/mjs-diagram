@@ -890,7 +890,12 @@ export class DiagramViewer extends HTMLElement {
       this._connectorLayer.removeChild(this._connectorLayer.lastChild);
     }
 
+    let stencilAnimationTime = 1000.0;
     if (state.stencils !== undefined && state.stencils.length > 0) {
+      // staggered animation delay based on the number of stencils
+      const stencilAnimationDelay = Math.min(250, stencilAnimationTime / state.stencils.length);
+      stencilAnimationTime = stencilAnimationDelay * state.stencils.length;
+      
       state.stencils.forEach((stencilState, index) => {
         const sp = this._stencilSet.getStencilProperties(stencilState.typeName);
         if (sp !== undefined) {
@@ -906,13 +911,17 @@ export class DiagramViewer extends HTMLElement {
           if (this.loadAnimationEnabled) {
             setTimeout(() => {
               stencil.container.classList.add('fade-in');
-            }, index * 250);
+            }, index * stencilAnimationDelay);
           }
         }
       });
     }
 
+    const connectorAnimationTime = 250.0;
     if (state.connectors !== undefined && state.connectors.length > 0) {
+      // staggered animation delay based on the number of connectors
+      const connectorAnimationDelay = Math.min(50, connectorAnimationTime / state.connectors.length);
+
       state.connectors.forEach((conState, index) => {
         const cp = this._stencilSet.getConnectorProperties(conState.typeName);
         if (cp !== undefined) {
@@ -957,7 +966,7 @@ export class DiagramViewer extends HTMLElement {
               if (this.loadAnimationEnabled) {
                 setTimeout(() => {
                   connector.container.classList.add('connector-fade-in');
-                }, this._stencils.length * 250 + index * 50);
+                }, stencilAnimationTime + index * connectorAnimationDelay);
               }
             }
           }

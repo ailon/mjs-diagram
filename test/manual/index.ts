@@ -235,9 +235,9 @@ export class Experiments {
       console.log(`connector click ${(<ConnectorEventData>ev.detail).connector.typeName}`);
     });
 
-    this.viewer.stencilSet = flowchartStencilSet;
+    // this.viewer.stencilSet = flowchartStencilSet;
     // this.viewer.stencilSet = orgchartStencilSet;
-    // this.viewer.stencilSet = basicStencilSet;
+    this.viewer.stencilSet = basicStencilSet;
     // this.viewer.stencilSet = networkStencilSet;
     // this.viewer.stencilSet = mindMapStencilSet;
 
